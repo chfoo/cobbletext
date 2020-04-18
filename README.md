@@ -10,11 +10,20 @@ Work in progress; not usable yet.
 
 ### Dependencies
 
+Libraries:
+
 * FreeType 2
-* International Components for Unicode (ICU)
 * HarfBuzz 2
+* International Components for Unicode (ICU)
+
+Header-only libraries:
+
 * Boost
 * Microsoft GSL
+
+Resources:
+
+* adobe-notdef (included as a Git Submodule)
 
 Optional for examples and tests:
 
@@ -27,15 +36,46 @@ Optional for examples and tests:
 
 ### Linux package manager
 
+On Debian based system, install
+
+* build-essential
+* libfreetype6-dev
+* libharfbuzz-dev
+* libicu-dev
+* libboost1.XX-dev (where XX is the latest version)
+* libmsgsl-dev
+
+Optional:
+
+* uthash-dev
+* There's no catch2 package yet. Put it somewhere and supply the path to CMake as described later.
+
 ## Building
 
 Requirements:
 
-* CMake 3.13+
+* CMake 3.13+ for generating the build files.
+* Python 3 for `script/embed_resource.py`. CMake will call Python automatically.
+* GNU Make or Visual Studio for the actual build.
 
-### Makefile
+To generate build files using CMake:
 
 1. `mkdir build`
 2. `cd build`
 3. `cmake ..`
-4. `make cobbletext cobbletext_shared`
+
+For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`.
+
+If CMake can't find something, you can manually edit CMakeCache.txt. Use `cmake .. -L` to list out configurable variables.
+
+### Makefile
+
+* Running `make cobbletext` will build a shared/dynamic library.
+* Running `make cobbletext_static` will build a static library.
+
+### Visual Studio
+
+Ensure the C++ workload is installed. See Tools -> Get tools and features.
+
+* Project `cobbletext` is the dynamic library.
+* Project `cobbletext_static` is the static library.

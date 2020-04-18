@@ -13,8 +13,6 @@ find_path(MS_GSL_INCLUDE_PATH "gsl")
 find_library(HARFBUZZ_LIB_PATH "harfbuzz")
 
 set(COBBLETEXT_DEPENDENCY_INCLUDES
-    "${PROJECT_SOURCE_DIR}/lib/GSL/include"
-    "${PROJECT_SOURCE_DIR}/lib/color/src/"
     ${Boost_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
     "${HARFBUZZ_INCLUDE_PATH}"
