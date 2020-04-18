@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <uchar.h>
 
 #ifdef _WIN32
     #ifdef COBBLETEXT_EXPORTS
