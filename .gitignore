@@ -1,0 +1,9 @@
+
+## Cmake output directory
+build/
+
+
+## Visual Studio Code
+.vscode/
+
+

@@ -1,0 +1,5 @@
+#pragma once
+
+#define COBBLETEXT_VERSION_MAJOR @cobbletext_VERSION_MAJOR@
+#define COBBLETEXT_VERSION_MINOR @cobbletext_VERSION_MINOR@
+#define COBBLETEXT_VERSION_PATCH @cobbletext_VERSION_PATCH@

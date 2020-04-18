@@ -1,0 +1,6 @@
+[submodule "lib/Catch2"]
+	path = lib/Catch2
+	url = https://github.com/catchorg/Catch2
+[submodule "lib/adobe-notdef"]
+	path = lib/adobe-notdef
+	url = https://github.com/adobe-fonts/adobe-notdef
