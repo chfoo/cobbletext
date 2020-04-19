@@ -12,10 +12,10 @@
 struct CobbletextEngine {
     CobbletextLibrary * library;
     std::unique_ptr<cobbletext::Engine> obj;
-    std::vector<struct CobbletextTileInfo> tiles;
-    std::vector<struct CobbletextAdvanceInfo> advances;
-    std::unique_ptr<struct CobbletextTileInfo *[]> tilesPointer;
-    std::unique_ptr<struct CobbletextAdvanceInfo *[]> advancesPointer;
+    std::vector<std::unique_ptr<const struct CobbletextTileInfo>> tiles;
+    std::vector<std::unique_ptr<const struct CobbletextAdvanceInfo>> advances;
+    std::unique_ptr<const struct CobbletextTileInfo *[]> tilesPointer;
+    std::unique_ptr<const struct CobbletextAdvanceInfo *[]> advancesPointer;
     bool tilesPrepared;
     bool advancesPrepared;
 };

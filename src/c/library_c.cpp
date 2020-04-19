@@ -5,9 +5,10 @@
 #include "Exception.hpp"
 
 CobbletextLibrary * cobbletext_library_new() {
-    auto handle = new struct CobbletextLibrary();
+    CobbletextLibrary * handle;
 
     try {
+        handle = new CobbletextLibrary();
         handle->obj = std::make_shared<cobbletext::Library>();
         cobbletext::c::handleSuccess(handle);
     } catch (std::exception & exception) {

@@ -10,13 +10,13 @@ CobbletextEngine * cobbletext_engine_new(CobbletextLibrary * library) {
     try {
         handle = new CobbletextEngine();
         cobbletext::c::handleSuccess(library);
+        handle->obj = std::make_unique<cobbletext::Engine>(library->obj);
+        handle->library = library;
     } catch (std::exception & exception) {
         cobbletext::c::handleException(library, &exception);
         return nullptr;
     }
 
-    handle->obj = std::make_unique<cobbletext::Engine>(library->obj);
-    handle->library = library;
     return handle;
 }
 
@@ -201,8 +201,7 @@ const struct CobbletextTileInfo ** cobbletext_engine_get_tiles(
         engine->tilesPrepared = true;
     }
 
-    return const_cast<const struct CobbletextTileInfo **>(
-        engine->tilesPointer.get());
+    return engine->tilesPointer.get();
 }
 
 uint32_t cobbletext_engine_get_advance_count(CobbletextEngine * engine) {
@@ -232,19 +231,20 @@ void prepareEngineTiles(CobbletextEngine * engine) {
     engine->tiles.clear();
     auto tiles = engine->obj->tiles();
 
-    auto tilesPointer = new struct CobbletextTileInfo * [tiles.size()];
+    auto tilesPointer = new const struct CobbletextTileInfo * [tiles.size()];
     engine->tilesPointer.reset(tilesPointer);
 
     for (size_t index = 0; index < tiles.size(); index++) {
-        struct CobbletextTileInfo cTileInfo;
+        struct CobbletextTileInfo * cTileInfo = new struct CobbletextTileInfo;
         auto & tile = tiles[index];
 
-        cTileInfo.atlas_x = tile.atlasX;
-        cTileInfo.atlas_y = tile.atlasY;
-        cTileInfo.glyph_id = tile.glyphID;
+        cTileInfo->atlas_x = tile.atlasX;
+        cTileInfo->atlas_y = tile.atlasY;
+        cTileInfo->glyph_id = tile.glyphID;
 
-        engine->tiles.push_back(cTileInfo);
-        engine->tilesPointer.get()[index] = &engine->tiles[index];
+        engine->tiles.push_back(
+            std::unique_ptr<const struct CobbletextTileInfo>(cTileInfo));
+        engine->tilesPointer.get()[index] = engine->tiles[index].get();
     }
 }
 
@@ -252,25 +252,28 @@ void prepareEngineAdvances(struct CobbletextEngine * engine) {
     engine->advances.clear();
     auto advances = engine->obj->advances();
 
-    auto advancesPointer = new struct CobbletextAdvanceInfo * [advances.size()];
+    auto advancesPointer =
+        new const struct CobbletextAdvanceInfo * [advances.size()];
     engine->advancesPointer.reset(advancesPointer);
 
     for (size_t index = 0; index < advances.size(); index++) {
-        struct CobbletextAdvanceInfo cAdvanceInfo;
+        struct CobbletextAdvanceInfo * cAdvanceInfo =
+            new struct CobbletextAdvanceInfo;
         auto & advance = advances[index];
 
-        cAdvanceInfo.advance_x = advance.advanceX;
-        cAdvanceInfo.advance_y = advance.advanceY;
-        cAdvanceInfo.custom_property = advance.customProperty;
-        cAdvanceInfo.glyph = advance.glyph;
-        cAdvanceInfo.glyph_offset_x = advance.glyphOffsetX;
-        cAdvanceInfo.glyph_offset_y = advance.glyphOffsetY;
-        cAdvanceInfo.inline_object = advance.inlineObject;
-        cAdvanceInfo.text_index = advance.textIndex;
-        cAdvanceInfo.type = static_cast<CobbletextAdvanceType>(advance.type);
+        cAdvanceInfo->advance_x = advance.advanceX;
+        cAdvanceInfo->advance_y = advance.advanceY;
+        cAdvanceInfo->custom_property = advance.customProperty;
+        cAdvanceInfo->glyph = advance.glyph;
+        cAdvanceInfo->glyph_offset_x = advance.glyphOffsetX;
+        cAdvanceInfo->glyph_offset_y = advance.glyphOffsetY;
+        cAdvanceInfo->inline_object = advance.inlineObject;
+        cAdvanceInfo->text_index = advance.textIndex;
+        cAdvanceInfo->type = static_cast<CobbletextAdvanceType>(advance.type);
 
-        engine->advances.push_back(cAdvanceInfo);
-        engine->advancesPointer.get()[index] = &engine->advances[index];
+        engine->advances.push_back(
+            std::unique_ptr<const struct CobbletextAdvanceInfo>(cAdvanceInfo));
+        engine->advancesPointer.get()[index] = engine->advances[index].get();
     }
 }
 
