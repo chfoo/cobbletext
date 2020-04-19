@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include <unicode/unistr.h>
 #include <unicode/locid.h>
@@ -18,12 +19,10 @@ class TextSource {
 public:
     icu::Locale locale;
     std::vector<TextRun> runs;
-    icu::UnicodeString textBuffer;
-
-private:
+    std::shared_ptr<icu::UnicodeString> textBuffer;
 
 public:
-    TextSource(icu::Locale locale);
+    TextSource();
 
     void clear();
     void addText(icu::UnicodeString text, TextFormat & textFormat);

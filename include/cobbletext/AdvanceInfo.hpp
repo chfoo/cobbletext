@@ -15,7 +15,6 @@ enum class AdvanceType {
 
 class COBBLETEXT_API AdvanceInfo {
 public:
-    uint32_t index;
     AdvanceType type;
     uint32_t textIndex;
 

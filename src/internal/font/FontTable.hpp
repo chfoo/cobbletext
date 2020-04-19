@@ -22,13 +22,14 @@ private:
 public:
     const FontID fallbackFont;
 
-    FontTable(std::shared_ptr<FreeType> freeType);
+    explicit FontTable(std::shared_ptr<FreeType> freeType);
     ~FontTable();
 
     FontID load(const char * path);
     FontID loadBytes(const gsl::span<const uint8_t> & data);
 
     Font & getFont(FontID fontID);
+    Font & getFontWithFallback(FontID fontID);
     FontInfo getFontInfo(FontID fontID);
 
 private:

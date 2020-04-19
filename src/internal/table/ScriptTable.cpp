@@ -1,5 +1,7 @@
 #include "internal/table/ScriptTable.hpp"
 
+#include <cassert>
+
 #include "internal/ICUError.hpp"
 
 namespace cobbletext::internal {
@@ -12,13 +14,14 @@ hb_language_t ScriptTable::languageToHarfBuzz(std::string language) {
     return hb_language_from_string(language.c_str(), language.size());
 }
 
-void ScriptTable::setText(const icu::UnicodeString & text) {
-    this->text = std::ref(text);
+void ScriptTable::setTextBuffer(std::shared_ptr<const icu::UnicodeString> text) {
+    this->text = text;
 }
 
 hb_script_t ScriptTable::getHarfBuzzScript(int32_t codeUnitIndex) {
+    assert(text);
     ICUError errorCode;
-    auto codePoint = text->get().char32At(codeUnitIndex);
+    auto codePoint = text->char32At(codeUnitIndex);
 
     auto scriptCode = uscript_getScript(codePoint, errorCode);
     auto usage = uscript_getUsage(scriptCode);

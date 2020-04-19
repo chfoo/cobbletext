@@ -21,15 +21,16 @@ public:
 
 class BidiTable {
     std::unique_ptr<UBiDi,UbidiDeleter> bidiStruct;
-    std::optional<std::reference_wrapper<const icu::UnicodeString>> text;
+    std::shared_ptr<const icu::UnicodeString> text;
 
 public:
     BidiTable();
 
     static hb_direction_t directionToHarfBuzz(ScriptDirection direction);
 
-    void setText(const icu::UnicodeString & text,
-        ScriptDirection direction = ScriptDirection::LTR);
+    void setTextBuffer(std::shared_ptr<const icu::UnicodeString> text);
+
+    void analyze(ScriptDirection direction);
 
     bool isMixed();
 

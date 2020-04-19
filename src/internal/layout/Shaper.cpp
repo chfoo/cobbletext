@@ -5,14 +5,18 @@ namespace cobbletext::internal {
 Shaper::Shaper(std::shared_ptr<FontTable> fontTable) :
         fontTable(fontTable),
         harfBuzzBuffer(hb_buffer_create()) {
+
     hb_buffer_reference(harfBuzzBuffer.get());
+    hb_buffer_set_cluster_level(harfBuzzBuffer.get(),
+        HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
 }
 
-void Shaper::setText(const icu::UnicodeString & text) {
-    this->text = std::ref(text);
+void Shaper::setTextBuffer(std::shared_ptr<const icu::UnicodeString> text) {
+    this->text = text;
 }
 
-std::vector<ShapeResult> Shaper::shapeRuns(const std::vector<InternalTextRun> & runs) {
+std::vector<ShapeResult> Shaper::shapeRuns(
+        const std::vector<InternalTextRun> & runs) {
     std::vector<ShapeResult> results;
 
     for ( auto const & run : runs) {
@@ -22,8 +26,9 @@ std::vector<ShapeResult> Shaper::shapeRuns(const std::vector<InternalTextRun> & 
     return results;
 }
 
-void Shaper::shapeRun(const InternalTextRun & run, std::vector<ShapeResult> & results) {
-    auto font = fontTable->getFont(run.source.textFormat->fontFace);
+void Shaper::shapeRun(const InternalTextRun & run,
+        std::vector<ShapeResult> & results) {
+    auto font = fontTable->getFontWithFallback(run.source.textFormat->fontFace);
 
     hb_buffer_clear_contents(harfBuzzBuffer.get());
 
@@ -32,8 +37,8 @@ void Shaper::shapeRun(const InternalTextRun & run, std::vector<ShapeResult> & re
     hb_buffer_set_language(harfBuzzBuffer.get(), run.language);
 
     hb_buffer_add_utf16(harfBuzzBuffer.get(),
-        reinterpret_cast<const uint16_t*>(text->get().getBuffer()),
-        text->get().length(),
+        reinterpret_cast<const uint16_t*>(text->getBuffer()),
+        text->length(),
         run.textIndex, run.textLength
     );
 

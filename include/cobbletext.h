@@ -84,7 +84,6 @@ struct CobbletextTileInfo {
 };
 
 struct CobbletextAdvanceInfo {
-    uint32_t index;
     CobbletextAdvanceType type;
     uint32_t text_index;
 

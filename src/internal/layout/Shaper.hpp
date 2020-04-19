@@ -26,18 +26,18 @@ class Shaper {
 private:
     std::shared_ptr<FontTable> fontTable;
     std::unique_ptr<hb_buffer_t,HarfBuzzBufferDeleter> harfBuzzBuffer;
-    std::optional<std::reference_wrapper<const icu::UnicodeString>> text;
-
+    std::shared_ptr<const icu::UnicodeString> text;
 
 public:
-    Shaper(std::shared_ptr<FontTable> fontTable);
+    explicit Shaper(std::shared_ptr<FontTable> fontTable);
 
-    void setText(const icu::UnicodeString & text);
+    void setTextBuffer(std::shared_ptr<const icu::UnicodeString> text);
 
     std::vector<ShapeResult> shapeRuns(const std::vector<InternalTextRun> & runs);
 
 private:
-    void shapeRun(const InternalTextRun & run, std::vector<ShapeResult> & results);
+    void shapeRun(const InternalTextRun & run,
+        std::vector<ShapeResult> & results);
 
 };
 

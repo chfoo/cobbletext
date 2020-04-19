@@ -77,6 +77,14 @@ Font & FontTable::getFont(FontID fontID) {
     }
 }
 
+Font & FontTable::getFontWithFallback(FontID fontID) {
+    if (fonts.find(fontID) != fonts.end()) {
+        return fonts.at(fontID);
+    }
+
+    return getFont(fallbackFont);
+}
+
 FontInfo FontTable::getFontInfo(FontID fontID) {
     auto & font = getFont(fontID);
 

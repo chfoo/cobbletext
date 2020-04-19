@@ -57,7 +57,7 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
         return;
     }
 
-    auto font = fontTable->getFont(glyphKey.fontFace);
+    auto font = fontTable->getFontWithFallback(glyphKey.fontFace);
 
     FT_Error errorCode = FT_Load_Glyph(font.freeTypeFace,
         glyphKey.index, FT_LOAD_DEFAULT);
@@ -82,6 +82,11 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
 }
 
 GlyphInfo GlyphTable::getGlyphInfo(GlyphID glyphID) {
+    if (idMap.find(glyphID) == idMap.end()) {
+        throw_with_trace(
+            LogicError("glyph not in table: " + std::to_string(glyphID)));
+    }
+
     auto & glyphKey = idToKey(glyphID);
     auto & glyph = glyphs.at(glyphKey);
     GlyphInfo glyphInfo;

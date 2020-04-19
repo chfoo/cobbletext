@@ -23,7 +23,7 @@ class AtlasPacker {
     std::shared_ptr<GlyphTable> glyphTable;
 
 public:
-    AtlasPacker(std::shared_ptr<GlyphTable> glyphTable);
+    explicit AtlasPacker(std::shared_ptr<GlyphTable> glyphTable);
 
     static bool glyphSortComparator(
         const std::unique_ptr<AtlasPackerSlot> & slot1,

@@ -1,6 +1,7 @@
 #include "internal/table/BidiTable.hpp"
 
 #include <unicode/schriter.h>
+#include <cassert>
 
 #include "internal/ICUError.hpp"
 
@@ -22,10 +23,12 @@ hb_direction_t BidiTable::directionToHarfBuzz(ScriptDirection direction) {
 }
 
 
-void BidiTable::setText(const icu::UnicodeString & text,
-        ScriptDirection direction) {
+void BidiTable::setTextBuffer(std::shared_ptr<const icu::UnicodeString> text) {
+    this->text = text;
+}
 
-    this->text = std::ref(text);
+void BidiTable::analyze(ScriptDirection direction) {
+    assert(text);
 
     UBiDiLevel paragraphLevel;
 
@@ -39,7 +42,7 @@ void BidiTable::setText(const icu::UnicodeString & text,
 
     ICUError errorCode;
 
-    ubidi_setPara(bidiStruct.get(), text.getBuffer(), text.length(),
+    ubidi_setPara(bidiStruct.get(), text->getBuffer(), text->length(),
         paragraphLevel, nullptr, errorCode);
 }
 
@@ -51,8 +54,6 @@ bool BidiTable::isMixed() {
 
 ScriptDirection BidiTable::getDirection(int32_t codeUnitIndex) {
     std::vector<ScriptDirection> directions;
-
-    auto iterator = icu::StringCharacterIterator(*text);
 
     UBiDiLevel level = ubidi_getLevelAt(bidiStruct.get(), codeUnitIndex);
 

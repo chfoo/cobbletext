@@ -2,21 +2,45 @@
 
 #include <memory>
 
+#include <unicode/uloc.h>
+#include <harfbuzz/hb.h>
+
+#include "AdvanceInfo.hpp"
 #include "internal/Context.hpp"
 #include "internal/input/TextSource.hpp"
+#include "internal/layout/InternalTextRun.hpp"
+#include "internal/layout/Shaper.hpp"
+#include "internal/layout/ShapeResult.hpp"
+#include "internal/layout/LineBreaker.hpp"
+#include "internal/table/BidiTable.hpp"
+#include "internal/table/ScriptTable.hpp"
 #include "TileInfo.hpp"
-#include "AdvanceInfo.hpp"
 
 namespace cobbletext::internal {
 
 class LayoutEngine {
+    BidiTable bidiTable;
+    ScriptTable scriptTable;
+    Shaper shaper;
+    LineBreaker lineBreaker;
+
     std::shared_ptr<Context> context;
     std::shared_ptr<TextSource> textSource;
 
+    hb_language_t defaultLanguageHB = HB_LANGUAGE_INVALID;
+    ScriptDirection defaultDirection = ScriptDirection::NotSpecified;
+    hb_direction_t defaultDirectionHB = HB_DIRECTION_INVALID;
+
+    std::vector<InternalTextRun> internalRuns;
+    std::vector<ShapeResult> shapeResults;
+
+    bool tilesValid_ = true;
 public:
     std::vector<TileInfo> tiles;
     std::vector<AdvanceInfo> advances;
-    bool tilesValid = false;
+    uint32_t lineLength = 0;
+
+    bool tilesValid();
 
     LayoutEngine(std::shared_ptr<Context> context,
         std::shared_ptr<TextSource> textSource);
@@ -25,6 +49,14 @@ public:
 
     void layOut();
 
+private:
+    void createInternalRuns();
+    void processInlineObject(const TextRun & textRun);
+    void processTextRun(const TextRun & textRun);
+    void fastPathTextRun(const TextRun & textRun);
+
+    void registerGlyphsAndMakeTiles();
+    void makeAdvances(std::vector<LineRun> & lineRuns);
 };
 
 }
