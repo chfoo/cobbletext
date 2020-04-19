@@ -74,6 +74,7 @@ TEST_CASE("engine text") {
     }
 
     cobbletext_engine_lay_out(engine);
+    cobbletext_engine_prepare_advances(engine);
 
     uint32_t advance_count = cobbletext_engine_get_advance_count(engine);
     const CobbletextAdvanceInfo ** advances =
@@ -96,6 +97,7 @@ TEST_CASE("engine inline object") {
 
     cobbletext_engine_add_inline_object(engine, 123, 400);
     cobbletext_engine_lay_out(engine);
+    cobbletext_engine_prepare_advances(engine);
 
     uint32_t advance_count = cobbletext_engine_get_advance_count(engine);
     const CobbletextAdvanceInfo ** advances =
@@ -123,6 +125,7 @@ TEST_CASE("engine custom property") {
     cobbletext_engine_set_custom_property(engine, 456);
     cobbletext_engine_add_text_utf8(engine, "world!", -1);
     cobbletext_engine_lay_out(engine);
+    cobbletext_engine_prepare_advances(engine);
 
     uint32_t advance_count = cobbletext_engine_get_advance_count(engine);
     const CobbletextAdvanceInfo ** advances =
@@ -193,6 +196,16 @@ TEST_CASE("engine raster and tile packing") {
 
         texture_size *= 2;
     }
+
+    cobbletext_engine_prepare_tiles(engine);
+
+    REQUIRE_FALSE( cobbletext_get_error_code(library) );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+
+    cobbletext_engine_prepare_advances(engine);
+
+    REQUIRE_FALSE( cobbletext_get_error_code(library) );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
 
     uint32_t tile_count = cobbletext_engine_get_tile_count(engine);
     uint32_t advance_count = cobbletext_engine_get_advance_count(engine);

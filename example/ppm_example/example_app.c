@@ -103,6 +103,9 @@ void example_app_create_atlas(ExampleApp * app) {
     app->atlas = calloc(app->atlas_size * app->atlas_size, 1);
     ABORT_IF_NULL(app->atlas, "atlas malloc fail")
 
+    cobbletext_engine_prepare_tiles(app->engine);
+    example_app_check_error(app);
+
     uint32_t tile_count = cobbletext_engine_get_tile_count(app->engine);
     const struct CobbletextTileInfo ** tiles =
         cobbletext_engine_get_tiles(app->engine);
@@ -160,6 +163,9 @@ void example_app_draw_image(ExampleApp * app) {
 
     app->image = calloc(image_width * image_height, sizeof(*app->image));
     ABORT_IF_NULL(app->image, "image malloc fail")
+
+    cobbletext_engine_prepare_advances(app->engine);
+    example_app_check_error(app);
 
     uint32_t advances_count = cobbletext_engine_get_advance_count(app->engine);
     const struct CobbletextAdvanceInfo ** advances =

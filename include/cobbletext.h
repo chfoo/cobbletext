@@ -260,11 +260,17 @@ bool cobbletext_engine_pack_tiles(CobbletextEngine * engine, uint32_t width,
     uint32_t height);
 
 COBBLETEXT_API
+void cobbletext_engine_prepare_tiles(CobbletextEngine * engine);
+
+COBBLETEXT_API
 uint32_t cobbletext_engine_get_tile_count(CobbletextEngine * engine);
 
 COBBLETEXT_API
 const struct CobbletextTileInfo ** cobbletext_engine_get_tiles(
     CobbletextEngine * engine);
+
+COBBLETEXT_API
+void cobbletext_engine_prepare_advances(CobbletextEngine * engine);
 
 COBBLETEXT_API
 uint32_t cobbletext_engine_get_advance_count(CobbletextEngine * engine);

@@ -185,10 +185,29 @@ bool cobbletext_engine_pack_tiles(CobbletextEngine * engine, uint32_t width,
     return engine->obj->packTiles(width, height);
 }
 
-uint32_t cobbletext_engine_get_tile_count(CobbletextEngine * engine) {
-    if (!engine->tilesPrepared) {
+void cobbletext_engine_prepare_tiles(CobbletextEngine * engine) {
+    try {
         cobbletext::c::prepareEngineTiles(engine);
         engine->tilesPrepared = true;
+        cobbletext::c::handleSuccess(engine->library);
+    } catch (std::exception & exception) {
+        cobbletext::c::handleException(engine->library, &exception);
+    }
+}
+
+void cobbletext_engine_prepare_advances(CobbletextEngine * engine) {
+    try {
+        cobbletext::c::prepareEngineAdvances(engine);
+        engine->advancesPrepared = true;
+        cobbletext::c::handleSuccess(engine->library);
+    } catch (std::exception & exception) {
+        cobbletext::c::handleException(engine->library, &exception);
+    }
+}
+
+uint32_t cobbletext_engine_get_tile_count(CobbletextEngine * engine) {
+    if (!engine->tilesPrepared) {
+        cobbletext::internal::Debug::abort("Tiles not prepared");
     }
 
     return engine->tiles.size();
@@ -197,8 +216,7 @@ uint32_t cobbletext_engine_get_tile_count(CobbletextEngine * engine) {
 const struct CobbletextTileInfo ** cobbletext_engine_get_tiles(
         CobbletextEngine * engine) {
     if (!engine->tilesPrepared) {
-        cobbletext::c::prepareEngineTiles(engine);
-        engine->tilesPrepared = true;
+        cobbletext::internal::Debug::abort("Tiles not prepared");
     }
 
     return engine->tilesPointer.get();
@@ -206,8 +224,7 @@ const struct CobbletextTileInfo ** cobbletext_engine_get_tiles(
 
 uint32_t cobbletext_engine_get_advance_count(CobbletextEngine * engine) {
     if (!engine->advancesPrepared) {
-        cobbletext::c::prepareEngineAdvances(engine);
-        engine->advancesPrepared = true;
+        cobbletext::internal::Debug::abort("Advances not prepared");
     }
 
     return engine->advances.size();
@@ -216,12 +233,10 @@ uint32_t cobbletext_engine_get_advance_count(CobbletextEngine * engine) {
 const struct CobbletextAdvanceInfo ** cobbletext_engine_get_advances(
         CobbletextEngine * engine) {
     if (!engine->advancesPrepared) {
-        cobbletext::c::prepareEngineAdvances(engine);
-        engine->advancesPrepared = true;
+        cobbletext::internal::Debug::abort("Advances not prepared");
     }
 
-    return const_cast<const struct CobbletextAdvanceInfo **>(
-        engine->advancesPointer.get());
+    return engine->advancesPointer.get();
 }
 
 
