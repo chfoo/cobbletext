@@ -1,11 +1,8 @@
 #include "c/library_c.hpp"
 
-
-
+#include "c/util_c.hpp"
 #include "LibraryImpl.hpp"
 #include "Exception.hpp"
-
-
 
 CobbletextLibrary * cobbletext_library_new() {
     auto handle = new struct CobbletextLibrary();
@@ -126,23 +123,5 @@ const struct CobbletextGlyphInfo * cobbletext_library_get_glyph_info(
 
 
 namespace cobbletext::c {
-
-void handleSuccess(struct CobbletextLibrary * library) {
-    library->errorCode = 0;
-    library->errorMessage = "";
-}
-
-void handleException(struct CobbletextLibrary * library,
-        std::exception * exception) {
-    auto * libraryError = dynamic_cast<cobbletext::LibraryError*>(exception);
-
-    if (libraryError) {
-        library->errorCode = libraryError->code;
-        library->errorMessage = libraryError->message;
-    } else {
-        library->errorCode = -1;
-        library->errorMessage = exception->what();
-    }
-}
 
 }

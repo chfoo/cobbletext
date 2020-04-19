@@ -7,11 +7,14 @@
 
 void example_app_run(ExampleApp * app) {
     app->library = cobbletext_library_new();
+    example_app_check_error(app);
     app->engine = cobbletext_engine_new(app->library);
+    example_app_check_error(app);
 
     example_app_set_text(app);
 
     cobbletext_engine_lay_out(app->engine);
+    example_app_check_error(app);
 
     if (!cobbletext_engine_tiles_valid(app->engine)) {
         example_app_create_atlas(app);
@@ -41,6 +44,16 @@ void example_app_destroy(ExampleApp * app) {
             HASH_DEL(app->atlas_table, atlas_entry);
             free(atlas_entry);
         }
+    }
+}
+
+void example_app_check_error(ExampleApp * app) {
+    if (cobbletext_get_error_code(app->library)) {
+        int32_t error_code = cobbletext_get_error_code(app->library);
+        const char * error_message = cobbletext_get_error_message(app->library);
+
+        printf("Error: %d %s\n", error_code, error_message);
+        ABORT_WITH_MESSAGE("error");
     }
 }
 
@@ -99,6 +112,7 @@ void example_app_create_atlas(ExampleApp * app) {
         const struct CobbletextGlyphInfo * glyph =
             cobbletext_library_get_glyph_info(app->library, tile->glyph_id);
 
+        example_app_check_error(app);
         example_app_draw_atlas_tile(app, tile, glyph);
 
         struct AtlasEntry * atlas_entry;

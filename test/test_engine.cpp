@@ -210,6 +210,30 @@ TEST_CASE("engine raster and tile packing") {
     CHECK( cobbletext_engine_get_image_width(engine) );
     CHECK( cobbletext_engine_get_image_height(engine) );
 
+    for (size_t index = 0; index < tile_count; index++) {
+        const CobbletextTileInfo * tile = tiles[index];
+
+        CHECK( tile->glyph_id );
+    }
+
+    for (size_t index = 0; index < advance_count; index++) {
+        const CobbletextAdvanceInfo * advance = advances[index];
+
+        if (advance->type == COBBLETEXT_ADVANCE_TYPE_GLYPH) {
+            CHECK( advance->glyph );
+
+            const CobbletextGlyphInfo * glyph =
+                cobbletext_library_get_glyph_info(library, advance->glyph);
+
+            REQUIRE_FALSE( cobbletext_get_error_code(library) );
+            CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+            CHECK( glyph->image );
+            CHECK( glyph->image_width );
+            CHECK( glyph->image_height );
+        }
+
+    }
+
     cobbletext_engine_delete(engine);
     cobbletext_library_delete(library);
 }

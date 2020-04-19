@@ -18,10 +18,6 @@ struct CobbletextLibrary {
 
 namespace cobbletext::c {
 
-static void handleSuccess(struct CobbletextLibrary * library);
-
-static void handleException(struct CobbletextLibrary * library,
-    std::exception * exception);
 
 
 }

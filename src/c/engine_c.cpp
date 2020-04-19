@@ -1,9 +1,20 @@
 #include "c/engine_c.hpp"
 
+#include "c/util_c.hpp"
+#include "c/library_c.hpp"
 #include "internal/Debug.hpp"
 
 CobbletextEngine * cobbletext_engine_new(CobbletextLibrary * library) {
-    auto handle = new CobbletextEngine();
+    CobbletextEngine * handle;
+
+    try {
+        handle = new CobbletextEngine();
+        cobbletext::c::handleSuccess(library);
+    } catch (std::exception & exception) {
+        cobbletext::c::handleException(library, &exception);
+        return nullptr;
+    }
+
     handle->obj = std::make_unique<cobbletext::Engine>(library->obj);
     handle->library = library;
     return handle;
@@ -143,7 +154,13 @@ void cobbletext_engine_clear(CobbletextEngine * engine) {
 }
 
 void cobbletext_engine_lay_out(CobbletextEngine * engine) {
-    engine->obj->layOut();
+    try {
+        engine->obj->layOut();
+        cobbletext::c::handleSuccess(engine->library);
+    } catch (std::exception & exception) {
+        cobbletext::c::handleException(engine->library, &exception);
+        return;
+    }
     engine->tilesPrepared = engine->advancesPrepared = false;
 }
 

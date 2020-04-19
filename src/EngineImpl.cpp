@@ -1,5 +1,7 @@
 #include "EngineImpl.hpp"
 
+#include <unicode/uloc.h>
+
 #include "internal/input/TextFormat.hpp"
 
 namespace cobbletext {
@@ -8,8 +10,7 @@ Engine::Impl::Impl(Engine & parent,
     std::shared_ptr<internal::Context> context) :
     parent(parent),
     context(context),
-    textSource(
-        std::make_shared<internal::TextSource>(parent.locale.c_str())),
+    textSource(std::make_shared<internal::TextSource>()),
     layoutEngine(std::make_shared<internal::LayoutEngine>(
         context, textSource)) {}
 
@@ -37,12 +38,17 @@ void Engine::Impl::clear() {
 }
 
 void Engine::Impl::layOut() {
-    textSource->locale = parent.locale.c_str();
+    if (parent.locale != "") {
+        textSource->locale = parent.locale.c_str();
+    } else {
+        textSource->locale = icu::Locale::getDefault();
+    }
+    layoutEngine->lineLength = parent.lineLength;
     layoutEngine->layOut();
 }
 
 bool Engine::Impl::tilesValid() {
-    return layoutEngine->tilesValid;
+    return layoutEngine->tilesValid();
 }
 
 void Engine::Impl::rasterize() {

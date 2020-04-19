@@ -42,6 +42,8 @@ void example_app_run(ExampleApp * app);
 
 void example_app_destroy(ExampleApp * app);
 
+void example_app_check_error(ExampleApp * app);
+
 void example_app_set_text(ExampleApp * app);
 
 void example_app_create_atlas(ExampleApp * app);

@@ -31,9 +31,7 @@ target_include_directories(cobbletext_static PRIVATE ${COBBLETEXT_LIBRARY_ALL_IN
 set_target_properties(cobbletext PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(cobbletext_static PROPERTIES VERSION ${PROJECT_VERSION})
 
-set_target_properties(cobbletext PROPERTIES SOVERSION 1)
-
-set_target_properties(cobbletext PROPERTIES PUBLIC_HEADER "cobbletext.h cobbletext.hpp")
+set_target_properties(cobbletext PROPERTIES SOVERSION 0)
 
 if(${COBBLETEXT_DEBUG})
     add_compile_definitions(COBBLETEXT_DEBUG=1)

@@ -6,7 +6,6 @@
 
 #include "Engine.hpp"
 #include "EngineImpl.hpp"
-#include "c/library_c.hpp"
 #include "cobbletext.h"
 
 
