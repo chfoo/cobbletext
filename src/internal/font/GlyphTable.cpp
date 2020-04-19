@@ -64,6 +64,11 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
 
     FreeType::throwIfError(errorCode);
 
+    errorCode = FT_Set_Char_Size(font.freeTypeFace,
+        0, glyphKey.fontSize * 64, 0, 0);
+
+    FreeType::throwIfError(errorCode);
+
     if (font.freeTypeFace->glyph->format != FT_GLYPH_FORMAT_BITMAP) {
         errorCode = FT_Render_Glyph(font.freeTypeFace->glyph,
             FT_RENDER_MODE_NORMAL);

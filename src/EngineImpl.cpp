@@ -45,6 +45,10 @@ void Engine::Impl::layOut() {
     }
     layoutEngine->lineLength = parent.lineLength;
     layoutEngine->layOut();
+
+    // TODO: real values
+    parent.imageWidth = 500;
+    parent.imageHeight = 500;
 }
 
 bool Engine::Impl::tilesValid() {

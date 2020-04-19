@@ -78,6 +78,7 @@ void example_app_set_text(ExampleApp * app) {
 void example_app_create_atlas(ExampleApp * app) {
     printf("Rasterizing...\n");
     cobbletext_engine_rasterize(app->engine);
+    example_app_check_error(app);
 
     printf("Creating atlas...\n");
 
@@ -164,6 +165,11 @@ void example_app_draw_image(ExampleApp * app) {
     app->image = calloc(image_width * image_height, sizeof(*app->image));
     ABORT_IF_NULL(app->image, "image malloc fail")
 
+    memset(app->image, 0xff, image_width * image_height * sizeof(*app->image));
+
+    app->image_width = image_width;
+    app->image_height = image_height;
+
     cobbletext_engine_prepare_advances(app->engine);
     example_app_check_error(app);
 
@@ -196,27 +202,35 @@ void example_app_draw_glyph(ExampleApp * app,
 
     for (size_t index = 0; index < tile_length; index++) {
         size_t tile_x = index % atlas_entry->width;
-        size_t tile_y = index / atlas_entry->height;
+        size_t tile_y = index / atlas_entry->width;
         size_t atlas_x = atlas_entry->x + tile_x;
         size_t atlas_y = atlas_entry->y + tile_y;
         size_t atlas_index = app->atlas_size * atlas_y + atlas_x;
 
         size_t image_x = app->pen_x + advance->glyph_offset_x + tile_x;
-        size_t image_y = app->pen_x + advance->glyph_offset_y + tile_y;
-        size_t image_index = app->image_height * image_y + image_x;
+        size_t image_y = app->pen_y + advance->glyph_offset_y + tile_y;
+        size_t image_index = app->image_width * image_y + image_x;
 
+        if (image_x < 0 || image_y < 0
+        || image_x >= app->image_width || image_y >= app->image_height) {
+            continue;
+        }
+
+        uint32_t background = app->image[image_index];
         uint32_t color;
 
         if (advance->custom_property == PROPERTY_RED_TEXT) {
-            color = 0xffff0000;
+            color = 0xff0000;
         } else {
-            color = 0xff000000;
+            color = 0x000000;
         }
 
-        // TODO: alpha blend and gamma correction
-        app->atlas[atlas_index];
+        uint8_t coverage = app->atlas[atlas_index];
+        uint32_t foreground = (coverage << 24) | color;
 
-        uint32_t pixel = color;
+        uint32_t pixel = cobbletext_math_alpha_blend_over_argb(background,
+            foreground);
+        pixel = cobbletext_math_gamma_correction_argb(pixel, 1.8);
 
         app->image[image_index] = pixel;
     }
@@ -224,6 +238,18 @@ void example_app_draw_glyph(ExampleApp * app,
 
 void example_app_save_file(ExampleApp * app) {
     printf("Saving file...\n");
+
+    FILE * atlas_file = fopen("example_atlas.pgm", "wb");
+
+    fprintf(atlas_file, "P5 %d %d 255\n", app->atlas_size, app->atlas_size);
+
+    size_t atlas_length = app->atlas_size * app->atlas_size;
+
+    for (size_t index = 0; index < atlas_length; index++) {
+        fputc(app->atlas[index], atlas_file);
+    }
+
+    fclose(atlas_file);
 
     FILE * file = fopen("example.ppm", "wb");
 

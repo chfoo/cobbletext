@@ -74,6 +74,8 @@ std::vector<LineRun> LineBreaker::applyBreaks(const std::vector<ShapeResult> & s
 
         }
 
+        line.length += shapeLength;
+
         line.shapeResults.push_back(std::ref(shapeResult));
 
         shapeResultIterator++;

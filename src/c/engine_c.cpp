@@ -169,7 +169,12 @@ bool cobbletext_engine_tiles_valid(CobbletextEngine * engine) {
 }
 
 void cobbletext_engine_rasterize(CobbletextEngine * engine) {
-    engine->obj->rasterize();
+    try {
+        engine->obj->rasterize();
+        cobbletext::c::handleSuccess(engine->library);
+    } catch (std::exception & exception) {
+        cobbletext::c::handleException(engine->library, &exception);
+    }
 }
 
 uint32_t cobbletext_engine_get_image_width(CobbletextEngine * engine) {
