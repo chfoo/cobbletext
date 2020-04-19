@@ -44,3 +44,6 @@ if(${COBBLETEXT_ADDRESS_SANITIZER})
     target_link_options(cobbletext PRIVATE ${SANITIZE_FLAGS} )
     target_link_options(cobbletext_static PRIVATE ${SANITIZE_FLAGS} )
 endif()
+
+target_link_libraries(cobbletext PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})
+target_link_libraries(cobbletext_static PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})

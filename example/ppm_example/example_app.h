@@ -16,7 +16,7 @@
 #define INLINE_OBJECT_1 1
 
 struct AtlasEntry {
-    CobbletextGlyphID glyphID;
+    CobbletextGlyphID glyph_id;
     uint32_t x;
     uint32_t y;
     uint32_t width;

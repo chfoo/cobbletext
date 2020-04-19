@@ -9,14 +9,11 @@ target_include_directories(test_main PRIVATE
     "${CMAKE_SOURCE_DIR}/include/"
     "${CMAKE_SOURCE_DIR}/src/"
     "${CMAKE_CURRENT_BINARY_DIR}"
-    ${COBBLETEXT_DEPENDENCY_INCLUDES}
     "${CATCH2_INCLUDE_PATH}"
 )
 
-target_link_libraries(test_main PRIVATE
-    cobbletext
-    ${COBBLETEXT_DEPENDENCY_LIBS}
-)
+target_link_libraries(test_main PRIVATE cobbletext
+    ${ICU_LIBRARIES})
 
 if(NOT WIN32)
     target_link_libraries(test_main PRIVATE dl)

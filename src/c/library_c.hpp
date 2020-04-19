@@ -14,6 +14,7 @@ struct CobbletextLibrary {
     std::string errorMessage;
     std::unique_ptr<struct CobbletextFontInfo> fontInfo;
     std::unique_ptr<struct CobbletextGlyphInfo> glyphInfo;
+    std::unique_ptr<uint8_t[]> glyphImage;
 };
 
 namespace cobbletext::c {

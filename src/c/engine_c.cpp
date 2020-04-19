@@ -264,7 +264,7 @@ void prepareEngineAdvances(struct CobbletextEngine * engine) {
         cAdvanceInfo->advance_x = advance.advanceX;
         cAdvanceInfo->advance_y = advance.advanceY;
         cAdvanceInfo->custom_property = advance.customProperty;
-        cAdvanceInfo->glyph = advance.glyph;
+        cAdvanceInfo->glyph_id = advance.glyphID;
         cAdvanceInfo->glyph_offset_x = advance.glyphOffsetX;
         cAdvanceInfo->glyph_offset_y = advance.glyphOffsetY;
         cAdvanceInfo->inline_object = advance.inlineObject;

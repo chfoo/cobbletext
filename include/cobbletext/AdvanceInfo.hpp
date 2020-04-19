@@ -21,7 +21,7 @@ public:
     int32_t advanceX;
     int32_t advanceY;
 
-    GlyphID glyph;
+    GlyphID glyphID;
     int32_t glyphOffsetX;
     int32_t glyphOffsetY;
 

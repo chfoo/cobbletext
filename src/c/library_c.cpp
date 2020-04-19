@@ -104,14 +104,11 @@ const struct CobbletextGlyphInfo * cobbletext_library_get_glyph_info(
         return nullptr;
     }
 
-    if (library->glyphInfo) {
-        delete [] library->glyphInfo->image;
-    }
-
     library->glyphInfo = std::make_unique<CobbletextGlyphInfo>();
     library->glyphInfo->id = glyphInfo.id;
 
     uint8_t * image = new uint8_t[glyphInfo.image.size()];
+    library->glyphImage = std::unique_ptr<uint8_t[]>(image);
     std::copy(glyphInfo.image.begin(), glyphInfo.image.end(), image);
     library->glyphInfo->image = image;
 

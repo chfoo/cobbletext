@@ -121,13 +121,13 @@ void example_app_create_atlas(ExampleApp * app) {
         if (atlas_entry) { ABORT_WITH_MESSAGE("tile with duplicate key") }
 
         atlas_entry = calloc(1, sizeof(*atlas_entry));
-        atlas_entry->glyphID = tile->glyph_id;
+        atlas_entry->glyph_id = tile->glyph_id;
         atlas_entry->x = tile->atlas_x;
         atlas_entry->y = tile->atlas_y;
         atlas_entry->width = glyph->image_width;
         atlas_entry->height = glyph->image_height;
 
-        HASH_ADD_INT(app->atlas_table, glyphID, atlas_entry);
+        HASH_ADD_INT(app->atlas_table, glyph_id, atlas_entry);
     }
 }
 
@@ -183,7 +183,7 @@ void example_app_draw_glyph(ExampleApp * app,
         const struct CobbletextAdvanceInfo * advance) {
 
     struct AtlasEntry * atlas_entry;
-    HASH_FIND_INT(app->atlas_table, &advance->glyph, atlas_entry);
+    HASH_FIND_INT(app->atlas_table, &advance->glyph_id, atlas_entry);
     ABORT_IF_NULL(atlas_entry, "atlas entry empty");
 
     size_t tile_length = atlas_entry->width * atlas_entry->height;

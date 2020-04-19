@@ -90,7 +90,7 @@ struct CobbletextAdvanceInfo {
     int32_t advance_x;
     int32_t advance_y;
 
-    CobbletextGlyphID glyph;
+    CobbletextGlyphID glyph_id;
     int32_t glyph_offset_x;
     int32_t glyph_offset_y;
 
@@ -98,6 +98,13 @@ struct CobbletextAdvanceInfo {
 
     CobbletextCustomPropertyID custom_property;
 };
+
+#ifdef COBBLETEXT_TYPEDEF_STRUCTS
+    typedef struct CobbletextFontInfo CobbletextFontInfo;
+    typedef struct CobbletextGlyphInfo CobbletextGlyphInfo;
+    typedef struct CobbletextTileInfo CobbletextTileInfo;
+    typedef struct CobbletextAdvanceInfo CobbletextAdvanceInfo;
+#endif
 
 COBBLETEXT_API
 int32_t cobbletext_get_version_major();

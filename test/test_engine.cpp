@@ -220,10 +220,10 @@ TEST_CASE("engine raster and tile packing") {
         const CobbletextAdvanceInfo * advance = advances[index];
 
         if (advance->type == COBBLETEXT_ADVANCE_TYPE_GLYPH) {
-            CHECK( advance->glyph );
+            CHECK( advance->glyph_id );
 
             const CobbletextGlyphInfo * glyph =
-                cobbletext_library_get_glyph_info(library, advance->glyph);
+                cobbletext_library_get_glyph_info(library, advance->glyph_id);
 
             REQUIRE_FALSE( cobbletext_get_error_code(library) );
             CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );

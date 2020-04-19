@@ -204,16 +204,21 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
             AdvanceInfo advance;
 
             if (shapeResult.run.source.textFormat) {
+                const auto & textFormat = shapeResult.run.source.textFormat;
+                GlyphKey glyphKey(textFormat->fontFace, textFormat->fontSize,
+                    shapeResult.glyphIndex);
+
                 advance.type = AdvanceType::Glyph;
                 // TODO: go backwards if RTL
                 advance.advanceX = shapeResult.xAdvance;
                 advance.advanceY = shapeResult.yAdvance;
                 advance.glyphOffsetX = shapeResult.xOffset;
                 advance.glyphOffsetY = shapeResult.yOffset;
-                advance.glyph = shapeResult.glyphIndex;
+                advance.glyphID = context->glyphTable->keyToID(glyphKey);
                 advance.textIndex = shapeResult.cluster;
                 advance.customProperty =
                     shapeResult.run.source.textFormat->customProperty;
+
             } else if (shapeResult.run.source.inlineObject) {
                 // TODO: handle vertical
                 // TODO: go backwards if RTL
