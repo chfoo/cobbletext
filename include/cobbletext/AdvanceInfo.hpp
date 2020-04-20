@@ -1,11 +1,14 @@
 #pragma once
 
+#include <ostream>
+
 #include "common.hpp"
 
 namespace cobbletext {
 
 
 enum class AdvanceType {
+    Invalid = 0,
     Glyph = 1,
     InlineObject = 2,
     LineBreak = 3,
@@ -15,19 +18,23 @@ enum class AdvanceType {
 
 class COBBLETEXT_API AdvanceInfo {
 public:
-    AdvanceType type;
-    uint32_t textIndex;
+    AdvanceType type = AdvanceType::Invalid;
+    uint32_t textIndex = 0;
 
-    int32_t advanceX;
-    int32_t advanceY;
+    int32_t advanceX = 0;
+    int32_t advanceY = 0;
 
-    GlyphID glyphID;
-    int32_t glyphOffsetX;
-    int32_t glyphOffsetY;
+    GlyphID glyphID = 0;
+    int32_t glyphOffsetX = 0;
+    int32_t glyphOffsetY = 0;
 
-    InlineObjectID inlineObject;
+    InlineObjectID inlineObject = 0;
 
-    CustomPropertyID customProperty;
+    CustomPropertyID customProperty = 0;
+
+private:
+    friend std::ostream & operator<<(std::ostream & stream,
+        const AdvanceInfo & advanceInfo);
 };
 
 

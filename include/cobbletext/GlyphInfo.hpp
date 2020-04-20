@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <ostream>
 
 #include "common.hpp"
 
@@ -8,12 +9,14 @@ namespace cobbletext {
 
 class COBBLETEXT_API GlyphInfo {
 public:
-    GlyphID id;
+    GlyphID id = 0;
     std::vector<uint8_t> image;
-    uint32_t imageWidth;
-    uint32_t imageHeight;
-    uint32_t atlasX;
-    uint32_t atlasY;
+    uint32_t imageWidth = 0;
+    uint32_t imageHeight = 0;
+
+private:
+    friend std::ostream & operator<<(std::ostream & stream,
+        const GlyphInfo & glyphInfo);
 };
 
 }

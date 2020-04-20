@@ -68,6 +68,10 @@ FontID FontTable::getFreeID() {
     return id;
 }
 
+bool FontTable::hasFont(FontID fontID) {
+    return fonts.find(fontID) != fonts.end();
+}
+
 Font & FontTable::getFont(FontID fontID) {
     try {
         return fonts.at(fontID);
@@ -109,5 +113,16 @@ FontInfo FontTable::getFontInfo(FontID fontID) {
 
     return fontInfo;
 }
+
+int32_t FontTable::fontUnitsToPixels(FontID fontID, double fontSize, int32_t value) {
+    auto & font = getFont(fontID);
+
+    auto errorCode = FT_Set_Char_Size(font.freeTypeFace, 0, fontSize * 64, 0, 0);
+
+    FreeType::throwIfError(errorCode);
+
+    return FT_MulFix(value, font.freeTypeFace->size->metrics.y_scale) / 64;
+}
+
 
 }

@@ -28,7 +28,7 @@ std::vector<ShapeResult> Shaper::shapeRuns(
 
 void Shaper::shapeRun(const InternalTextRun & run,
         std::vector<ShapeResult> & results) {
-    auto font = fontTable->getFontWithFallback(run.source.textFormat->fontFace);
+    auto font = fontTable->getFontWithFallback(run.source.textFormat.fontFace);
 
     hb_buffer_clear_contents(harfBuzzBuffer.get());
 
@@ -43,7 +43,7 @@ void Shaper::shapeRun(const InternalTextRun & run,
     );
 
     FT_Set_Char_Size(font.freeTypeFace,
-        0, run.source.textFormat->fontSize * 64,
+        0, run.source.textFormat.fontSize * 64,
         0, 0);
 
     hb_shape(font.harfBuzzFont, harfBuzzBuffer.get(), nullptr, 0);

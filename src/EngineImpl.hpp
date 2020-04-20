@@ -7,6 +7,7 @@
 #include "Engine.hpp"
 #include "Library.hpp"
 #include "internal/input/TextSource.hpp"
+#include "internal/input/TextFormat.hpp"
 #include "internal/Context.hpp"
 #include "internal/Codec.hpp"
 #include "internal/layout/LayoutEngine.hpp"
@@ -23,6 +24,8 @@ public:
 
 
     Impl(Engine & parent, std::shared_ptr<internal::Context> context);
+
+    internal::TextFormat makeCurrentTextFormat();
 
     void addUnicodeString(icu::UnicodeString string);
 

@@ -9,12 +9,12 @@ namespace cobbletext::internal {
 
 class TextFormat {
 public:
-    FontID fontFace;
+    FontID fontFace = 0;
     double fontSize = 12;
     std::string language;
     std::string script;
     ScriptDirection scriptDirection = ScriptDirection::NotSpecified;
-    CustomPropertyID customProperty;
+    CustomPropertyID customProperty = 0;
 };
 
 }

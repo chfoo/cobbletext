@@ -3,30 +3,30 @@
 #include <string>
 #include <memory>
 
-#include "common.hpp"
 #include "AdvanceInfo.hpp"
-#include "TileInfo.hpp"
+#include "common.hpp"
 #include "Encoding.hpp"
 #include "FontInfo.hpp"
 #include "GlyphInfo.hpp"
 #include "Library.hpp"
+#include "OutputInfo.hpp"
 #include "ScriptDirection.hpp"
+#include "TileInfo.hpp"
 
 namespace cobbletext {
 
 
 class COBBLETEXT_API Engine {
 public:
-    uint32_t lineLength;
+    uint32_t lineLength = 0;
     std::string locale;
     std::string language;
     std::string script;
-    ScriptDirection scriptDirection;
-    FontID font;
-    double fontSize;
-    CustomPropertyID customProperty;
-    uint32_t imageWidth;
-    uint32_t imageHeight;
+    ScriptDirection scriptDirection = ScriptDirection::NotSpecified;
+    FontID font = 0;
+    double fontSize = 12;
+    CustomPropertyID customProperty = 0;
+    OutputInfo outputInfo;
 
     std::vector<TileInfo> tiles();
     std::vector<AdvanceInfo> advances();

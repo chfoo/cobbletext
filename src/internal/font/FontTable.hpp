@@ -28,9 +28,13 @@ public:
     FontID load(const char * path);
     FontID loadBytes(const gsl::span<const uint8_t> & data);
 
+    bool hasFont(FontID fontID);
+
     Font & getFont(FontID fontID);
     Font & getFontWithFallback(FontID fontID);
     FontInfo getFontInfo(FontID fontID);
+
+    int32_t fontUnitsToPixels(FontID fontID, double fontSize, int32_t value);
 
 private:
     FontID getFreeID();

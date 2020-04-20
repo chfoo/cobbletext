@@ -2,8 +2,6 @@
 
 #include <unicode/uloc.h>
 
-#include "internal/input/TextFormat.hpp"
-
 namespace cobbletext {
 
 Engine::Impl::Impl(Engine & parent,
@@ -14,7 +12,7 @@ Engine::Impl::Impl(Engine & parent,
     layoutEngine(std::make_shared<internal::LayoutEngine>(
         context, textSource)) {}
 
-void Engine::Impl::addUnicodeString(icu::UnicodeString string) {
+internal::TextFormat Engine::Impl::makeCurrentTextFormat() {
     internal::TextFormat textFormat;
 
     textFormat.customProperty = parent.customProperty;
@@ -24,17 +22,21 @@ void Engine::Impl::addUnicodeString(icu::UnicodeString string) {
     textFormat.script = parent.script;
     textFormat.scriptDirection = parent.scriptDirection;
 
-    textSource->addText(string, textFormat);
+    return textFormat;
+}
+
+void Engine::Impl::addUnicodeString(icu::UnicodeString string) {
+    textSource->addText(string, makeCurrentTextFormat());
 }
 
 void Engine::Impl::addInlineObject(InlineObjectID id, uint32_t size) {
-    textSource->addInlineObject(id, size);
+    textSource->addInlineObject(id, size, makeCurrentTextFormat());
 }
 
 void Engine::Impl::clear() {
     textSource->clear();
     layoutEngine->clear();
-    parent.imageHeight = parent.imageWidth = 0;
+    parent.outputInfo.textWidth = parent.outputInfo.textHeight = 0;
 }
 
 void Engine::Impl::layOut() {
@@ -46,9 +48,8 @@ void Engine::Impl::layOut() {
     layoutEngine->lineLength = parent.lineLength;
     layoutEngine->layOut();
 
-    // TODO: real values
-    parent.imageWidth = 500;
-    parent.imageHeight = 500;
+    parent.outputInfo.textWidth = layoutEngine->textWidth();
+    parent.outputInfo.textHeight = layoutEngine->textHeight();
 }
 
 bool Engine::Impl::tilesValid() {
@@ -56,14 +57,14 @@ bool Engine::Impl::tilesValid() {
 }
 
 void Engine::Impl::rasterize() {
-    for (auto & tile : layoutEngine->tiles) {
+    for (auto & tile : layoutEngine->tiles()) {
         const auto & glyphKey = context->glyphTable->idToKey(tile.glyphID);
         context->glyphTable->rasterize(glyphKey);
     }
 }
 
 bool Engine::Impl::packTiles(uint32_t width, uint32_t height) {
-    return context->atlasPacker->pack(layoutEngine->tiles, width, height);
+    return context->atlasPacker->pack(layoutEngine->tiles(), width, height);
 }
 
 }

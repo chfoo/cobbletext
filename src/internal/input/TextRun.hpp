@@ -14,11 +14,13 @@ public:
     int32_t textIndex;
     int32_t textLength;
 
-    std::optional<TextFormat> textFormat;
+    TextFormat textFormat;
+
     std::optional<InlineObject> inlineObject;
 
 private:
-    friend std::ostream & operator<<(std::ostream & stream, const TextRun & textRun);
+    friend std::ostream & operator<<(std::ostream & stream,
+        const TextRun & textRun);
 };
 
 }

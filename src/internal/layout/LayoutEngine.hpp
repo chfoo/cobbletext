@@ -32,13 +32,23 @@ class LayoutEngine {
     hb_direction_t defaultDirectionHB = HB_DIRECTION_INVALID;
 
     std::vector<InternalTextRun> internalRuns;
-    std::vector<ShapeResult> shapeResults;
+    std::shared_ptr<std::vector<ShapeResult>> shapeResults;
+
+    std::vector<TileInfo> tiles_;
+    std::vector<AdvanceInfo> advances_;
+
+    uint32_t textWidth_;
+    uint32_t textHeight_;
 
     bool tilesValid_ = true;
 public:
-    std::vector<TileInfo> tiles;
-    std::vector<AdvanceInfo> advances;
     uint32_t lineLength = 0;
+
+    std::vector<TileInfo> & tiles();
+    std::vector<AdvanceInfo> & advances();
+
+    uint32_t textWidth();
+    uint32_t textHeight();
 
     bool tilesValid();
 

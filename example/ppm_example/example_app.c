@@ -11,6 +11,8 @@ void example_app_run(ExampleApp * app) {
     app->engine = cobbletext_engine_new(app->library);
     example_app_check_error(app);
 
+    example_app_load_font(app);
+
     example_app_set_text(app);
 
     cobbletext_engine_lay_out(app->engine);
@@ -57,6 +59,25 @@ void example_app_check_error(ExampleApp * app) {
     }
 }
 
+void example_app_load_font(ExampleApp * app) {
+    char * font_path = getenv("FONT_PATH");
+
+    if (!font_path) {
+        printf("*** You didn't specify a font file! ***\n"
+        "Please run the program with an environment variable "
+        "name 'FONT_PATH' and value containing a file path to a font file.\n"
+        "Use export FONT_PATH=/usr/share/fonts/your_path_here\n"
+        "or $env:PATH = $Env:WinDir\\Fonts\\your_filename_here\n"
+        "set to a session enviornment variable.\n"
+        "");
+
+        return;
+    }
+
+    app->fontID = cobbletext_library_load_font(app->library, font_path);
+    example_app_check_error(app);
+}
+
 void example_app_set_text(ExampleApp * app) {
     printf("Adding text and objects...\n");
 
@@ -64,6 +85,7 @@ void example_app_set_text(ExampleApp * app) {
     cobbletext_engine_set_line_length(app->engine, 200);
     cobbletext_engine_set_font_size(app->engine, 16);
     cobbletext_engine_set_custom_property(app->engine, PROPERTY_NONE);
+    cobbletext_engine_set_font(app->engine, app->fontID);
 
     cobbletext_engine_add_text_utf8(app->engine, EAT_GLASS_TEXT, -1);
     cobbletext_engine_add_text_utf8(app->engine, "\n", -1);
@@ -159,16 +181,17 @@ void example_app_draw_image(ExampleApp * app) {
         free(app->image);
     }
 
-    uint32_t image_width = cobbletext_engine_get_image_width(app->engine);
-    uint32_t image_height = cobbletext_engine_get_image_height(app->engine);
+    const struct CobbletextOutputInfo * output_info =
+        cobbletext_engine_get_output_info(app->engine);
 
-    app->image = calloc(image_width * image_height, sizeof(*app->image));
+    app->image_width = output_info->text_width;
+    app->image_height = output_info->text_height;
+    size_t image_size = app->image_width * app->image_height;
+
+    app->image = calloc(image_size, sizeof(*app->image));
     ABORT_IF_NULL(app->image, "image malloc fail")
 
-    memset(app->image, 0xff, image_width * image_height * sizeof(*app->image));
-
-    app->image_width = image_width;
-    app->image_height = image_height;
+    memset(app->image, 0xff, image_size * sizeof(*app->image));
 
     cobbletext_engine_prepare_advances(app->engine);
     example_app_check_error(app);

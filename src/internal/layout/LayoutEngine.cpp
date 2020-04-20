@@ -16,12 +16,30 @@ LayoutEngine::LayoutEngine(std::shared_ptr<Context> context,
         std::shared_ptr<TextSource> textSource) :
         context(context),
         textSource(textSource),
-        shaper(context->fontTable) {
+        shaper(context->fontTable),
+        lineBreaker(context) {
     bidiTable.setTextBuffer(textSource->textBuffer);
     scriptTable.setTextBuffer(textSource->textBuffer);
     shaper.setTextBuffer(textSource->textBuffer);
     lineBreaker.setTextBuffer(textSource->textBuffer);
 }
+
+std::vector<TileInfo> & LayoutEngine::tiles() {
+    return tiles_;
+}
+
+std::vector<AdvanceInfo> & LayoutEngine::advances() {
+    return advances_;
+}
+
+uint32_t LayoutEngine::textWidth() {
+    return textWidth_;
+}
+
+uint32_t LayoutEngine::textHeight() {
+    return textHeight_;
+}
+
 
 bool LayoutEngine::tilesValid() {
     return tilesValid_;
@@ -48,25 +66,60 @@ void LayoutEngine::layOut() {
         COBBLETEXT_DEBUG_PRINT("default language " << errorCode.get());
     }
 
+    // TODO: support vertical
+    if (lineLength) {
+        textWidth_ = lineLength;
+    } else {
+        textWidth_ = 0;
+    }
+    textHeight_ = 0;
+
     bidiTable.analyze(defaultDirection);
     createInternalRuns();
-    shapeResults = shaper.shapeRuns(internalRuns);
+
+    for (const auto & run : internalRuns) {
+        COBBLETEXT_DEBUG_PRINT(run);
+    }
+
+    shapeResults = std::make_shared<std::vector<ShapeResult>>(
+        shaper.shapeRuns(internalRuns));
+
+    for (const auto & shapeResult : *shapeResults) {
+        COBBLETEXT_DEBUG_PRINT(shapeResult);
+    }
+
     registerGlyphsAndMakeTiles();
+
     lineBreaker.setTextBuffer(textSource->textBuffer);
     lineBreaker.locale(textSource->locale);
     lineBreaker.lineLength = lineLength;
     auto lines = lineBreaker.applyBreaks(shapeResults);
+
+    for (const auto & line : lines) {
+        textHeight_ += line.lineHeight;
+
+        if (!lineLength) {
+            textWidth_ = std::max(textWidth_, line.totalAdvance);
+        }
+
+        COBBLETEXT_DEBUG_PRINT(line);
+    }
+
     makeAdvances(lines);
+
+    for (const auto & advance : advances_) {
+        COBBLETEXT_DEBUG_PRINT(advance);
+    }
 }
 
 void LayoutEngine::createInternalRuns() {
     internalRuns.clear();
 
     for (auto const & textRun : textSource->runs) {
-        if (textRun.textFormat) {
-            processTextRun(textRun);
-        } else if (textRun.inlineObject) {
+        if (textRun.inlineObject) {
             processInlineObject(textRun);
+        } else {
+            processTextRun(textRun);
         }
     }
 }
@@ -75,6 +128,8 @@ void LayoutEngine::processInlineObject(const TextRun & textRun) {
     InternalTextRun internalRun(textRun);
 
     internalRun.direction = defaultDirectionHB;
+    internalRun.language = defaultLanguageHB;
+    internalRun.script = HB_SCRIPT_COMMON;
     internalRuns.push_back(internalRun);
 }
 
@@ -82,9 +137,9 @@ void LayoutEngine::processTextRun(const TextRun & textRun) {
     if (textRun.textLength <= 0) {
         return;
 
-    } else if (textRun.textFormat->script != ""
-    && textRun.textFormat->scriptDirection != ScriptDirection::NotSpecified
-    && textRun.textFormat->language != "") {
+    } else if (textRun.textFormat.script != ""
+    && textRun.textFormat.scriptDirection != ScriptDirection::NotSpecified
+    && textRun.textFormat.language != "") {
         fastPathTextRun(textRun);
         return;
     }
@@ -125,11 +180,11 @@ void LayoutEngine::processTextRun(const TextRun & textRun) {
                 runDirection);
             internalRun.script = runScript;
 
-            if (textRun.textFormat->language == "") {
+            if (textRun.textFormat.language == "") {
                 internalRun.language = defaultLanguageHB;
             } else {
                 internalRun.language = ScriptTable::languageToHarfBuzz(
-                    textRun.textFormat->language);
+                    textRun.textFormat.language);
             }
 
             assert(internalRun.direction != HB_DIRECTION_INVALID);
@@ -153,61 +208,82 @@ void LayoutEngine::processTextRun(const TextRun & textRun) {
 void LayoutEngine::fastPathTextRun(const TextRun & textRun) {
     InternalTextRun internalRun(textRun);
 
-    internalRun.direction = BidiTable::directionToHarfBuzz(textRun.textFormat->scriptDirection);
-    internalRun.script = ScriptTable::scriptToHarfBuzz(textRun.textFormat->script);
-    internalRun.language = ScriptTable::languageToHarfBuzz(textRun.textFormat->language);
+    internalRun.direction =
+        BidiTable::directionToHarfBuzz(textRun.textFormat.scriptDirection);
+    internalRun.script =
+        ScriptTable::scriptToHarfBuzz(textRun.textFormat.script);
+    internalRun.language =
+        ScriptTable::languageToHarfBuzz(textRun.textFormat.language);
 
     internalRuns.push_back(internalRun);
 }
 
 void LayoutEngine::registerGlyphsAndMakeTiles() {
-    tiles.clear();
+    tiles_.clear();
     std::unordered_set<GlyphKey,GlyphKeyHasher> glyphsSeen;
 
-    for (auto const & shapeResult : shapeResults) {
-        if (shapeResult.run.source.textFormat) {
-            auto const & textFormat = *shapeResult.run.source.textFormat;
-            auto key = GlyphKey(textFormat.fontFace, textFormat.fontSize,
-                shapeResult.glyphIndex);
-
-            if (glyphsSeen.find(key) != glyphsSeen.end()) {
-                continue;
-            }
-
-            bool isNew = context->glyphTable->registerGlyph(key);
-
-            if (isNew) {
-                tilesValid_ = false;
-            }
-
-            TileInfo tile;
-            tile.glyphID = context->glyphTable->keyToID(key);
-            tiles.push_back(tile);
-
-            glyphsSeen.insert(key);
+    for (auto const & shapeResult : *shapeResults) {
+        if (shapeResult.run.source.inlineObject) {
+            continue;
         }
+
+        auto const & textFormat = shapeResult.run.source.textFormat;
+        auto key = GlyphKey(textFormat.fontFace, textFormat.fontSize,
+            shapeResult.glyphIndex);
+
+        if (glyphsSeen.find(key) != glyphsSeen.end()) {
+            continue;
+        }
+
+        bool isNew = context->glyphTable->registerGlyph(key);
+
+        if (isNew) {
+            tilesValid_ = false;
+        }
+
+        TileInfo tile;
+        tile.glyphID = context->glyphTable->keyToID(key);
+        tiles_.push_back(tile);
+
+        glyphsSeen.insert(key);
     }
 }
 
 void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
-    advances.clear();
+    advances_.clear();
 
-    AdvanceInfo baselineAdjust;
-    baselineAdjust.type = AdvanceType::Layout;
-    baselineAdjust.advanceY = 50; // TODO: fix this
+    if (lineRuns.empty()) {
+        return;
+    }
 
-    advances.push_back(baselineAdjust);
+    // AdvanceInfo baselineAdjust;
+    // baselineAdjust.type = AdvanceType::Layout;
+
+    // // TODO: handle vertical text
+    // baselineAdjust.advanceY = lineRuns.front().lineHeight;
+
+    // advances_.push_back(baselineAdjust);
 
     for (const auto & lineRun : lineRuns) {
         for (const auto & shapeResultRef : lineRun.shapeResults) {
             const auto & shapeResult = shapeResultRef.get();
             AdvanceInfo advance;
 
-            if (shapeResult.run.source.textFormat) {
-                const auto & textFormat = shapeResult.run.source.textFormat;
-                GlyphKey glyphKey(textFormat->fontFace, textFormat->fontSize,
-                    shapeResult.glyphIndex);
+            const auto & textFormat = shapeResult.run.source.textFormat;
+            GlyphKey glyphKey(textFormat.fontFace, textFormat.fontSize,
+                shapeResult.glyphIndex);
 
+            if (shapeResult.run.source.inlineObject) {
+                // TODO: handle vertical
+                // TODO: go backwards if RTL
+                const auto & inlineObject =
+                    *shapeResult.run.source.inlineObject;
+
+                advance.type = AdvanceType::InlineObject;
+                advance.advanceX = inlineObject.pixelSize;
+                advance.inlineObject = inlineObject.id;
+
+            } else {
                 advance.type = AdvanceType::Glyph;
                 // TODO: go backwards if RTL
                 advance.advanceX = shapeResult.xAdvance;
@@ -215,28 +291,20 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
                 advance.glyphOffsetX = shapeResult.xOffset;
                 advance.glyphOffsetY = shapeResult.yOffset;
                 advance.glyphID = context->glyphTable->keyToID(glyphKey);
-                advance.textIndex = shapeResult.cluster;
-                advance.customProperty =
-                    shapeResult.run.source.textFormat->customProperty;
-
-            } else if (shapeResult.run.source.inlineObject) {
-                // TODO: handle vertical
-                // TODO: go backwards if RTL
-                const auto & inlineObject =
-                    *shapeResult.run.source.inlineObject;
-                advance.advanceX = inlineObject.pixelSize;
-                advance.inlineObject = inlineObject.id;
-            } else {
-                assert("unknown shape result type");
             }
 
-            advances.push_back(advance);
+            advance.textIndex = shapeResult.cluster;
+            advance.customProperty =
+                shapeResult.run.source.textFormat.customProperty;
+
+            advances_.push_back(advance);
         }
 
         AdvanceInfo lineBreakAdvance;
         lineBreakAdvance.type = AdvanceType::LineBreak;
-        lineBreakAdvance.advanceY = 50; // TODO: fix this
-        advances.push_back(lineBreakAdvance);
+        lineBreakAdvance.advanceX = -lineRun.totalAdvance;
+        lineBreakAdvance.advanceY = lineRun.lineHeight; // TODO: vertical text
+        advances_.push_back(lineBreakAdvance);
     }
 }
 

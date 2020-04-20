@@ -13,11 +13,11 @@ Engine::Engine(std::shared_ptr<Library> library) :
     impl(std::make_unique<Impl>(*this, library->impl->context)) {}
 
 std::vector<TileInfo> Engine::tiles() {
-    return impl->layoutEngine->tiles;
+    return impl->layoutEngine->tiles();
 }
 
 std::vector<AdvanceInfo> Engine::advances() {
-    return impl->layoutEngine->advances;
+    return impl->layoutEngine->advances();
 }
 
 void Engine::addText(const uint8_t * data, uint32_t length, Encoding encoding) {

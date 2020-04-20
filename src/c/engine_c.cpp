@@ -177,14 +177,6 @@ void cobbletext_engine_rasterize(CobbletextEngine * engine) {
     }
 }
 
-uint32_t cobbletext_engine_get_image_width(CobbletextEngine * engine) {
-    return engine->obj->imageWidth;
-}
-
-uint32_t cobbletext_engine_get_image_height(CobbletextEngine * engine) {
-    return engine->obj->imageHeight;
-}
-
 bool cobbletext_engine_pack_tiles(CobbletextEngine * engine, uint32_t width,
         uint32_t height) {
     return engine->obj->packTiles(width, height);
@@ -242,6 +234,19 @@ const struct CobbletextAdvanceInfo ** cobbletext_engine_get_advances(
     }
 
     return engine->advancesPointer.get();
+}
+
+const struct CobbletextOutputInfo * cobbletext_engine_get_output_info(
+        CobbletextEngine * engine) {
+
+    struct CobbletextOutputInfo * info = new struct CobbletextOutputInfo();
+
+    engine->outputInfo.reset(info);
+
+    info->text_width = engine->obj->outputInfo.textWidth;
+    info->text_height = engine->obj->outputInfo.textHeight;
+
+    return info;
 }
 
 

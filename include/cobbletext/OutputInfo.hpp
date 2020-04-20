@@ -6,15 +6,14 @@
 
 namespace cobbletext {
 
-class COBBLETEXT_API TileInfo {
+class COBBLETEXT_API OutputInfo {
 public:
-    GlyphID glyphID = 0;
-    uint32_t atlasX = 0;
-    uint32_t atlasY = 0;
+    uint32_t textWidth;
+    uint32_t textHeight;
 
 private:
     friend std::ostream & operator<<(std::ostream & stream,
-        const TileInfo & tileInfo);
+        const OutputInfo & outputInfo);
 };
 
 }

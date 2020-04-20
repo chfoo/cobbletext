@@ -14,7 +14,7 @@ void TextSource::clear() {
     textBuffer->remove();
 }
 
-void TextSource::addText(icu::UnicodeString text, TextFormat & textFormat) {
+void TextSource::addText(icu::UnicodeString text, TextFormat textFormat) {
     TextRun run;
 
     run.textFormat = textFormat;
@@ -25,8 +25,11 @@ void TextSource::addText(icu::UnicodeString text, TextFormat & textFormat) {
     runs.push_back(run);
 }
 
-void TextSource::addInlineObject(int id, uint32_t pixelSize) {
+void TextSource::addInlineObject(int id, uint32_t pixelSize,
+        TextFormat textFormat) {
     TextRun run;
+
+    run.textFormat = textFormat;
 
     run.inlineObject.emplace(id, pixelSize);
 

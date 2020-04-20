@@ -52,6 +52,7 @@ typedef uint32_t CobbletextInlineObjectID;
 typedef uint64_t CobbletextCustomPropertyID;
 
 typedef uint8_t CobbletextAdvanceType;
+#define COBBLETEXT_ADVANCE_TYPE_INVALID 0
 #define COBBLETEXT_ADVANCE_TYPE_GLYPH 1
 #define COBBLETEXT_ADVANCE_TYPE_INLINE_OBJECT 2
 #define COBBLETEXT_ADVANCE_TYPE_LINE_BREAK 3
@@ -99,11 +100,17 @@ struct CobbletextAdvanceInfo {
     CobbletextCustomPropertyID custom_property;
 };
 
+struct CobbletextOutputInfo {
+    uint32_t text_width;
+    uint32_t text_height;
+};
+
 #ifdef COBBLETEXT_TYPEDEF_STRUCTS
     typedef struct CobbletextFontInfo CobbletextFontInfo;
     typedef struct CobbletextGlyphInfo CobbletextGlyphInfo;
     typedef struct CobbletextTileInfo CobbletextTileInfo;
     typedef struct CobbletextAdvanceInfo CobbletextAdvanceInfo;
+    typedef struct CobbletextOutputInfo CobbletextOutputInfo;
 #endif
 
 COBBLETEXT_API
@@ -250,12 +257,6 @@ COBBLETEXT_API
 void cobbletext_engine_rasterize(CobbletextEngine * engine);
 
 COBBLETEXT_API
-uint32_t cobbletext_engine_get_image_width(CobbletextEngine * engine);
-
-COBBLETEXT_API
-uint32_t cobbletext_engine_get_image_height(CobbletextEngine * engine);
-
-COBBLETEXT_API
 bool cobbletext_engine_pack_tiles(CobbletextEngine * engine, uint32_t width,
     uint32_t height);
 
@@ -277,6 +278,10 @@ uint32_t cobbletext_engine_get_advance_count(CobbletextEngine * engine);
 
 COBBLETEXT_API
 const struct CobbletextAdvanceInfo ** cobbletext_engine_get_advances(
+    CobbletextEngine * engine);
+
+COBBLETEXT_API
+const struct CobbletextOutputInfo * cobbletext_engine_get_output_info(
     CobbletextEngine * engine);
 
 

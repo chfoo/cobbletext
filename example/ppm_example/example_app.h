@@ -28,6 +28,7 @@ typedef struct ExampleApp {
     CobbletextLibrary * library;
     CobbletextEngine * engine;
     struct AtlasEntry * atlas_table;
+    CobbletextFontID fontID;
     uint8_t * atlas;
     uint32_t atlas_size;
     uint32_t * image;
@@ -43,6 +44,8 @@ void example_app_run(ExampleApp * app);
 void example_app_destroy(ExampleApp * app);
 
 void example_app_check_error(ExampleApp * app);
+
+void example_app_load_font(ExampleApp * app);
 
 void example_app_set_text(ExampleApp * app);
 
