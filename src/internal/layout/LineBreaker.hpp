@@ -47,6 +47,8 @@ private:
 
     void pushCurrentLine();
 
+    bool isMandatoryLineBreakAfter(int32_t codePointIndex);
+
     void fillLine();
 
     void rewindLine();

@@ -22,6 +22,10 @@ void TextSource::addText(icu::UnicodeString text, TextFormat textFormat) {
     textBuffer->append(text);
     run.textLength = textBuffer->length() - run.textIndex;
 
+#ifdef COBBLETEXT_DEBUG
+    run.text = text;
+#endif
+
     runs.push_back(run);
 }
 

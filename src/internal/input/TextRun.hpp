@@ -3,6 +3,11 @@
 #include <optional>
 #include <ostream>
 
+#ifdef COBBLETEXT_DEBUG
+    #include <string>
+    #include <unicode/unistr.h>
+#endif
+
 #include "internal/input/TextFormat.hpp"
 #include "internal/input/InlineObject.hpp"
 
@@ -17,6 +22,10 @@ public:
     TextFormat textFormat;
 
     std::optional<InlineObject> inlineObject;
+
+#ifdef COBBLETEXT_DEBUG
+    icu::UnicodeString text;
+#endif
 
 private:
     friend std::ostream & operator<<(std::ostream & stream,

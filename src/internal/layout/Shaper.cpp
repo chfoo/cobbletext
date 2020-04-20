@@ -76,6 +76,10 @@ void Shaper::shapeRun(const InternalTextRun & run,
         result.glyphIndex = glyphInfo.codepoint;
         result.cluster = glyphInfo.cluster;
 
+        #ifdef COBBLETEXT_DEBUG
+        result.codePoint = text->char32At(glyphInfo.cluster);
+        #endif
+
         results.push_back(result);
     }
 }

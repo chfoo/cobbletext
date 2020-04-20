@@ -7,8 +7,14 @@ std::ostream & operator<<(std::ostream & stream, const LineRun & line) {
         << "[LineRun "
         << "totalAdvance=" << line.totalAdvance << " "
         << "lineHeight=" << line.lineHeight << " "
-        << "shapeResults=" << line.shapeResults.size() << " "
-        << "]";
+        << "shapeResults=" << line.shapeResults.size() << " ";
+
+    if (!line.shapeResults.empty()) {
+        stream << line.shapeResults.front() << " "
+            << line.shapeResults.back() << " ";
+    }
+
+    stream << "]";
 
     return stream;
 }

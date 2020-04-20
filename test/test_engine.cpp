@@ -59,17 +59,17 @@ TEST_CASE("engine text") {
     }
 
     SECTION("add text 8") {
-        unsigned char text[] = {0xF0, 0x9F, 0x98, 0x80};
+        unsigned char text[] = {0xF0, 0x9F, 0x98, 0x80, 0};
         cobbletext_engine_add_text_utf8(engine, reinterpret_cast<const char *>(text), -1);
     }
 
     SECTION("add text 16") {
-        char16_t text[] = {0xD83D, 0xDE00};
+        char16_t text[] = {0xD83D, 0xDE00, 0};
         cobbletext_engine_add_text_utf16(engine, text, -1);
     }
 
     SECTION("add text 32") {
-        char32_t text[] = {0x1F600};
+        char32_t text[] = {0x1F600, 0};
         cobbletext_engine_add_text_utf32(engine, text, -1);
     }
 
@@ -121,9 +121,9 @@ TEST_CASE("engine custom property") {
     CobbletextEngine * engine = cobbletext_engine_new(library);
 
     cobbletext_engine_set_custom_property(engine, 123);
-    cobbletext_engine_add_text_utf8(engine, "hello ", -1);
+    cobbletext_engine_add_text_utf8(engine, "a", -1);
     cobbletext_engine_set_custom_property(engine, 456);
-    cobbletext_engine_add_text_utf8(engine, "world!", -1);
+    cobbletext_engine_add_text_utf8(engine, "b", -1);
     cobbletext_engine_lay_out(engine);
     cobbletext_engine_prepare_advances(engine);
 
@@ -148,6 +148,10 @@ TEST_CASE("engine custom property") {
 TEST_CASE("engine tile validity") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);
+
+    cobbletext_engine_lay_out(engine);
+
+    CHECK( cobbletext_engine_tiles_valid(engine) );
 
     cobbletext_engine_add_text_utf8(engine, "hello world", -1);
     cobbletext_engine_lay_out(engine);
@@ -214,14 +218,17 @@ TEST_CASE("engine raster and tile packing") {
         cobbletext_engine_get_tiles(engine);
     const CobbletextAdvanceInfo ** advances =
         cobbletext_engine_get_advances(engine);
+    const CobbletextOutputInfo * outputInfo =
+        cobbletext_engine_get_output_info(engine);
 
     CHECK( tile_count );
     CHECK( advance_count );
     CHECK( tiles );
     CHECK( advances );
+    CHECK( outputInfo );
 
-    CHECK( cobbletext_engine_get_image_width(engine) );
-    CHECK( cobbletext_engine_get_image_height(engine) );
+    CHECK( outputInfo->text_width );
+    CHECK( outputInfo->text_height );
 
     for (size_t index = 0; index < tile_count; index++) {
         const CobbletextTileInfo * tile = tiles[index];
@@ -243,6 +250,8 @@ TEST_CASE("engine raster and tile packing") {
             CHECK( glyph->image );
             CHECK( glyph->image_width );
             CHECK( glyph->image_height );
+            CHECK( glyph->image_offset_x );
+            CHECK( glyph->image_offset_y );
         }
 
     }

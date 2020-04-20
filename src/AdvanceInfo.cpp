@@ -12,8 +12,13 @@ std::ostream & operator<<(std::ostream & stream, const AdvanceInfo & advance) {
         << "advance=" << advance.advanceX << "," << advance.advanceY << " "
         << "customProperty=" << advance.customProperty << " "
         << "glyphID=" << advance.glyphID << " "
-        << "glyph offset=" << advance.glyphOffsetX << "," << advance.glyphOffsetY << " "
-        << "]";
+        << "glyph offset=" << advance.glyphOffsetX << "," << advance.glyphOffsetY << " ";
+
+    if (advance.type == AdvanceType::InlineObject) {
+        stream << "inlineObject=" << advance.inlineObject << " ";
+    }
+
+    stream << "]";
 
     return stream;
 }

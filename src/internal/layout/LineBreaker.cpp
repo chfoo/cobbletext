@@ -55,7 +55,22 @@ std::vector<LineRun> LineBreaker::applyBreaks(
     characterBreaker->setText(*text);
     this->shapeResults = shapeResults;
     shapeResultIterator.emplace(shapeResults->begin());
+    lines.clear();
     currentLine = LineRun();
+
+#ifdef COBBLETEXT_DEBUG
+    for (int32_t index = 0; index < text->length(); index++) {
+        std::string character;
+        auto subString = text->tempSubString(index, 1);
+        subString.toUTF8String(character);
+
+        COBBLETEXT_DEBUG_PRINT(index << " "
+            << character << " "
+            << std::to_string(lineBreaker->isBoundary(index)) << " "
+            << std::to_string(lineBreaker->getRuleStatus())
+        );
+    }
+#endif
 
     while (*shapeResultIterator != shapeResults->end()) {
         fillLine();
@@ -72,36 +87,40 @@ void LineBreaker::pushCurrentLine() {
     currentLine = LineRun();
 }
 
+bool LineBreaker::isMandatoryLineBreakAfter(int32_t codePointIndex) {
+    auto codeUnitIndex =
+        stringIndexer.codePointToCodeUnit(codePointIndex + 1);
+    auto isBoundary = lineBreaker->isBoundary(codeUnitIndex);
+
+    if (isBoundary) {
+        auto rule = lineBreaker->getRuleStatus();
+        return rule == ULineBreakTag::UBRK_LINE_HARD;
+    } else {
+        return false;
+    }
+}
+
 void LineBreaker::fillLine() {
     while (*shapeResultIterator != shapeResults->end()) {
         auto & shapeResult = **shapeResultIterator;
         uint32_t shapeLength;
-        bool breakRequired = false;
 
         if (shapeResult.run.source.inlineObject) {
             shapeLength = shapeResult.run.source.inlineObject->pixelSize;
         } else {
-            auto codePointIndex = shapeResult.cluster;
-            auto codeUnitIndex =
-                stringIndexer.codePointToCodeUnit(codePointIndex);
-
-            auto isBoundary = lineBreaker->isBoundary(codeUnitIndex);
-            auto rule = lineBreaker->getRuleStatus();
-
             // TODO: make this support vertical lines
             shapeLength = shapeResult.xAdvance;
-
-            if (rule == ULineBreakTag::UBRK_LINE_HARD) {
-                breakRequired = true;
-            }
         }
 
-        currentLine.shapeResults.push_back(shapeResult);
-        currentLine.totalAdvance += shapeLength;
+        bool breakRequired = isMandatoryLineBreakAfter(shapeResult.cluster);
 
-        ++*shapeResultIterator;
-
-        if (breakRequired) {
+        if (!breakRequired) {
+            currentLine.shapeResults.push_back(shapeResult);
+            currentLine.totalAdvance += shapeLength;
+            ++*shapeResultIterator;
+        } else {
+            // Skip over the newline character. It's not always empty.
+            ++*shapeResultIterator;
             break;
         }
 

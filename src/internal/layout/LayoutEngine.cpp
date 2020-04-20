@@ -74,6 +74,10 @@ void LayoutEngine::layOut() {
     }
     textHeight_ = 0;
 
+    for (const auto & run : textSource->runs) {
+        COBBLETEXT_DEBUG_PRINT(run);
+    }
+
     bidiTable.analyze(defaultDirection);
     createInternalRuns();
 
@@ -104,6 +108,9 @@ void LayoutEngine::layOut() {
 
         COBBLETEXT_DEBUG_PRINT(line);
     }
+
+    COBBLETEXT_DEBUG_PRINT("textWidth=" << textWidth_ << " "
+        << "textHeight=" << textHeight_);
 
     makeAdvances(lines);
 
@@ -256,15 +263,19 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
         return;
     }
 
-    AdvanceInfo baselineAdjust;
-    baselineAdjust.type = AdvanceType::Layout;
 
-    // TODO: handle vertical text
-    baselineAdjust.advanceY = lineRuns.front().lineHeight;
+    auto lineRunIter = lineRuns.begin();
+    while (true) {
+        const auto & lineRun = *lineRunIter;
 
-    advances_.push_back(baselineAdjust);
+        AdvanceInfo baselineAdjust;
+        baselineAdjust.type = AdvanceType::Layout;
 
-    for (const auto & lineRun : lineRuns) {
+        // TODO: handle vertical text
+        baselineAdjust.advanceY = lineRun.lineHeight;
+
+        advances_.push_back(baselineAdjust);
+
         for (const auto & shapeResultRef : lineRun.shapeResults) {
             const auto & shapeResult = shapeResultRef.get();
             AdvanceInfo advance;
@@ -300,11 +311,16 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
             advances_.push_back(advance);
         }
 
-        AdvanceInfo lineBreakAdvance;
-        lineBreakAdvance.type = AdvanceType::LineBreak;
-        lineBreakAdvance.advanceX = -lineRun.totalAdvance;
-        lineBreakAdvance.advanceY = lineRun.lineHeight; // TODO: vertical text
-        advances_.push_back(lineBreakAdvance);
+        ++lineRunIter;
+
+        if (lineRunIter != lineRuns.end()) {
+            AdvanceInfo lineBreakAdvance;
+            lineBreakAdvance.type = AdvanceType::LineBreak;
+            lineBreakAdvance.advanceX = -lineRun.totalAdvance;
+            advances_.push_back(lineBreakAdvance);
+        } else {
+            break;
+        }
     }
 }
 

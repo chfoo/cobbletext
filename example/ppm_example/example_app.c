@@ -112,6 +112,10 @@ void example_app_set_text(ExampleApp * app) {
     cobbletext_engine_add_text_utf8(app->engine, "Inline", -1);
     cobbletext_engine_add_inline_object(app->engine, INLINE_OBJECT_1, 50);
     cobbletext_engine_add_text_utf8(app->engine, "object", -1);
+    cobbletext_engine_add_text_utf8(app->engine, "\n", -1);
+
+    cobbletext_engine_set_font_size(app->engine, 16);
+    cobbletext_engine_add_text_utf8(app->engine, EMOJI_TEXT, -1);
 }
 
 void example_app_create_atlas(ExampleApp * app) {

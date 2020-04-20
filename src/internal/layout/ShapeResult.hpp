@@ -17,6 +17,10 @@ public:
     uint32_t cluster;
     uint32_t glyphIndex;
 
+#ifdef COBBLETEXT_DEBUG
+    uint32_t codePoint;
+#endif
+
     explicit ShapeResult(const InternalTextRun & run) : run(run) {}
 
 private:
