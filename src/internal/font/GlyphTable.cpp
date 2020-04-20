@@ -59,13 +59,13 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
 
     auto font = fontTable->getFontWithFallback(glyphKey.fontFace);
 
-    FT_Error errorCode = FT_Load_Glyph(font.freeTypeFace,
-        glyphKey.index, FT_LOAD_DEFAULT);
+    FT_Error errorCode = FT_Set_Char_Size(font.freeTypeFace,
+        0, glyphKey.fontSize * 64, 0, 0);
 
     FreeType::throwIfError(errorCode);
 
-    errorCode = FT_Set_Char_Size(font.freeTypeFace,
-        0, glyphKey.fontSize * 64, 0, 0);
+    errorCode = FT_Load_Glyph(font.freeTypeFace,
+        glyphKey.index, FT_LOAD_DEFAULT);
 
     FreeType::throwIfError(errorCode);
 
