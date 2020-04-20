@@ -42,6 +42,44 @@ TEST_CASE("engine getter/setter") {
     cobbletext_library_delete(library);
 }
 
+TEST_CASE("engine text empty") {
+    CobbletextLibrary * library = cobbletext_library_new();
+    CobbletextEngine * engine = cobbletext_engine_new(library);
+
+    cobbletext_engine_lay_out(engine);
+    cobbletext_engine_prepare_advances(engine);
+
+    uint32_t advance_count = cobbletext_engine_get_advance_count(engine);
+    const CobbletextAdvanceInfo ** advances =
+        cobbletext_engine_get_advances(engine);
+
+    CHECK( advance_count == 0 );
+    CHECK( advances );
+
+    cobbletext_engine_delete(engine);
+    cobbletext_library_delete(library);
+}
+
+TEST_CASE("engine text 1 newline") {
+    CobbletextLibrary * library = cobbletext_library_new();
+    CobbletextEngine * engine = cobbletext_engine_new(library);
+
+    cobbletext_engine_add_text_utf8(engine, "\n", -1);
+    cobbletext_engine_lay_out(engine);
+    cobbletext_engine_prepare_advances(engine);
+
+    uint32_t advance_count = cobbletext_engine_get_advance_count(engine);
+    const CobbletextAdvanceInfo ** advances =
+        cobbletext_engine_get_advances(engine);
+
+    // Move pen to first baseline, then nothing happens
+    CHECK( advance_count == 1 );
+    CHECK( advances );
+
+    cobbletext_engine_delete(engine);
+    cobbletext_library_delete(library);
+}
+
 TEST_CASE("engine text") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);

@@ -56,7 +56,7 @@ std::vector<LineRun> LineBreaker::applyBreaks(
     this->shapeResults = shapeResults;
     shapeResultIterator.emplace(shapeResults->begin());
     lines.clear();
-    currentLine = LineRun();
+    currentLine.clear();
 
 #ifdef COBBLETEXT_DEBUG
     for (int32_t index = 0; index < text->length(); index++) {
@@ -84,7 +84,7 @@ std::vector<LineRun> LineBreaker::applyBreaks(
 void LineBreaker::pushCurrentLine() {
     lines.push_back(currentLine);
 
-    currentLine = LineRun();
+    currentLine.clear();
 }
 
 bool LineBreaker::isMandatoryLineBreakAfter(int32_t codePointIndex) {
@@ -119,7 +119,9 @@ void LineBreaker::fillLine() {
             currentLine.totalAdvance += shapeLength;
             ++*shapeResultIterator;
         } else {
-            // Skip over the newline character. It's not always empty.
+            // Skip over the newline character. It's not always 0 size and
+            // visually empty.
+            currentLine.lineBreakShapeResult.emplace(shapeResult);
             ++*shapeResultIterator;
             break;
         }
@@ -194,6 +196,14 @@ void LineBreaker::analyzeLineHeight() {
             fontIDs.push_back(fontFace);
             fontSizes.push_back(fontSize);
         }
+    }
+
+    if (currentLine.shapeResults.empty() && currentLine.lineBreakShapeResult) {
+        const auto & shapeResult = *currentLine.lineBreakShapeResult;
+        auto fontFace = shapeResult.run.source.textFormat.fontFace;
+        auto fontSize = shapeResult.run.source.textFormat.fontSize;
+        fontIDs.push_back(fontFace);
+        fontSizes.push_back(fontSize);
     }
 
     for (size_t index = 0; index < fontIDs.size(); index++) {

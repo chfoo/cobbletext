@@ -2,6 +2,13 @@
 
 namespace cobbletext::internal {
 
+void LineRun::clear() {
+    shapeResults.clear();
+    lineBreakShapeResult.reset();
+    totalAdvance = 0;
+    lineHeight = 0;
+}
+
 std::ostream & operator<<(std::ostream & stream, const LineRun & line) {
     stream
         << "[LineRun "
