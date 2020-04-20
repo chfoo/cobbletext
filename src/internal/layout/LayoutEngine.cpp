@@ -99,14 +99,29 @@ void LayoutEngine::layOut() {
     lineBreaker.lineLength = lineLength;
     auto lines = lineBreaker.applyBreaks(shapeResults);
 
-    for (const auto & line : lines) {
-        textHeight_ += line.lineHeight;
+    auto lineIterator = lines.begin();
+
+    while (lineIterator != lines.end()) {
+        auto const & line = *lineIterator;
+        bool isFirstLine = lineIterator == lines.begin();
+        bool isLastLine = lineIterator == std::prev(lines.end());
+
+        if (!isFirstLine) {
+            textHeight_ += line.lineHeight; // acscent + descent + linegap
+        } else {
+            textHeight_ += line.ascent;
+        }
+        if (isLastLine) {
+            textHeight_ += line.descent;
+        }
 
         if (!lineLength) {
             textWidth_ = std::max(textWidth_, line.totalAdvance);
         }
 
         COBBLETEXT_DEBUG_PRINT(line);
+
+        ++lineIterator;
     }
 
     COBBLETEXT_DEBUG_PRINT("textWidth=" << textWidth_ << " "
@@ -263,6 +278,7 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
         return;
     }
 
+    uint32_t previousTextIndex = 0;
 
     auto lineRunIter = lineRuns.begin();
     while (true) {
@@ -270,9 +286,13 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
 
         AdvanceInfo baselineAdjust;
         baselineAdjust.type = AdvanceType::Layout;
-
+        baselineAdjust.textIndex = previousTextIndex;
         // TODO: handle vertical text
-        baselineAdjust.advanceY = lineRun.lineHeight;
+        if (lineRunIter == lineRuns.begin()) {
+            baselineAdjust.advanceY = lineRun.ascent;
+        } else {
+            baselineAdjust.advanceY = lineRun.lineHeight;
+        }
 
         advances_.push_back(baselineAdjust);
 
@@ -309,6 +329,8 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
                 shapeResult.run.source.textFormat.customProperty;
 
             advances_.push_back(advance);
+
+            previousTextIndex = advance.textIndex;
         }
 
         ++lineRunIter;
@@ -316,9 +338,11 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
         if (lineRunIter != lineRuns.end()) {
             AdvanceInfo lineBreakAdvance;
             lineBreakAdvance.type = AdvanceType::LineBreak;
+            lineBreakAdvance.textIndex = previousTextIndex;
             lineBreakAdvance.advanceX = -lineRun.totalAdvance;
             advances_.push_back(lineBreakAdvance);
         } else {
+
             break;
         }
     }

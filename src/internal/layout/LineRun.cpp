@@ -7,6 +7,8 @@ void LineRun::clear() {
     lineBreakShapeResult.reset();
     totalAdvance = 0;
     lineHeight = 0;
+    ascent = 0;
+    descent = 0;
 }
 
 std::ostream & operator<<(std::ostream & stream, const LineRun & line) {
@@ -14,6 +16,8 @@ std::ostream & operator<<(std::ostream & stream, const LineRun & line) {
         << "[LineRun "
         << "totalAdvance=" << line.totalAdvance << " "
         << "lineHeight=" << line.lineHeight << " "
+        << "ascent=" << line.ascent << " "
+        << "descent=" << line.descent << " "
         << "shapeResults=" << line.shapeResults.size() << " ";
 
     if (!line.shapeResults.empty()) {

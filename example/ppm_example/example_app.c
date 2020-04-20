@@ -115,6 +115,7 @@ void example_app_set_text(ExampleApp * app) {
     cobbletext_engine_add_text_utf8(app->engine, "\n", -1);
 
     cobbletext_engine_set_font_size(app->engine, 16);
+    cobbletext_engine_set_custom_property(app->engine, PROPERTY_NONE);
     cobbletext_engine_add_text_utf8(app->engine, EMOJI_TEXT, -1);
 }
 

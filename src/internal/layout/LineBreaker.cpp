@@ -218,11 +218,29 @@ void LineBreaker::analyzeLineHeight() {
 
         context->fontTable->setFontSize(fontID, fontSize);
 
-        currentLine.lineHeight = std::max<uint32_t>(
-            currentLine.lineHeight,
-            context->fontTable->fontUnitsToPixels(fontID,
-                font.freeTypeFace->height)
-        );
+        auto fontPixelHeight = context->fontTable->fontUnitsToPixels(
+            fontID, font.freeTypeFace->height);
+
+        currentLine.lineHeight =
+            std::max<uint32_t>(currentLine.lineHeight, fontPixelHeight);
+
+        // Positive above the baseline
+        if (font.freeTypeFace->ascender > 0) {
+            auto fontPixelAscent = context->fontTable->fontUnitsToPixels(
+                fontID, font.freeTypeFace->ascender);
+
+            currentLine.ascent =
+                std::max<uint32_t>(currentLine.ascent, fontPixelAscent);
+        }
+
+        // Negative below the baseline
+        if (font.freeTypeFace->descender < 0) {
+            auto fontPixelAscent = context->fontTable->fontUnitsToPixels(
+                fontID, font.freeTypeFace->descender);
+
+            currentLine.descent =
+                std::max<uint32_t>(currentLine.descent, -fontPixelAscent);
+        }
     }
 }
 
