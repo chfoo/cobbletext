@@ -76,6 +76,8 @@ struct CobbletextGlyphInfo {
     const uint8_t * image;
     uint32_t image_width;
     uint32_t image_height;
+    int32_t image_offset_x;
+    int32_t image_offset_y;
 };
 
 struct CobbletextTileInfo {

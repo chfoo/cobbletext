@@ -114,12 +114,23 @@ FontInfo FontTable::getFontInfo(FontID fontID) {
     return fontInfo;
 }
 
-int32_t FontTable::fontUnitsToPixels(FontID fontID, double fontSize, int32_t value) {
+bool FontTable::setFontSize(FontID fontID, double fontSize) {
     auto & font = getFont(fontID);
 
-    auto errorCode = FT_Set_Char_Size(font.freeTypeFace, 0, fontSize * 64, 0, 0);
+    if (font.fontSize == fontSize) {
+        return false;
+    }
+
+    auto errorCode = FT_Set_Char_Size(font.freeTypeFace,
+        0, fontSize * 64, 0, 0);
 
     FreeType::throwIfError(errorCode);
+
+    return true;
+}
+
+int32_t FontTable::fontUnitsToPixels(FontID fontID, int32_t value) {
+    auto & font = getFont(fontID);
 
     return FT_MulFix(value, font.freeTypeFace->size->metrics.y_scale) / 64;
 }

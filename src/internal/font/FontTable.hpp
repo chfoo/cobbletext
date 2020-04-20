@@ -34,7 +34,9 @@ public:
     Font & getFontWithFallback(FontID fontID);
     FontInfo getFontInfo(FontID fontID);
 
-    int32_t fontUnitsToPixels(FontID fontID, double fontSize, int32_t value);
+    bool setFontSize(FontID fontID, double fontSize);
+
+    int32_t fontUnitsToPixels(FontID fontID, int32_t value);
 
 private:
     FontID getFreeID();

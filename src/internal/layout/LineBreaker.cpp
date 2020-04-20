@@ -187,9 +187,11 @@ void LineBreaker::analyzeLineHeight() {
 
         auto & font = context->fontTable->getFont(fontID);
 
+        context->fontTable->setFontSize(fontID, fontSize);
+
         currentLine.lineHeight = std::max<uint32_t>(
             currentLine.lineHeight,
-            context->fontTable->fontUnitsToPixels(fontID, fontSize,
+            context->fontTable->fontUnitsToPixels(fontID,
                 font.freeTypeFace->height)
         );
     }

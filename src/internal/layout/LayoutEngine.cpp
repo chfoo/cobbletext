@@ -256,13 +256,13 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
         return;
     }
 
-    // AdvanceInfo baselineAdjust;
-    // baselineAdjust.type = AdvanceType::Layout;
+    AdvanceInfo baselineAdjust;
+    baselineAdjust.type = AdvanceType::Layout;
 
-    // // TODO: handle vertical text
-    // baselineAdjust.advanceY = lineRuns.front().lineHeight;
+    // TODO: handle vertical text
+    baselineAdjust.advanceY = lineRuns.front().lineHeight;
 
-    // advances_.push_back(baselineAdjust);
+    advances_.push_back(baselineAdjust);
 
     for (const auto & lineRun : lineRuns) {
         for (const auto & shapeResultRef : lineRun.shapeResults) {

@@ -13,6 +13,8 @@ public:
     std::vector<uint8_t> image;
     uint32_t imageWidth = 0;
     uint32_t imageHeight = 0;
+    int32_t imageOffsetX = 0;
+    int32_t imageOffsetY = 0;
 
 private:
     friend std::ostream & operator<<(std::ostream & stream,

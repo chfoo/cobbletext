@@ -10,6 +10,7 @@ class Font {
 public:
     FT_Face const freeTypeFace;
     hb_font_t * const harfBuzzFont;
+    double fontSize = 0;
 
     Font(FT_Face freeTypeFace, hb_font_t * harfBuzzFont) :
         freeTypeFace(freeTypeFace),

@@ -2,6 +2,7 @@
 
 #include <malloc.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "sample_text.h"
 
@@ -81,8 +82,24 @@ void example_app_load_font(ExampleApp * app) {
 void example_app_set_text(ExampleApp * app) {
     printf("Adding text and objects...\n");
 
+    char * line_length_string = getenv("LINE_LENGTH");
+    uint32_t line_length = 0;
+
+    if (!line_length_string) {
+        printf("*** You didn't set a line length! ***\n"
+        "Specity a line length like you did with enviornment variable FONT_PATH,\n"
+        "or ignore this warning and we'll draw it without line breaks.\n"
+        );
+    } else {
+        line_length = strtoumax(line_length_string, NULL, 0);
+
+        if (line_length) {
+            printf("*** Invalid line length ***\n");
+        }
+    }
+
     cobbletext_engine_set_locale(app->engine, "en-US");
-    cobbletext_engine_set_line_length(app->engine, 200);
+    cobbletext_engine_set_line_length(app->engine, line_length);
     cobbletext_engine_set_font_size(app->engine, 16);
     cobbletext_engine_set_custom_property(app->engine, PROPERTY_NONE);
     cobbletext_engine_set_font(app->engine, app->fontID);
@@ -152,6 +169,8 @@ void example_app_create_atlas(ExampleApp * app) {
         atlas_entry->y = tile->atlas_y;
         atlas_entry->width = glyph->image_width;
         atlas_entry->height = glyph->image_height;
+        atlas_entry->offset_x = glyph->image_offset_x;
+        atlas_entry->offset_y = glyph->image_offset_y;
 
         HASH_ADD_INT(app->atlas_table, glyph_id, atlas_entry);
     }
@@ -230,8 +249,8 @@ void example_app_draw_glyph(ExampleApp * app,
         size_t atlas_y = atlas_entry->y + tile_y;
         size_t atlas_index = app->atlas_size * atlas_y + atlas_x;
 
-        size_t image_x = app->pen_x + advance->glyph_offset_x + tile_x;
-        size_t image_y = app->pen_y + advance->glyph_offset_y + tile_y;
+        size_t image_x = app->pen_x + atlas_entry->offset_x + advance->glyph_offset_x + tile_x;
+        size_t image_y = app->pen_y + atlas_entry->offset_y + advance->glyph_offset_y + tile_y;
         size_t image_index = app->image_width * image_y + image_x;
 
         if (image_x < 0 || image_y < 0

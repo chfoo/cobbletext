@@ -83,6 +83,8 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
     glyph.image = std::vector<uint8_t>(buffer,
         buffer + bitmap.width * bitmap.rows);
 
+    glyph.imageOffsetX = font.freeTypeFace->glyph->bitmap_left;
+    glyph.imageOffsetY = -font.freeTypeFace->glyph->bitmap_top;
     glyph.hasImage = true;
 }
 
@@ -102,6 +104,8 @@ GlyphInfo GlyphTable::getGlyphInfo(GlyphID glyphID) {
     glyphInfo.image = glyph.image;
     glyphInfo.imageHeight = glyph.imageHeight;
     glyphInfo.imageWidth = glyph.imageWidth;
+    glyphInfo.imageOffsetX = glyph.imageOffsetX;
+    glyphInfo.imageOffsetY = glyph.imageOffsetY;
 
     return glyphInfo;
 }

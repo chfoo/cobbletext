@@ -114,6 +114,8 @@ const struct CobbletextGlyphInfo * cobbletext_library_get_glyph_info(
 
     library->glyphInfo->image_width = glyphInfo.imageWidth;
     library->glyphInfo->image_height = glyphInfo.imageHeight;
+    library->glyphInfo->image_offset_x = glyphInfo.imageOffsetX;
+    library->glyphInfo->image_offset_y = glyphInfo.imageOffsetY;
 
     return library->glyphInfo.get();
 }

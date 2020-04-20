@@ -21,6 +21,8 @@ struct AtlasEntry {
     uint32_t y;
     uint32_t width;
     uint32_t height;
+    int32_t offset_x;
+    int32_t offset_y;
     UT_hash_handle hh;
 };
 
