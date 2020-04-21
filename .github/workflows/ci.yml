@@ -10,10 +10,10 @@ jobs:
         include:
           - target: windows-x86
             vm: windows-latest
-            triplet: windows-x86
+            triplet: x86-windows
           - target: windows-x64
             vm: windows-latest
-            triplet: windows-x64
+            triplet: x64-windows
           - target: ubuntu
             vm: ubuntu-latest
             triplet: x64-linux
