@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   build_test_build_release:
     strategy:
+      fail-fast: false
       matrix:
         target: [windows-x86, windows-x64, ubuntu, macos]
         include:
@@ -47,6 +48,7 @@ jobs:
       - run: |
           cd lib
           git clone https://github.com/troydhanson/uthash.git
+          cd uthash
           git checkout 1124f0a70b0714886402c3c0df03d037e3c4d57a
         if: steps.cache-uthash.outputs.cache-hit != 'true'
       - run: |
