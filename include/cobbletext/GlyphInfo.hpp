@@ -4,6 +4,7 @@
 #include <ostream>
 
 #include "common.hpp"
+#include "macros.h"
 
 namespace cobbletext {
 

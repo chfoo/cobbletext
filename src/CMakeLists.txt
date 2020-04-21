@@ -15,6 +15,7 @@ add_custom_command(OUTPUT Resource.cpp
         "ADOBE_NOTDEF"
         "${CMAKE_SOURCE_DIR}/lib/adobe-notdef/AND-Regular.otf"
         "${CMAKE_CURRENT_BINARY_DIR}/Resource.cpp"
+    VERBATIM
 )
 
 set(COBBLETEXT_LIBRARY_ALL_INCLUDES
@@ -34,11 +35,11 @@ set_target_properties(cobbletext_static PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(cobbletext PROPERTIES SOVERSION 0)
 
 if(MSVC)
-  target_compile_options(cobbletext PRIVATE /Wall)
-  target_compile_options(cobbletext_static PRIVATE /Wall)
+    target_compile_options(cobbletext PRIVATE /Wall)
+    target_compile_options(cobbletext_static PRIVATE /Wall)
 else()
-  target_compile_options(cobbletext PRIVATE -Wall)
-  target_compile_options(cobbletext_static PRIVATE -Wall)
+    target_compile_options(cobbletext PRIVATE -Wall)
+    target_compile_options(cobbletext_static PRIVATE -Wall)
 endif()
 
 

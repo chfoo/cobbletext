@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "cobbletext.h"
+#include "cobbletext/cobbletext.h"
 
 TEST_CASE("library construction and error clearing") {
     CobbletextLibrary * library = cobbletext_library_new();

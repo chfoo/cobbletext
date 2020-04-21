@@ -5,6 +5,7 @@
 
 #include "AdvanceInfo.hpp"
 #include "common.hpp"
+#include "macros.h"
 #include "Encoding.hpp"
 #include "FontInfo.hpp"
 #include "GlyphInfo.hpp"

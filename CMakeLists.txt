@@ -28,3 +28,4 @@ set(COBBLETEXT_DEPENDENCY_LIBS
 add_subdirectory(src cobbletext)
 add_subdirectory(example/ppm_example)
 add_subdirectory(test)
+add_subdirectory("doc")

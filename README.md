@@ -54,9 +54,10 @@ Optional:
 
 Requirements:
 
+* C++17 compiler
 * CMake 3.13+ for generating the build files.
 * Python 3 for `script/embed_resource.py`. CMake will call Python automatically.
-* GNU Make or Visual Studio for the actual build.
+* GNU Make or Visual Studio for running the build files.
 
 To generate build files using CMake:
 

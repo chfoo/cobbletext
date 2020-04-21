@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "common.hpp"
+#include "macros.h"
 #include "FontInfo.hpp"
 #include "GlyphInfo.hpp"
 

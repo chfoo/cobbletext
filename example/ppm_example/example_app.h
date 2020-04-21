@@ -5,7 +5,7 @@
 
 #include <uthash.h>
 
-#include <cobbletext.h>
+#include <cobbletext/cobbletext.h>
 
 #define ABORT_WITH_MESSAGE(message) { printf((message)); abort(); }
 #define ABORT_IF_NULL(value, message) { if ((value) == NULL) { printf((message)); abort(); } }
