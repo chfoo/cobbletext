@@ -1,0 +1,78 @@
+name: CI
+
+on: [push, pull_request]
+
+strategy:
+  matrix:
+    target: [windows-x86, windows-x64, ubuntu, macos]
+    include:
+      - target: windows-x86
+        vm: windows-latest
+        triplet: windows-x86
+      - target: windows-x64
+        vm: windows-latest
+        triplet: windows-x64
+      - target: ubuntu
+        vm: ubuntu-latest
+        triplet: x64-linux
+      - target: macos
+        vm: macos-latest
+        triplet: x64-osx
+
+jobs:
+  build_test_build_release:
+    runs-on: ${{ matrix.vm }}
+    steps:
+      - uses: actions/checkout@v2.1.0
+        with:
+          submodules: true
+      - uses: actions/cache@v1
+        id: cache-vcpkg
+        with:
+          key: vcpkg-${{ matrix.target }}-v1
+          path: ${{ env.VCPKG_INSTALLATION_ROOT }}
+      - run: >-
+          vcpkg install --triplet ${{ matrix.triplet }}
+            freetype[bzip2,png] harfbuzz[ucdn] icu boost ms-gsl catch2
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - uses: actions/cache@v1
+        id: cache-uthash
+        with:
+          key: uthash-${{ matrix.target }}-v1
+          path: lib/uthash/
+      - run: |
+          cd lib
+          git clone https://github.com/troydhanson/uthash.git
+          git checkout 1124f0a70b0714886402c3c0df03d037e3c4d57a
+        if: steps.cache-uthash.outputs.cache-hit != 'true'
+      - run: |
+          mkdir build
+          cd build
+          cmake .. -D CMAKE_BUILD_TYPE=Debug \
+            -D CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -D UTHASH_INCLUDE_PATH=${{ github.workspace }}/lib/uthash/src/uthash.h
+      - run: cmake --build .
+        working-directory: build/
+      - run: ctest --verbose
+        working-directory: build/
+      - run: |
+          mkdir build-release
+          cd build-release
+          cmake .. -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+      - run: |
+          cmake --build . --target cobbletext
+          cmake --build . --target cobbletext_static
+        working-directory: build-release/
+      - uses: actions/upload-artifact@v1
+          with:
+            name: bin-${{ matrix.triplet }}
+            path: build-release/bin/
+      - run: >-
+          vcpkg export --triplet ${{ matrix.triplet }}
+            --raw --output build-release/bin-dependencies/
+            freetype[bzip2,png] harfbuzz[ucdn] icu
+      - uses: actions/upload-artifact@v1
+          with:
+            name: bin-dependencies-${{ matrix.triplet }}
+            path: build-release/bin-dependencies/
