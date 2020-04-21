@@ -4,79 +4,27 @@ Cobbletext is a complex text layout and rendering engine as a C/C++ library. It 
 
 It uses FreeType, HarfBuzz, and Unicode ICU for the actual dirty work.
 
-Work in progress; not usable yet.
+**Work in progress.**
 
 ## Quick start
 
-### Dependencies
+See [INSTALL.md](INSTALL.md) for building the library.
 
-Libraries:
+For prebuilt libraries, check the Releases section in the GitHub repository.
 
-* FreeType 2
-* HarfBuzz 2
-* International Components for Unicode (ICU)
+TODO
 
-Header-only libraries:
+## Further reading
 
-* Boost
-* Microsoft GSL
+* API documentation: TODO
+* [HarfBuzz documentation](https://harfbuzz.github.io/index.html)
+* [FreeType documentation](https://www.freetype.org/freetype2/docs/documentation.html)
+* [ICU documentation](http://userguide.icu-project.org/)
 
-Resources:
+## Contributing
 
-* adobe-notdef (included as a Git Submodule)
+If you have any issues or improvements, please use the GitHub Issues and Pull Requests section.
 
-Optional for examples and tests:
+## License
 
-* uthash
-* Catch2
-
-### vcpkg
-
-### Homebrew (MacOS)
-
-### Linux package manager
-
-On Debian based system, install
-
-* build-essential
-* libfreetype6-dev
-* libharfbuzz-dev
-* libicu-dev
-* libboost1.XX-dev (where XX is the latest version)
-* libmsgsl-dev
-
-Optional:
-
-* uthash-dev
-* There's no catch2 package yet. Put it somewhere and supply the path to CMake as described later.
-
-## Building
-
-Requirements:
-
-* C++17 compiler
-* CMake 3.13+ for generating the build files.
-* Python 3 for `script/embed_resource.py`. CMake will call Python automatically.
-* GNU Make or Visual Studio for running the build files.
-
-To generate build files using CMake:
-
-1. `mkdir build`
-2. `cd build`
-3. `cmake ..`
-
-For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`.
-
-If CMake can't find something, you can manually edit CMakeCache.txt. Use `cmake .. -L` to list out configurable variables.
-
-### Makefile
-
-* Running `make cobbletext` will build a shared/dynamic library.
-* Running `make cobbletext_static` will build a static library.
-
-### Visual Studio
-
-Ensure the C++ workload is installed. See Tools -> Get tools and features.
-
-* Project `cobbletext` is the dynamic library.
-* Project `cobbletext_static` is the static library.
+Copyright 2020 Christopher Foo. Licensed under Mozilla Public License Version 2.0.
