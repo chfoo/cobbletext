@@ -2,25 +2,24 @@ name: CI
 
 on: [push, pull_request]
 
-strategy:
-  matrix:
-    target: [windows-x86, windows-x64, ubuntu, macos]
-    include:
-      - target: windows-x86
-        vm: windows-latest
-        triplet: windows-x86
-      - target: windows-x64
-        vm: windows-latest
-        triplet: windows-x64
-      - target: ubuntu
-        vm: ubuntu-latest
-        triplet: x64-linux
-      - target: macos
-        vm: macos-latest
-        triplet: x64-osx
-
 jobs:
   build_test_build_release:
+    strategy:
+      matrix:
+        target: [windows-x86, windows-x64, ubuntu, macos]
+        include:
+          - target: windows-x86
+            vm: windows-latest
+            triplet: windows-x86
+          - target: windows-x64
+            vm: windows-latest
+            triplet: windows-x64
+          - target: ubuntu
+            vm: ubuntu-latest
+            triplet: x64-linux
+          - target: macos
+            vm: macos-latest
+            triplet: x64-osx
     runs-on: ${{ matrix.vm }}
     steps:
       - uses: actions/checkout@v2.1.0
