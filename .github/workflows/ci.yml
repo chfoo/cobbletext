@@ -21,6 +21,9 @@ jobs:
             vm: macos-latest
             triplet: x64-osx
     runs-on: ${{ matrix.vm }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v2.1.0
         with:
@@ -29,9 +32,11 @@ jobs:
         id: cache-vcpkg
         with:
           key: vcpkg-${{ matrix.target }}-v1
-          path: ${{ env.VCPKG_INSTALLATION_ROOT }}
-      - run: >-
-          vcpkg install --triplet ${{ matrix.triplet }}
+          path: vcpkg/
+      - run: |
+          mkdir -p ./vcpkg
+          cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
+          ./vcpkg/vcpkg install --triplet ${{ matrix.triplet }} \
             freetype[bzip2,png] harfbuzz[ucdn] icu boost ms-gsl catch2
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       - uses: actions/cache@v1
@@ -48,8 +53,8 @@ jobs:
           mkdir build
           cd build
           cmake .. -D CMAKE_BUILD_TYPE=Debug \
-            -D CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake \
-            -D UTHASH_INCLUDE_PATH=${{ github.workspace }}/lib/uthash/src/uthash.h
+            -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -D UTHASH_INCLUDE_PATH=$GITHUB_WORKSPACE/lib/uthash/src/uthash.h
       - run: cmake --build .
         working-directory: build/
       - run: ctest --verbose
@@ -58,7 +63,7 @@ jobs:
           mkdir build-release
           cd build-release
           cmake .. -D CMAKE_BUILD_TYPE=Release \
-            -D CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+            -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake
       - run: |
           cmake --build . --target cobbletext
           cmake --build . --target cobbletext_static
@@ -68,7 +73,7 @@ jobs:
           name: bin-${{ matrix.triplet }}
           path: build-release/bin/
       - run: >-
-          vcpkg export --triplet ${{ matrix.triplet }}
+          ./vcpkg/vcpkg export --triplet ${{ matrix.triplet }}
             --raw --output build-release/bin-dependencies/
             freetype[bzip2,png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1
