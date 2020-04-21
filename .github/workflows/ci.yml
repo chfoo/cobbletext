@@ -65,14 +65,14 @@ jobs:
           cmake --build . --target cobbletext_static
         working-directory: build-release/
       - uses: actions/upload-artifact@v1
-          with:
-            name: bin-${{ matrix.triplet }}
-            path: build-release/bin/
+        with:
+          name: bin-${{ matrix.triplet }}
+          path: build-release/bin/
       - run: >-
           vcpkg export --triplet ${{ matrix.triplet }}
             --raw --output build-release/bin-dependencies/
             freetype[bzip2,png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1
-          with:
-            name: bin-dependencies-${{ matrix.triplet }}
-            path: build-release/bin-dependencies/
+        with:
+          name: bin-dependencies-${{ matrix.triplet }}
+          path: build-release/bin-dependencies/
