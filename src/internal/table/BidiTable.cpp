@@ -36,8 +36,10 @@ void BidiTable::analyze(ScriptDirection direction) {
         case ScriptDirection::LTR:
         case ScriptDirection::NotSpecified:
             paragraphLevel = UBIDI_DEFAULT_LTR;
+            break;
         case ScriptDirection::RTL:
             paragraphLevel = UBIDI_DEFAULT_RTL;
+            break;
     }
 
     ICUError errorCode;

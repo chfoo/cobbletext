@@ -14,10 +14,10 @@ namespace cobbletext::internal {
 
 LayoutEngine::LayoutEngine(std::shared_ptr<Context> context,
         std::shared_ptr<TextSource> textSource) :
-        context(context),
-        textSource(textSource),
         shaper(context->fontTable),
-        lineBreaker(context) {
+        lineBreaker(context),
+        context(context),
+        textSource(textSource) {
     bidiTable.setTextBuffer(textSource->textBuffer);
     scriptTable.setTextBuffer(textSource->textBuffer);
     shaper.setTextBuffer(textSource->textBuffer);
@@ -55,12 +55,15 @@ void LayoutEngine::layOut() {
 
     ICUError errorCode;
 
-    defaultDirection = textSource->locale.isRightToLeft() ?
+    bool isDefaultRTL = textSource->locale.isRightToLeft();
+    defaultDirection = isDefaultRTL ?
         ScriptDirection::RTL : ScriptDirection::LTR;
-    defaultDirectionHB = textSource->locale.isRightToLeft() ?
+    defaultDirectionHB = isDefaultRTL ?
         HB_DIRECTION_RTL : HB_DIRECTION_LTR;
     defaultLanguageHB = ScriptTable::languageToHarfBuzz(
         textSource->locale.toLanguageTag<std::string>(errorCode));
+
+    COBBLETEXT_DEBUG_PRINT("RTL=" << isDefaultRTL);
 
     if (errorCode.get()) {
         COBBLETEXT_DEBUG_PRINT("default language " << errorCode.get());
@@ -272,13 +275,13 @@ void LayoutEngine::registerGlyphsAndMakeTiles() {
 }
 
 void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
+    // TODO: handle vertical text
     advances_.clear();
+    previousTextIndex = 0;
 
     if (lineRuns.empty()) {
         return;
     }
-
-    uint32_t previousTextIndex = 0;
 
     auto lineRunIter = lineRuns.begin();
     while (true) {
@@ -287,7 +290,7 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
         AdvanceInfo baselineAdjust;
         baselineAdjust.type = AdvanceType::Layout;
         baselineAdjust.textIndex = previousTextIndex;
-        // TODO: handle vertical text
+
         if (lineRunIter == lineRuns.begin()) {
             baselineAdjust.advanceY = lineRun.ascent;
         } else {
@@ -296,42 +299,7 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
 
         advances_.push_back(baselineAdjust);
 
-        for (const auto & shapeResultRef : lineRun.shapeResults) {
-            const auto & shapeResult = shapeResultRef.get();
-            AdvanceInfo advance;
-
-            const auto & textFormat = shapeResult.run.source.textFormat;
-            GlyphKey glyphKey(textFormat.fontFace, textFormat.fontSize,
-                shapeResult.glyphIndex);
-
-            if (shapeResult.run.source.inlineObject) {
-                // TODO: handle vertical
-                // TODO: go backwards if RTL
-                const auto & inlineObject =
-                    *shapeResult.run.source.inlineObject;
-
-                advance.type = AdvanceType::InlineObject;
-                advance.advanceX = inlineObject.pixelSize;
-                advance.inlineObject = inlineObject.id;
-
-            } else {
-                advance.type = AdvanceType::Glyph;
-                // TODO: go backwards if RTL
-                advance.advanceX = shapeResult.xAdvance;
-                advance.advanceY = shapeResult.yAdvance;
-                advance.glyphOffsetX = shapeResult.xOffset;
-                advance.glyphOffsetY = shapeResult.yOffset;
-                advance.glyphID = context->glyphTable->keyToID(glyphKey);
-            }
-
-            advance.textIndex = shapeResult.cluster;
-            advance.customProperty =
-                shapeResult.run.source.textFormat.customProperty;
-
-            advances_.push_back(advance);
-
-            previousTextIndex = advance.textIndex;
-        }
+        processLineRun(lineRun);
 
         ++lineRunIter;
 
@@ -345,6 +313,84 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
 
             break;
         }
+    }
+}
+
+void LayoutEngine::processLineRun(const LineRun & lineRun) {
+    bool isRTLSegment = false;
+    uint32_t rtlSegmentAdvanceSum = 0;
+    size_t beginRTLAdvanceIndex = 0;
+
+    auto addRTLBegin = [&] () {
+        AdvanceInfo beginRTLAdvance;
+        beginRTLAdvance.type = AdvanceType::Bidi;
+        beginRTLAdvance.textIndex = previousTextIndex;
+        beginRTLAdvance.advanceX = 0;
+        advances_.push_back(beginRTLAdvance);
+        beginRTLAdvanceIndex = advances_.size() - 1;
+        isRTLSegment = true;
+    };
+
+    auto addRTLEnd = [&] () {
+        AdvanceInfo endRTLAdvance;
+        endRTLAdvance.type = AdvanceType::Bidi;
+        advances_[beginRTLAdvanceIndex].advanceX = rtlSegmentAdvanceSum;
+        endRTLAdvance.advanceX = rtlSegmentAdvanceSum;
+        endRTLAdvance.textIndex = previousTextIndex;
+        advances_.push_back(endRTLAdvance);
+        isRTLSegment = false;
+    };
+
+    for (const auto & shapeResultRef : lineRun.shapeResults) {
+        const auto & shapeResult = shapeResultRef.get();
+        bool isShapeRTL = shapeResult.run.direction == HB_DIRECTION_RTL;
+
+        if (!isRTLSegment && isShapeRTL) {
+            addRTLBegin();
+        } else if (isRTLSegment && !isShapeRTL) {
+            addRTLEnd();
+        }
+
+        AdvanceInfo advance;
+
+        const auto & textFormat = shapeResult.run.source.textFormat;
+        GlyphKey glyphKey(textFormat.fontFace, textFormat.fontSize,
+            shapeResult.glyphIndex);
+
+        if (shapeResult.run.source.inlineObject) {
+            const auto & inlineObject =
+                *shapeResult.run.source.inlineObject;
+
+            advance.type = AdvanceType::InlineObject;
+            advance.advanceX = inlineObject.pixelSize;
+            advance.inlineObject = inlineObject.id;
+
+        } else {
+            advance.type = AdvanceType::Glyph;
+            advance.advanceX = shapeResult.xAdvance;
+            advance.advanceY = shapeResult.yAdvance;
+            advance.glyphOffsetX = shapeResult.xOffset;
+            advance.glyphOffsetY = shapeResult.yOffset;
+            advance.glyphID = context->glyphTable->keyToID(glyphKey);
+        }
+
+        advance.textIndex = shapeResult.cluster;
+        advance.customProperty =
+            shapeResult.run.source.textFormat.customProperty;
+
+        if (isRTLSegment) {
+            rtlSegmentAdvanceSum += advance.advanceX;
+            advance.glyphOffsetX -= advance.advanceX;
+            advance.advanceX = -advance.advanceX;
+        }
+
+        advances_.push_back(advance);
+
+        previousTextIndex = advance.textIndex;
+    }
+
+    if (isRTLSegment) {
+        addRTLEnd();
     }
 }
 

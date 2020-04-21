@@ -67,7 +67,8 @@ std::vector<LineRun> LineBreaker::applyBreaks(
         COBBLETEXT_DEBUG_PRINT(index << " "
             << character << " "
             << std::to_string(lineBreaker->isBoundary(index)) << " "
-            << std::to_string(lineBreaker->getRuleStatus())
+            << std::to_string(lineBreaker->getRuleStatus()) << " "
+            << std::to_string(characterBreaker->isBoundary(index))
         );
     }
 #endif
@@ -100,6 +101,14 @@ bool LineBreaker::isMandatoryLineBreakAfter(int32_t codePointIndex) {
     }
 }
 
+bool LineBreaker::isCharacterBreakableBefore(int32_t codePointIndex) {
+    auto codeUnitIndex =
+        stringIndexer.codePointToCodeUnit(codePointIndex);
+    auto isBoundary = characterBreaker->isBoundary(codeUnitIndex);
+
+    return isBoundary;
+}
+
 void LineBreaker::fillLine() {
     while (*shapeResultIterator != shapeResults->end()) {
         auto & shapeResult = **shapeResultIterator;
@@ -114,11 +123,7 @@ void LineBreaker::fillLine() {
 
         bool breakRequired = isMandatoryLineBreakAfter(shapeResult.cluster);
 
-        if (!breakRequired) {
-            currentLine.shapeResults.push_back(shapeResult);
-            currentLine.totalAdvance += shapeLength;
-            ++*shapeResultIterator;
-        } else {
+        if (breakRequired) {
             // Skip over the newline character. It's not always 0 size and
             // visually empty.
             currentLine.lineBreakShapeResult.emplace(shapeResult);
@@ -126,14 +131,17 @@ void LineBreaker::fillLine() {
             break;
         }
 
-        // TODO: handle line overflow
-        // if (lineLength && shapeLength + currentLine.advanceWidth >= lineLength) {
-        //     rewindLine();
+        currentLine.shapeResults.push_back(shapeResult);
+        currentLine.totalAdvance += shapeLength;
+        ++*shapeResultIterator;
 
-        //     if (currentLine.shapeResults.empty()) {
-        //         fillLineWithOneChar();
-        //     }
-        // }
+        bool hasOverflown = lineLength
+            && currentLine.totalAdvance >= lineLength;
+
+        if (hasOverflown) {
+            rewindLine();
+            break;
+        }
     }
 }
 
@@ -141,43 +149,40 @@ void LineBreaker::rewindLine() {
     while (currentLine.shapeResults.size()) {
         auto & shapeResult = currentLine.shapeResults.back().get();
         currentLine.shapeResults.pop_back();
+
+        uint32_t shapeLength = getShapeLength(shapeResult);
+
+        currentLine.totalAdvance -= shapeLength;
         --*shapeResultIterator;
 
         auto codePointIndex = shapeResult.cluster;
         auto codeUnitIndex = stringIndexer.codePointToCodeUnit(codePointIndex);
-        auto isBoundary = lineBreaker->isBoundary(codeUnitIndex);
+        auto canBreakBeforeChar = lineBreaker->isBoundary(codeUnitIndex);
 
-        if (isBoundary) {
+        if (canBreakBeforeChar) {
             break;
         }
     }
+
+    if (currentLine.shapeResults.empty()) {
+        emergencyFillLine();
+    }
 }
 
-void LineBreaker::fillLineWithOneChar() {
+void LineBreaker::emergencyFillLine() {
     while (*shapeResultIterator != shapeResults->end()) {
         auto & shapeResult = **shapeResultIterator;
-        uint32_t shapeLength;
+        uint32_t shapeLength = getShapeLength(shapeResult);
+        bool isBreakable = isCharacterBreakableBefore(shapeResult.cluster);
+        bool isOverflow = currentLine.totalAdvance + shapeLength >= lineLength;
 
-        if (shapeResult.run.source.inlineObject) {
-            shapeLength = shapeResult.run.source.inlineObject->pixelSize;
-        } else {
-            shapeLength = shapeResult.xAdvance;
-        }
-
-        auto codePointIndex = shapeResult.cluster;
-        auto codeUnitIndex =
-            stringIndexer.codePointToCodeUnit(codePointIndex);
-        auto hasAtLastOneChar = !currentLine.shapeResults.empty();
-        auto isBoundary = characterBreaker->isBoundary(codeUnitIndex);
-
-        currentLine.shapeResults.push_back(shapeResult);
-        // TODO: make this support vertical lines
-        currentLine.totalAdvance += shapeLength;
-        ++*shapeResultIterator;
-
-        if (hasAtLastOneChar && isBoundary) {
+        if (!currentLine.shapeResults.empty() && isOverflow && isBreakable) {
             break;
         }
+
+        currentLine.shapeResults.push_back(shapeResult);
+        currentLine.totalAdvance += shapeLength;
+        ++*shapeResultIterator;
     }
 }
 
@@ -244,5 +249,13 @@ void LineBreaker::analyzeLineHeight() {
     }
 }
 
+uint32_t LineBreaker::getShapeLength(const ShapeResult & shapeResult) {
+    if (shapeResult.run.source.inlineObject) {
+        return shapeResult.run.source.inlineObject->pixelSize;
+    } else {
+        // TODO: Support vertical lines
+        return shapeResult.xAdvance;
+    }
+}
 
 }

@@ -15,13 +15,13 @@ LogicError::LogicError(const char * what_arg) :
     std::logic_error(what_arg) {}
 
 LibraryError::LibraryError(std::string message) :
-    message(message),
+    RuntimeError(message),
     code(-1),
-    RuntimeError(message) {}
+    message(message) {}
 
 LibraryError::LibraryError(std::string message, long long int code) :
-    message(message),
+    RuntimeError(std::to_string(code) + " : " + message),
     code(code),
-    RuntimeError(std::to_string(code) + " : " + message) {}
+    message(message) {}
 
 }

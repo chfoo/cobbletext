@@ -49,13 +49,17 @@ private:
 
     bool isMandatoryLineBreakAfter(int32_t codePointIndex);
 
+    bool isCharacterBreakableBefore(int32_t codePointIndex);
+
     void fillLine();
 
     void rewindLine();
 
-    void fillLineWithOneChar();
+    void emergencyFillLine();
 
     void analyzeLineHeight();
+
+    uint32_t getShapeLength(const ShapeResult & shapeResult);
 };
 
 }

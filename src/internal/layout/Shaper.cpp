@@ -1,5 +1,7 @@
 #include "internal/layout/Shaper.hpp"
 
+#include <cassert>
+
 namespace cobbletext::internal {
 
 Shaper::Shaper(std::shared_ptr<FontTable> fontTable) :
@@ -64,7 +66,19 @@ void Shaper::shapeRun(const InternalTextRun & run,
     hb_glyph_position_t * glyphPositions = hb_buffer_get_glyph_positions(
         harfBuzzBuffer.get(), &glyphCount);
 
-    for (unsigned int index = 0; index < glyphCount; index++) {
+    if (!glyphCount) {
+        return;
+    }
+
+    for (size_t index_ = 0; index_ < glyphCount; index_++) {
+        size_t index;
+
+        if (run.direction == HB_DIRECTION_RTL) {
+            index = glyphCount - index_ - 1;
+        } else {
+            index = index_;
+        }
+
         auto glyphInfo = glyphInfos[index];
         auto glyphPosition = glyphPositions[index];
 

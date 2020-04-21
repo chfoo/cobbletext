@@ -41,6 +41,9 @@ class LayoutEngine {
     uint32_t textHeight_;
 
     bool tilesValid_ = true;
+
+    uint32_t previousTextIndex;
+
 public:
     uint32_t lineLength = 0;
 
@@ -67,6 +70,7 @@ private:
 
     void registerGlyphsAndMakeTiles();
     void makeAdvances(std::vector<LineRun> & lineRuns);
+    void processLineRun(const LineRun & lineRun);
 };
 
 }
