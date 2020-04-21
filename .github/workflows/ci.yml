@@ -32,13 +32,14 @@ jobs:
       - uses: actions/cache@v1
         id: cache-vcpkg
         with:
-          key: vcpkg-${{ matrix.target }}-v1
+          key: vcpkg-${{ matrix.target }}-v2
           path: vcpkg/
       - run: |
           mkdir -p ./vcpkg
           cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
           ./vcpkg/vcpkg install --triplet ${{ matrix.triplet }} \
-            freetype[bzip2,png] harfbuzz[ucdn] icu boost ms-gsl catch2
+            freetype[bzip2,png] harfbuzz[ucdn] icu ms-gsl catch2 \
+            boost-stracktrace boost-exception boost-container-hash
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       - uses: actions/cache@v1
         id: cache-uthash
