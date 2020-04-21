@@ -18,3 +18,8 @@ target_link_libraries(test_main PRIVATE cobbletext
 if(NOT WIN32)
     target_link_libraries(test_main PRIVATE dl)
 endif()
+
+
+add_test(NAME main COMMAND test_main)
+set_property(TEST main APPEND PROPERTY ENVIRONMENT
+    "TEST_FONT_PATH=${CMAKE_SOURCE_DIR}/lib/adobe-notdef/AND-Regular.otf")

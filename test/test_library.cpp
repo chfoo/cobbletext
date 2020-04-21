@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <string>
+
 #include <catch2/catch.hpp>
 
 #include "cobbletext/cobbletext.h"
@@ -79,7 +82,16 @@ TEST_CASE("library heavy methods") {
     }
 
     SECTION("check load file") {
-        cobbletext_library_load_font(library, "lib/adobe-notdef/AND-Regular.otf");
+        std::string fontPath;
+
+        if (getenv("TEST_FONT_PATH")) {
+            fontPath.append(getenv("TEST_FONT_PATH"));
+        } else {
+            fprintf(stderr, "TEST_FONT_PATH not set");
+            fontPath.append("lib/adobe-notdef/AND-Regular.otf");
+        }
+
+        cobbletext_library_load_font(library, fontPath.c_str());
 
         CHECK_FALSE( cobbletext_get_error_code(library) );
         CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );

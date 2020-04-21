@@ -16,3 +16,5 @@ target_link_libraries(ppm_example PRIVATE cobbletext)
 if(NOT WIN32)
     target_link_libraries(ppm_example PRIVATE dl)
 endif()
+
+add_test(NAME ppm_example COMMAND ppm_example)

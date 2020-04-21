@@ -25,6 +25,8 @@ set(COBBLETEXT_DEPENDENCY_LIBS
     ${HARFBUZZ_LIB_PATH}
 )
 
+enable_testing()
+
 add_subdirectory(src cobbletext)
 add_subdirectory(example/ppm_example)
 add_subdirectory(test)
