@@ -39,7 +39,7 @@ jobs:
           cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
           ./vcpkg/vcpkg install --triplet ${{ matrix.triplet }} \
             freetype[bzip2,png] harfbuzz[ucdn] icu ms-gsl catch2 \
-            boost-stracktrace boost-exception boost-container-hash
+            boost-stacktrace boost-exception boost-container-hash
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       - uses: actions/cache@v1
         id: cache-uthash
