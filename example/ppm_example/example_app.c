@@ -98,24 +98,31 @@ void example_app_set_text(ExampleApp * app) {
         }
     }
 
-    cobbletext_engine_set_locale(app->engine, "en-US");
-    cobbletext_engine_set_line_length(app->engine, line_length);
-    cobbletext_engine_set_font_size(app->engine, 16);
-    cobbletext_engine_set_custom_property(app->engine, PROPERTY_NONE);
-    cobbletext_engine_set_font(app->engine, app->fontID);
+    struct CobbletextEngineProperties properties = {0};
+    properties.locale = "en-US";
+    properties.line_length = line_length;
+    cobbletext_engine_set_properties(app->engine, &properties);
+
+    struct CobbletextTextProperties text_properties = {0};
+    text_properties.font_size = 16;
+    text_properties.custom_property = PROPERTY_NONE;
+    text_properties.font = app->fontID;
+    cobbletext_engine_set_text_properties(app->engine, &text_properties);
 
     cobbletext_engine_add_text_utf8(app->engine, EAT_GLASS_TEXT, -1);
     cobbletext_engine_add_text_utf8(app->engine, "\n", -1);
 
-    cobbletext_engine_set_font_size(app->engine, 10);
-    cobbletext_engine_set_custom_property(app->engine, PROPERTY_RED_TEXT);
+    text_properties.font_size = 10;
+    text_properties.custom_property = PROPERTY_RED_TEXT;
+    cobbletext_engine_set_text_properties(app->engine, &text_properties);
     cobbletext_engine_add_text_utf8(app->engine, "Inline", -1);
     cobbletext_engine_add_inline_object(app->engine, INLINE_OBJECT_1, 50);
     cobbletext_engine_add_text_utf8(app->engine, "object", -1);
     cobbletext_engine_add_text_utf8(app->engine, "\n", -1);
 
-    cobbletext_engine_set_font_size(app->engine, 16);
-    cobbletext_engine_set_custom_property(app->engine, PROPERTY_NONE);
+    text_properties.font_size = 16;
+    text_properties.custom_property = PROPERTY_NONE;
+    cobbletext_engine_set_text_properties(app->engine, &text_properties);
     cobbletext_engine_add_text_utf8(app->engine, EMOJI_TEXT, -1);
 }
 

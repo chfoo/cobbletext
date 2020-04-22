@@ -12,6 +12,8 @@
 struct CobbletextEngine {
     CobbletextLibrary * library;
     std::unique_ptr<cobbletext::Engine> obj;
+    std::unique_ptr<struct CobbletextEngineProperties> properties;
+    std::unique_ptr<struct CobbletextTextProperties> textProperties;
     std::vector<std::unique_ptr<const struct CobbletextTileInfo>> tiles;
     std::vector<std::unique_ptr<const struct CobbletextAdvanceInfo>> advances;
     std::unique_ptr<const struct CobbletextTileInfo *[]> tilesPointer;

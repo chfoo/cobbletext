@@ -24,53 +24,58 @@ void cobbletext_engine_delete(CobbletextEngine * engine) {
     delete engine;
 }
 
-uint32_t cobbletext_engine_get_line_length(CobbletextEngine * engine) {
-    return engine->obj->lineLength;
-}
-
-void cobbletext_engine_set_line_length(CobbletextEngine * engine,
-        uint32_t length) {
-    engine->obj->lineLength = length;
-}
-
-const char * cobbletext_engine_get_locale(CobbletextEngine * engine) {
-    return engine->obj->locale.c_str();
-}
-
-void cobbletext_engine_set_locale(CobbletextEngine * engine,
-        const char * locale) {
-    engine->obj->locale = locale;
-}
-
-const char * cobbletext_engine_get_language(CobbletextEngine * engine) {
-    return engine->obj->language.c_str();
-}
-
-void cobbletext_engine_set_language(CobbletextEngine * engine,
-        const char * language) {
-    engine->obj->language = language;
-}
-
-const char * cobbletext_engine_get_script(CobbletextEngine * engine) {
-    return engine->obj->script.c_str();
-}
-
-void cobbletext_engine_set_script(CobbletextEngine * engine,
-        const char * script) {
-    engine->obj->script = script;
-}
-
-CobbletextScriptDirection cobbletext_engine_get_script_direction(
+const struct CobbletextEngineProperties * cobbletext_engine_get_properties(
         CobbletextEngine * engine) {
-    return static_cast<CobbletextScriptDirection>(engine->obj->scriptDirection);
+    if (!engine->properties) {
+        auto properties = new struct CobbletextEngineProperties;
+        engine->properties.reset(properties);
+    }
+
+    engine->properties->line_length = engine->obj->lineLength;
+    engine->properties->locale = engine->obj->locale.c_str();
+
+    return engine->properties.get();
 }
 
-void cobbletext_engine_set_script_direction(CobbletextEngine * engine,
-        CobbletextScriptDirection direction) {
+
+void cobbletext_engine_set_properties(CobbletextEngine * engine,
+        const struct CobbletextEngineProperties * properties) {
+
+    engine->obj->lineLength = properties->line_length;
+    engine->obj->locale = std::string(properties->locale ?
+        properties->locale : "");
+}
+
+const struct CobbletextTextProperties * cobbletext_engine_get_text_properties(
+        CobbletextEngine * engine) {
+    if (!engine->textProperties) {
+        auto textProperties = new struct CobbletextTextProperties;
+        engine->textProperties.reset(textProperties);
+    }
+
+    engine->textProperties->language = engine->obj->language.c_str();
+    engine->textProperties->script = engine->obj->script.c_str();
+    engine->textProperties->script_direction =
+        static_cast<CobbletextScriptDirection>(engine->obj->scriptDirection);
+    engine->textProperties->font = engine->obj->font;
+    engine->textProperties->font_size = engine->obj->fontSize;
+    engine->textProperties->custom_property = engine->obj->customProperty;
+
+    return engine->textProperties.get();
+}
+
+
+void cobbletext_engine_set_text_properties(CobbletextEngine * engine,
+        const struct CobbletextTextProperties * text_properties) {
+
+    engine->obj->language = std::string(text_properties->language ?
+        text_properties->language : "");
+    engine->obj->script = std::string(text_properties->script ?
+        text_properties->script : "");
 
     cobbletext::ScriptDirection directionEnum;
 
-    switch (direction) {
+    switch (text_properties->script_direction) {
         case COBBLETEXT_SCRIPT_DIRECTION_NOT_SPECIFIED:
             directionEnum = cobbletext::ScriptDirection::NotSpecified;
             break;
@@ -85,33 +90,10 @@ void cobbletext_engine_set_script_direction(CobbletextEngine * engine,
     }
 
     engine->obj->scriptDirection = directionEnum;
-}
 
-CobbletextFontID cobbletext_engine_get_font(CobbletextEngine * engine) {
-    return engine->obj->font;
-}
-
-void cobbletext_engine_set_font(CobbletextEngine * engine,
-        CobbletextFontID font) {
-    engine->obj->font = font;
-}
-
-double cobbletext_engine_get_font_size(CobbletextEngine * engine) {
-    return engine->obj->fontSize;
-}
-
-void cobbletext_engine_set_font_size(CobbletextEngine * engine, double size) {
-    engine->obj->fontSize = size;
-}
-
-CobbletextCustomPropertyID cobbletext_engine_get_custom_property(
-        CobbletextEngine * engine) {
-    return engine->obj->customProperty;
-}
-
-void cobbletext_engine_set_custom_property(CobbletextEngine * engine,
-        CobbletextCustomPropertyID id) {
-    engine->obj->customProperty = id;
+    engine->obj->font = text_properties->font;
+    engine->obj->fontSize = text_properties->font_size;
+    engine->obj->customProperty = text_properties->custom_property;
 }
 
 void cobbletext_engine_add_text(CobbletextEngine * engine,

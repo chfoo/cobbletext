@@ -41,6 +41,7 @@ extern "C" {
 #include "advance_info.h"
 #include "common.h"
 #include "encoding.h"
+#include "engine_properties.h"
 #include "engine.h"
 #include "font_info.h"
 #include "glyph_info.h"
@@ -48,11 +49,14 @@ extern "C" {
 #include "math_.h"
 #include "output_info.h"
 #include "script_direction.h"
+#include "text_properties.h"
 #include "tile_info.h"
 
 #ifdef COBBLETEXT_TYPEDEF_STRUCTS
     typedef struct CobbletextFontInfo CobbletextFontInfo;
     typedef struct CobbletextGlyphInfo CobbletextGlyphInfo;
+    typedef struct CobbletextTextProperties CobbletextTextProperties;
+    typedef struct CobbletextEngineProperties CobbletextEngineProperties;
     typedef struct CobbletextTileInfo CobbletextTileInfo;
     typedef struct CobbletextAdvanceInfo CobbletextAdvanceInfo;
     typedef struct CobbletextOutputInfo CobbletextOutputInfo;

@@ -6,9 +6,11 @@
 
 #include "common.h"
 #include "encoding.h"
+#include "engine_properties.h"
 #include "library.h"
 #include "macros.h"
 #include "script_direction.h"
+#include "text_properties.h"
 
 
 /**
@@ -40,159 +42,46 @@ COBBLETEXT_API
 void cobbletext_engine_delete(CobbletextEngine * engine);
 
 /**
- * Returns the line length in pixels.
- *
- * If the value is 0, no word wrapping is performed.
- */
-COBBLETEXT_API
-uint32_t cobbletext_engine_get_line_length(CobbletextEngine * engine);
-
-/**
- * Sets the line length in pixels.
- */
-COBBLETEXT_API
-void cobbletext_engine_set_line_length(CobbletextEngine * engine,
-    uint32_t length);
-
-/**
- * Returns the locale as a BCP 47 language tag.
- *
- * This value is used for assisting lower-level functions to tailor the
- * presention of the text to your application's user. It is typically
- * the GUI's locale or a document's language.
- *
- * The default is an empty string which indicates automatic detection of the
- * user's locale if possible.
- *
- * - Never null.
- * - Do not free.
- * - Owned by the engine.
- */
-COBBLETEXT_API
-const char * cobbletext_engine_get_locale(CobbletextEngine * engine);
-
-/**
- * Sets the locale as a BCP 47 language tag.
- *
- * @param locale Language tag (2 or more characters) or empty string.
- */
-COBBLETEXT_API
-void cobbletext_engine_set_locale(CobbletextEngine * engine,
-    const char * locale);
-
-/**
- * Returns the current language as a BCP 47 language tag.
- *
- * This low-level value typically controls the glyph variant selection to
- * use from a font file.
- *
- * Default value is an empty string which indicates automatic detection.
- */
-COBBLETEXT_API
-const char * cobbletext_engine_get_language(CobbletextEngine * engine);
-
-/**
- * Sets the current language as a BCP 47 language tag.
- *
- * This value will be applied to subsequent text.
- *
- * @param language Language tag (2 characters or more) or empty string.
- */
-COBBLETEXT_API
-void cobbletext_engine_set_language(CobbletextEngine * engine,
-    const char * language);
-
-/**
- * Returns the current script as a ISO 15924 string.
- *
- * This low-level value typically controls the rules for shaping glyphs.
- *
- * A ISO 15924 string is a 4 character string such as "Latn".
- *
- * Default value is an empty string which indicates automatic detection.
+ * Returns the engine properties.
  *
  * - Never null.
  * - Do not free.
  * - Owned by engine.
  */
 COBBLETEXT_API
-const char * cobbletext_engine_get_script(CobbletextEngine * engine);
-
-/**
- * Sets the current script as a ISO 15924 string.
- *
- * This value will be applied to subsequent text.
- *
- * @param string 4 character string or empty string.
- */
-COBBLETEXT_API
-void cobbletext_engine_set_script(CobbletextEngine * engine,
-    const char * script);
-
-/**
- * Returns the current script direction.
- *
- * Default value "not specified" indicates automatic detection.
- */
-COBBLETEXT_API
-CobbletextScriptDirection cobbletext_engine_get_script_direction(
+const struct CobbletextEngineProperties * cobbletext_engine_get_properties(
     CobbletextEngine * engine);
 
 /**
- * Sets the current script direction.
+ * Sets engine properties.
+ * *
+ * @param properties The properties to be applied. Fields will be copied.
+ */
+COBBLETEXT_API
+void cobbletext_engine_set_properties(CobbletextEngine * engine,
+    const struct CobbletextEngineProperties * properties);
+
+/**
+ * Returns the current text properties.
  *
- * This value will be applied to subsequent text.
+ * - Never null.
+ * - Do not free.
+ * - Owned by engine.
  */
 COBBLETEXT_API
-void cobbletext_engine_set_script_direction(CobbletextEngine * engine,
-    CobbletextScriptDirection direction);
-
-/**
- * Returns the current font face.
- */
-COBBLETEXT_API
-CobbletextFontID cobbletext_engine_get_font(CobbletextEngine * engine);
-
-/**
- * Sets the current font face.
- *
- * This value will be applied to subsequent text.
- */
-COBBLETEXT_API
-void cobbletext_engine_set_font(CobbletextEngine * engine,
-    CobbletextFontID font);
-
-/**
- * Gets the current font size in points.
- */
-COBBLETEXT_API
-double cobbletext_engine_get_font_size(CobbletextEngine * engine);
-
-/**
- * Sets the current font size in points.
- *
- * This value will be applied to subsequent text.
- */
-COBBLETEXT_API
-void cobbletext_engine_set_font_size(CobbletextEngine * engine, double size);
-
-/**
- * Gets the current user-provided custom property.
- *
- * Default value is 0.
- */
-COBBLETEXT_API
-CobbletextCustomPropertyID cobbletext_engine_get_custom_property(
+const struct CobbletextTextProperties * cobbletext_engine_get_text_properties(
     CobbletextEngine * engine);
 
 /**
- * Sets the current user-supplied custom property.
+ * Sets the current text properties.
  *
- * This value will be applied to subsequent text.
+ * The propreties will be applied to subsequent text.
+ *
+ * @param text_properties The properties to be applied. Fields will be copied.
  */
 COBBLETEXT_API
-void cobbletext_engine_set_custom_property(CobbletextEngine * engine,
-    CobbletextCustomPropertyID id);
+void cobbletext_engine_set_text_properties(CobbletextEngine * engine,
+    const struct CobbletextTextProperties * text_properties);
 
 /**
  * Append encoded bytes to the text buffer.

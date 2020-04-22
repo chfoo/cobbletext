@@ -17,26 +17,35 @@ TEST_CASE("engine getter/setter") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);
 
-    cobbletext_engine_set_line_length(engine, 200);
-    cobbletext_engine_set_locale(engine, "zz");
-    cobbletext_engine_set_custom_property(engine, 123);
-    cobbletext_engine_set_font(engine, 0);
-    cobbletext_engine_set_font_size(engine, 12);
-    cobbletext_engine_set_language(engine, "xx");
-    cobbletext_engine_set_script(engine, "xxxx");
-    cobbletext_engine_set_script_direction(engine,
-        COBBLETEXT_SCRIPT_DIRECTION_LTR);
+    CobbletextEngineProperties properties = {0};
+    properties.line_length = 200;
+    properties.locale = "zz";
+    cobbletext_engine_set_properties(engine, &properties);
 
-    CHECK( cobbletext_engine_get_line_length(engine) == 200 );
+    CobbletextTextProperties textProperties = {0};
+    textProperties.custom_property = 123;
+    textProperties.font = 0;
+    textProperties.font_size = 12;
+    textProperties.language = "xx";
+    textProperties.script = "xxxx";
+    textProperties.script_direction = COBBLETEXT_SCRIPT_DIRECTION_LTR;
+    cobbletext_engine_set_text_properties(engine, &textProperties);
 
-    CHECK_THAT( cobbletext_engine_get_locale(engine), Catch::Equals("zz") );
-    CHECK( cobbletext_engine_get_custom_property(engine) == 123);
-    CHECK( cobbletext_engine_get_font(engine) == 0);
-    CHECK( cobbletext_engine_get_font_size(engine) == 12);
-    CHECK_THAT( cobbletext_engine_get_language(engine), Catch::Equals("xx") );
-    CHECK_THAT( cobbletext_engine_get_script(engine), Catch::Equals("xxxx") );
-    CHECK( cobbletext_engine_get_script_direction(engine) ==
-        COBBLETEXT_SCRIPT_DIRECTION_LTR);
+    const CobbletextEngineProperties * properties2 =
+        cobbletext_engine_get_properties(engine);
+
+    CHECK( properties2->line_length == 200 );
+    CHECK_THAT( properties2->locale, Catch::Equals("zz") );
+
+    const CobbletextTextProperties * textProperties2 =
+        cobbletext_engine_get_text_properties(engine);
+
+    CHECK( textProperties2->custom_property == 123);
+    CHECK( textProperties2->font == 0);
+    CHECK( textProperties2->font_size == 12);
+    CHECK_THAT( textProperties2->language, Catch::Equals("xx") );
+    CHECK_THAT( textProperties2->script, Catch::Equals("xxxx") );
+    CHECK( textProperties2->script_direction == COBBLETEXT_SCRIPT_DIRECTION_LTR);
 
     cobbletext_engine_delete(engine);
     cobbletext_library_delete(library);
@@ -158,10 +167,16 @@ TEST_CASE("engine custom property") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);
 
-    cobbletext_engine_set_custom_property(engine, 123);
+    CobbletextTextProperties textProperties = {0};
+
+    textProperties.custom_property = 123;
+    cobbletext_engine_set_text_properties(engine, &textProperties);
     cobbletext_engine_add_text_utf8(engine, "a", -1);
-    cobbletext_engine_set_custom_property(engine, 456);
+
+    textProperties.custom_property = 456;
+    cobbletext_engine_set_text_properties(engine, &textProperties);
     cobbletext_engine_add_text_utf8(engine, "b", -1);
+
     cobbletext_engine_lay_out(engine);
     cobbletext_engine_prepare_advances(engine);
 
