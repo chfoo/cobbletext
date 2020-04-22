@@ -1,8 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-#include <uchar.h>
 #include <stdbool.h>
+
+#include "uchar_helper.h"
 
 #include "common.h"
 #include "encoding.h"
@@ -114,7 +115,7 @@ void cobbletext_engine_add_text_utf8(CobbletextEngine * engine,
  */
 COBBLETEXT_API
 void cobbletext_engine_add_text_utf16(CobbletextEngine * engine,
-    const char16_t * text, int32_t length);
+    const CobbletextChar16 * text, int32_t length);
 
 /**
  * Append UTF-32 code units to the text buffer.
@@ -125,7 +126,7 @@ void cobbletext_engine_add_text_utf16(CobbletextEngine * engine,
  */
 COBBLETEXT_API
 void cobbletext_engine_add_text_utf32(CobbletextEngine * engine,
-    const char32_t * text, int32_t length);
+    const CobbletextChar32 * text, int32_t length);
 
 /**
  * Append a placeholder for an object to the text buffer.

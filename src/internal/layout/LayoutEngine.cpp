@@ -138,9 +138,11 @@ void LayoutEngine::layOut() {
 
     makeAdvances(lines);
 
+    #ifdef COBBLETEXT_DEBUG
     for (const auto & advance : advances_) {
         COBBLETEXT_DEBUG_PRINT(advance);
     }
+    #endif
 }
 
 void LayoutEngine::createInternalRuns() {
