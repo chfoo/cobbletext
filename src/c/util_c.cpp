@@ -24,7 +24,7 @@ void handleException(struct CobbletextLibrary * library,
         library->errorMessage = exception->what();
     }
 
-    #if COBBLETEXT_DEBUG
+    #if defined(COBBLETEXT_DEBUG) && defined(COBBLETEXT_USE_STACK_TRACE)
     auto & exceptionRef = *exception;
     const boost::stacktrace::stacktrace * stackTrace =
         cobbletext::internal::get_error_info<cobbletext::internal::traced>(exceptionRef);

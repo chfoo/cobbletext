@@ -1,5 +1,6 @@
 set(COBBLETEXT_DEBUG false CACHE BOOL "Enable dev features such as debug printing")
 set(COBBLETEXT_ADDRESS_SANITIZER false CACHE BOOL "Add address sanitizer flags (gcc/clang)")
+set(COBBLETEXT_USE_STACK_TRACE false CACHE BOOL "Add stack traces to the library exceptions (requires boost-stacktrace, boost-exception)")
 
 file(GLOB_RECURSE COBBLETEXT_LIBRARY_SOURCES *.cpp)
 
@@ -42,11 +43,15 @@ else()
     target_compile_options(cobbletext_static PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-if(${COBBLETEXT_DEBUG})
+if(COBBLETEXT_USE_STACK_TRACE)
+    add_compile_definitions(COBBLETEXT_USE_STACK_TRACE=1)
+endif()
+
+if(COBBLETEXT_DEBUG)
     add_compile_definitions(COBBLETEXT_DEBUG=1)
 endif()
 
-if(${COBBLETEXT_ADDRESS_SANITIZER})
+if(COBBLETEXT_ADDRESS_SANITIZER)
     set(SANITIZE_FLAGS -fno-omit-frame-pointer -fsanitize=address)
     target_compile_options(cobbletext PRIVATE ${SANITIZE_FLAGS} )
     target_compile_options(cobbletext_static PRIVATE ${SANITIZE_FLAGS} )
