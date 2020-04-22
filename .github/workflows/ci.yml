@@ -56,6 +56,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -D CMAKE_BUILD_TYPE=Debug \
+            -D COBBLETEXT_BUILD_DOCS=false \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake \
             -D UTHASH_INCLUDE_PATH=$GITHUB_WORKSPACE/lib/uthash/src/uthash.h
       - run: |
@@ -68,6 +69,7 @@ jobs:
           mkdir build-release
           cd build-release
           cmake .. -D CMAKE_BUILD_TYPE=Release \
+            -D COBBLETEXT_BUILD_DOCS=false \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake
       - run: |
           cmake --build . --target cobbletext

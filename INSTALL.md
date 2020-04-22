@@ -73,7 +73,7 @@ To generate build files using CMake:
 
 For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`.
 
-If CMake can't find something, you can manually edit CMakeCache.txt. Use `cmake .. -L` to list out configurable variables.
+If CMake can't find something, you can manually edit CMakeCache.txt (or use a GUI if available). Use `cmake .. -L` to list out configurable variables. Cobbletext also provides its own variables for debugging or disabling things like documentation configs.
 
 In the same build directory, build the library either the shared or static library:
 
