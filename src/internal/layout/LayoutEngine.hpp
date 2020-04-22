@@ -9,11 +9,12 @@
 #include "internal/Context.hpp"
 #include "internal/input/TextSource.hpp"
 #include "internal/layout/InternalTextRun.hpp"
+#include "internal/layout/LineBreaker.hpp"
 #include "internal/layout/Shaper.hpp"
 #include "internal/layout/ShapeResult.hpp"
-#include "internal/layout/LineBreaker.hpp"
 #include "internal/table/BidiTable.hpp"
 #include "internal/table/ScriptTable.hpp"
+#include "TextAlignment.hpp"
 #include "TileInfo.hpp"
 
 namespace cobbletext::internal {
@@ -46,6 +47,7 @@ class LayoutEngine {
 
 public:
     uint32_t lineLength = 0;
+    TextAlignment textAlignment = TextAlignment::NotSpecified;
 
     std::vector<TileInfo> & tiles();
     std::vector<AdvanceInfo> & advances();
@@ -71,6 +73,7 @@ private:
     void registerGlyphsAndMakeTiles();
     void makeAdvances(std::vector<LineRun> & lineRuns);
     void processLineRun(const LineRun & lineRun);
+    int32_t getTextAlignmentOffset(const LineRun & lineRun);
 };
 
 }

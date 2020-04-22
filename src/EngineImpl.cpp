@@ -46,6 +46,7 @@ void Engine::Impl::layOut() {
         textSource->locale = icu::Locale::getDefault();
     }
     layoutEngine->lineLength = parent.lineLength;
+    layoutEngine->textAlignment = parent.textAlignment;
     layoutEngine->layOut();
 
     parent.outputInfo.textWidth = layoutEngine->textWidth();

@@ -20,6 +20,7 @@ TEST_CASE("engine getter/setter") {
     CobbletextEngineProperties properties = {0};
     properties.line_length = 200;
     properties.locale = "zz";
+    properties.text_alignment = COBBLETEXT_TEXT_ALIGNMENT_CENTER;
     cobbletext_engine_set_properties(engine, &properties);
 
     CobbletextTextProperties textProperties = {0};
@@ -36,6 +37,7 @@ TEST_CASE("engine getter/setter") {
 
     CHECK( properties2->line_length == 200 );
     CHECK_THAT( properties2->locale, Catch::Equals("zz") );
+    CHECK( properties2->text_alignment == COBBLETEXT_TEXT_ALIGNMENT_CENTER );
 
     const CobbletextTextProperties * textProperties2 =
         cobbletext_engine_get_text_properties(engine);

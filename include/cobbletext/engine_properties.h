@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "text_alignment.h"
+
 /**
  * Properties for controlling output parameters on a
  * `struct CobbletextEngine` instance.
@@ -31,4 +33,11 @@ struct CobbletextEngineProperties {
      * - Setter: May be null. (Null interpreted as empty string).
      */
     const char * locale;
+
+    /**
+     * Controls the alignment of text in each line.
+     *
+     * Default is not specified.
+     */
+    CobbletextTextAlignment text_alignment;
 };

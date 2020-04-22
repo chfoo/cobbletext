@@ -286,10 +286,12 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
     auto lineRunIter = lineRuns.begin();
     while (true) {
         const auto & lineRun = *lineRunIter;
+        int32_t textAlignOffset = getTextAlignmentOffset(lineRun);
 
         AdvanceInfo baselineAdjust;
         baselineAdjust.type = AdvanceType::Layout;
         baselineAdjust.textIndex = previousTextIndex;
+        baselineAdjust.advanceX = textAlignOffset;
 
         if (lineRunIter == lineRuns.begin()) {
             baselineAdjust.advanceY = lineRun.ascent;
@@ -307,7 +309,7 @@ void LayoutEngine::makeAdvances(std::vector<LineRun> & lineRuns) {
             AdvanceInfo lineBreakAdvance;
             lineBreakAdvance.type = AdvanceType::LineBreak;
             lineBreakAdvance.textIndex = previousTextIndex;
-            lineBreakAdvance.advanceX = -lineRun.totalAdvance;
+            lineBreakAdvance.advanceX = -lineRun.totalAdvance - textAlignOffset;
             advances_.push_back(lineBreakAdvance);
         } else {
 
@@ -391,6 +393,49 @@ void LayoutEngine::processLineRun(const LineRun & lineRun) {
 
     if (isRTLSegment) {
         addRTLEnd();
+    }
+}
+
+int32_t LayoutEngine::getTextAlignmentOffset(const LineRun & lineRun) {
+    if (lineRun.shapeResults.empty()) {
+        return 0;
+    }
+
+    bool isRTL = lineRun.shapeResults.front().get().run.direction
+        == HB_DIRECTION_RTL;
+    char action;
+
+    switch (textAlignment) {
+        case TextAlignment::Left:
+            action = 'L';
+            break;
+        case TextAlignment::Right:
+            action = 'R';
+            break;
+        case TextAlignment::NotSpecified:
+        case TextAlignment::Start:
+            action = isRTL ? 'R' : 'L';
+            break;
+        case TextAlignment::End:
+            action = isRTL ? 'L' : 'R';
+            break;
+        case TextAlignment::Center:
+            action = 'C';
+            break;
+        default:
+            assert(false);
+    }
+
+    switch (action) {
+        case 'L':
+            return 0;
+        case 'C':
+            return  (textWidth_ - lineRun.totalAdvance) / 2.0;
+        case 'R':
+            return textWidth_ - lineRun.totalAdvance;
+            break;
+        default:
+            assert(false);
     }
 }
 

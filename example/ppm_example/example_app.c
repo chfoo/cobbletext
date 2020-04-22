@@ -93,14 +93,26 @@ void example_app_set_text(ExampleApp * app) {
     } else {
         line_length = strtoumax(line_length_string, NULL, 0);
 
-        if (line_length) {
+        if (!line_length) {
             printf("*** Invalid line length ***\n");
+        }
+    }
+
+    char * text_alignment_string = getenv("TEXT_ALIGNMENT");
+    uint32_t text_alignment = 0;
+
+    if (text_alignment_string) {
+        text_alignment = strtoumax(text_alignment_string, NULL, 0);
+
+        if (!text_alignment) {
+            printf("*** Invalid text alignment ***\n");
         }
     }
 
     struct CobbletextEngineProperties properties = {0};
     properties.locale = "en-US";
     properties.line_length = line_length;
+    properties.text_alignment = text_alignment;
     cobbletext_engine_set_properties(app->engine, &properties);
 
     struct CobbletextTextProperties text_properties = {0};

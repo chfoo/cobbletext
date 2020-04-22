@@ -33,6 +33,8 @@ const struct CobbletextEngineProperties * cobbletext_engine_get_properties(
 
     engine->properties->line_length = engine->obj->lineLength;
     engine->properties->locale = engine->obj->locale.c_str();
+    engine->properties->text_alignment =
+        static_cast<CobbletextTextAlignment>(engine->obj->textAlignment);
 
     return engine->properties.get();
 }
@@ -44,6 +46,31 @@ void cobbletext_engine_set_properties(CobbletextEngine * engine,
     engine->obj->lineLength = properties->line_length;
     engine->obj->locale = std::string(properties->locale ?
         properties->locale : "");
+
+    cobbletext::TextAlignment textAlignmentNum;
+
+    switch (properties->text_alignment) {
+        case COBBLETEXT_TEXT_ALIGNMENT_NOT_SPECIFIED:
+        case COBBLETEXT_TEXT_ALIGNMENT_START:
+            textAlignmentNum = cobbletext::TextAlignment::Start;
+            break;
+        case COBBLETEXT_TEXT_ALIGNMENT_END:
+            textAlignmentNum = cobbletext::TextAlignment::End;
+            break;
+        case COBBLETEXT_TEXT_ALIGNMENT_LEFT:
+            textAlignmentNum = cobbletext::TextAlignment::Left;
+            break;
+        case COBBLETEXT_TEXT_ALIGNMENT_RIGHT:
+            textAlignmentNum = cobbletext::TextAlignment::Right;
+            break;
+        case COBBLETEXT_TEXT_ALIGNMENT_CENTER:
+            textAlignmentNum = cobbletext::TextAlignment::Center;
+            break;
+        default:
+            cobbletext::internal::Debug::abort("unknown text alignment");
+    }
+
+    engine->obj->textAlignment = textAlignmentNum;
 }
 
 const struct CobbletextTextProperties * cobbletext_engine_get_text_properties(

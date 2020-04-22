@@ -13,6 +13,7 @@
 #include "OutputInfo.hpp"
 #include "ScriptDirection.hpp"
 #include "TileInfo.hpp"
+#include "TextAlignment.hpp"
 
 namespace cobbletext {
 
@@ -21,6 +22,7 @@ class COBBLETEXT_API Engine {
 public:
     uint32_t lineLength = 0;
     std::string locale;
+    TextAlignment textAlignment = TextAlignment::NotSpecified;
     std::string language;
     std::string script;
     ScriptDirection scriptDirection = ScriptDirection::NotSpecified;
