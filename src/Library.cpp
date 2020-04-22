@@ -13,16 +13,23 @@
 
 namespace cobbletext {
 
-const int32_t Library::VERSION_MAJOR = COBBLETEXT_VERSION_MAJOR;
+int32_t Library::versionMajor() {
+    return COBBLETEXT_VERSION_MAJOR;
+}
 
-const int32_t Library::VERSION_MINOR = COBBLETEXT_VERSION_MINOR;
+int32_t Library::versionMinor() {
+    return COBBLETEXT_VERSION_MINOR;
+}
 
-const int32_t Library::VERSION_PATCH = COBBLETEXT_VERSION_PATCH;
+int32_t Library::versionPatch() {
+    return COBBLETEXT_VERSION_PATCH;
+}
 
-const std::string Library::VERSION =
-    std::to_string(Library::VERSION_MAJOR) + "." +
-    std::to_string(Library::VERSION_MINOR) + "." +
-    std::to_string(Library::VERSION_PATCH);
+std::string Library::version() {
+    return std::to_string(COBBLETEXT_VERSION_MAJOR) + "." +
+        std::to_string(COBBLETEXT_VERSION_MINOR) + "." +
+        std::to_string(COBBLETEXT_VERSION_PATCH);
+}
 
 Library::Library() :
     impl(std::make_unique<Impl>()) {}

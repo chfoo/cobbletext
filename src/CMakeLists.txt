@@ -4,8 +4,11 @@ set(COBBLETEXT_USE_STACK_TRACE false CACHE BOOL "Add stack traces to the library
 
 file(GLOB_RECURSE COBBLETEXT_LIBRARY_SOURCES *.cpp)
 
-add_library(cobbletext SHARED ${COBBLETEXT_LIBRARY_SOURCES} "Resource.cpp" )
-add_library(cobbletext_static STATIC ${COBBLETEXT_LIBRARY_SOURCES} "Resource.cpp" )
+if(COBBLETEXT_STATIC)
+    add_library(cobbletext STATIC ${COBBLETEXT_LIBRARY_SOURCES} "Resource.cpp" )
+else()
+    add_library(cobbletext SHARED ${COBBLETEXT_LIBRARY_SOURCES} "Resource.cpp" )
+endif()
 
 configure_file(Version.h.in "${CMAKE_CURRENT_BINARY_DIR}/Version.h")
 
@@ -28,19 +31,13 @@ set(COBBLETEXT_LIBRARY_ALL_INCLUDES
 )
 
 target_include_directories(cobbletext PRIVATE ${COBBLETEXT_LIBRARY_ALL_INCLUDES})
-target_include_directories(cobbletext_static PRIVATE ${COBBLETEXT_LIBRARY_ALL_INCLUDES})
-
 set_target_properties(cobbletext PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(cobbletext_static PROPERTIES VERSION ${PROJECT_VERSION})
-
 set_target_properties(cobbletext PROPERTIES SOVERSION 0)
 
 if(MSVC)
     target_compile_options(cobbletext PRIVATE /W4)
-    target_compile_options(cobbletext_static PRIVATE /W4)
 else()
     target_compile_options(cobbletext PRIVATE -Wall -Wextra -Wpedantic)
-    target_compile_options(cobbletext_static PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 if(COBBLETEXT_USE_STACK_TRACE)
@@ -54,10 +51,7 @@ endif()
 if(COBBLETEXT_ADDRESS_SANITIZER)
     set(SANITIZE_FLAGS -fno-omit-frame-pointer -fsanitize=address)
     target_compile_options(cobbletext PRIVATE ${SANITIZE_FLAGS} )
-    target_compile_options(cobbletext_static PRIVATE ${SANITIZE_FLAGS} )
     target_link_options(cobbletext PRIVATE ${SANITIZE_FLAGS} )
-    target_link_options(cobbletext_static PRIVATE ${SANITIZE_FLAGS} )
 endif()
 
 target_link_libraries(cobbletext PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})
-target_link_libraries(cobbletext_static PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})

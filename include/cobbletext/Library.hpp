@@ -12,12 +12,12 @@
 namespace cobbletext {
 
 
-class COBBLETEXT_API Library {
+class Library {
 public:
-    static const int32_t VERSION_MAJOR;
-    static const int32_t VERSION_MINOR;
-    static const int32_t VERSION_PATCH;
-    static const std::string VERSION;
+    static int32_t versionMajor();
+    static int32_t versionMinor();
+    static int32_t versionPatch();
+    static std::string version();
 
     friend class Engine;
 

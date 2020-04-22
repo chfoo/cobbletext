@@ -3,17 +3,17 @@
 #include "Library.hpp"
 
 int32_t cobbletext_get_version_major() {
-    return cobbletext::Library::VERSION_MAJOR;
+    return cobbletext::Library::versionMajor();
 }
 
 int32_t cobbletext_get_version_minor() {
-    return cobbletext::Library::VERSION_MINOR;
+    return cobbletext::Library::versionMinor();
 }
 
 int32_t cobbletext_get_version_patch() {
-    return cobbletext::Library::VERSION_PATCH;
+    return cobbletext::Library::versionPatch();
 }
 
 const char * cobbletext_get_version() {
-    return cobbletext::Library::VERSION.c_str();
+    return cobbletext::Library::version().c_str();
 }

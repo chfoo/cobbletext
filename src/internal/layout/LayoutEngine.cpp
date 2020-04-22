@@ -202,6 +202,8 @@ void LayoutEngine::processTextRun(const TextRun & textRun) {
 
             shouldMakeNewRun = isScriptDifferent || isDirectionDifferent;
         } else {
+            codeUnitDirection = ScriptDirection::NotSpecified;
+            codeUnitScript = HB_SCRIPT_UNKNOWN;
             shouldMakeNewRun = true;
         }
 

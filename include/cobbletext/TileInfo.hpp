@@ -7,7 +7,7 @@
 
 namespace cobbletext {
 
-class COBBLETEXT_API TileInfo {
+class TileInfo {
 public:
     GlyphID glyphID = 0;
     uint32_t atlasX = 0;

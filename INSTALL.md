@@ -71,14 +71,14 @@ To generate build files using CMake:
 2. `cd build`
 3. `cmake ..`
 
-For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`.
+For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`. To let the toolchain file know which triplet you want to use, use something like `-D VCPKG_TARGET_TRIPLET=x64-windows`.
 
 If CMake can't find something, you can manually edit CMakeCache.txt (or use a GUI if available). Use `cmake .. -L` to list out configurable variables. Cobbletext also provides its own variables for debugging or disabling things like documentation configs.
 
 In the same build directory, build the library either the shared or static library:
 
     cmake --build . --target cobbletext
-    cmake --build . --target cobbletext_static
+    cmake --build . --target cobbletext -D COBBLETEXT_STATIC=true
 
 Binaries are stored in the `build/bin` directory.
 
@@ -86,12 +86,10 @@ Alternatively, you can run the generated build files yourself as described below
 
 ### Makefile
 
-* Running `make cobbletext` will build a shared/dynamic library.
-* Running `make cobbletext_static` will build a static library.
+* Running `make cobbletext` will build the library.
 
 ### Visual Studio
 
 Ensure the C++ workload is installed. See Tools -> Get tools and features.
 
-* Project `cobbletext` is the dynamic library.
-* Project `cobbletext_static` is the static library.
+* Project `cobbletext` is the library.

@@ -7,6 +7,7 @@ project(cobbletext VERSION 0.0.0 DESCRIPTION "Complex text layout and rendering 
 set(COBBLETEXT_BUILD_EXAMPLES true CACHE BOOL "Whether to include example programs into the build config")
 set(COBBLETEXT_BUILD_TESTS true CACHE BOOL "Whether to include tests into the build config")
 set(COBBLETEXT_BUILD_DOCS true CACHE BOOL "Whether to include documentation to the build config")
+set(COBBLETEXT_STATIC false CACHE BOOL "Enable to build the library as a static library. Default is dynamic library.")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -16,6 +17,10 @@ CHECK_INCLUDE_FILE("uchar.h" HAS_UCHAR_H)
 
 if(NOT HAS_UCHAR_H)
     add_compile_definitions(COBBLETEXT_NO_UCHAR_H=1)
+endif()
+
+if(COBBLETEXT_STATIC)
+    add_compile_definitions(COBBLETEXT_STATIC=1)
 endif()
 
 find_package(Boost REQUIRED)

@@ -15,10 +15,11 @@ target_include_directories(test_main PRIVATE
 target_link_libraries(test_main PRIVATE cobbletext
     ${ICU_LIBRARIES})
 
-if(NOT WIN32)
-    target_link_libraries(test_main PRIVATE dl)
+if(NOT COBBLETEXT_STATIC)
+    if(NOT WIN32)
+        target_link_libraries(test_main PRIVATE dl)
+    endif()
 endif()
-
 
 add_test(NAME main COMMAND test_main)
 set_property(TEST main APPEND PROPERTY ENVIRONMENT

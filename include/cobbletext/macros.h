@@ -3,7 +3,7 @@
 /**
  * @private
  */
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(COBBLETEXT_STATIC)
     #ifdef COBBLETEXT_EXPORTS
         #define COBBLETEXT_API __declspec(dllexport)
     #else

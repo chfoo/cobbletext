@@ -9,18 +9,24 @@ jobs:
       matrix:
         target: [windows-x86, windows-x64, ubuntu, macos]
         include:
+          # We're using static linking on Windows for the tests
+          # because it uses C++ API which is not properly supported yet
           - target: windows-x86
             vm: windows-latest
             triplet: x86-windows
+            test_link_static: "true"
           - target: windows-x64
             vm: windows-latest
             triplet: x64-windows
+            test_link_static: "true"
           - target: ubuntu
             vm: ubuntu-latest
-            triplet: x64-linux
+            triplet: x64-linux-dynamic
+            test_link_static: "false"
           - target: macos
             vm: macos-latest
-            triplet: x64-osx
+            triplet: x64-osx-dynamic
+            test_link_static: "false"
     runs-on: ${{ matrix.vm }}
     defaults:
       run:
@@ -31,6 +37,8 @@ jobs:
       - uses: actions/checkout@v2.1.0
         with:
           submodules: true
+      # Install our C/C++ library dependencies
+      # and test support libraries:
       - uses: actions/cache@v1
         id: cache-vcpkg
         with:
@@ -40,6 +48,7 @@ jobs:
           mkdir -p ./vcpkg
           cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
           ./vcpkg/vcpkg install \
+            --overlay-triplets misc/vcpkg_custom_triplets \
             freetype[bzip2,png] harfbuzz[ucdn] icu ms-gsl catch2 \
             boost-container-hash
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -54,12 +63,14 @@ jobs:
           cd uthash
           git checkout 1124f0a70b0714886402c3c0df03d037e3c4d57a
         if: steps.cache-uthash.outputs.cache-hit != 'true'
+      # Build in debug mode for testing:
       - run: |
           mkdir build
           cd build
           cmake .. -D CMAKE_BUILD_TYPE=Debug \
             -D CMAKE_VERBOSE_MAKEFILE=true \
             -D COBBLETEXT_BUILD_DOCS=false \
+            -D COBBLETEXT_STATIC=${{ matrix.test_link_static }} \
             -D VCPKG_TARGET_TRIPLET=$VCPKG_DEFAULT_TRIPLET \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake \
             -D UTHASH_INCLUDE_PATH=$GITHUB_WORKSPACE/lib/uthash/src/uthash.h
@@ -69,6 +80,7 @@ jobs:
         working-directory: build/
       - run: ctest --verbose
         working-directory: build/
+      # Now build dynamic library:
       - run: |
           mkdir build-release
           cd build-release
@@ -86,6 +98,7 @@ jobs:
           path: build-release/bin/
       - run: >-
           ./vcpkg/vcpkg export
+            --overlay-triplets misc/vcpkg_custom_triplets \
             --raw --output build-release/bin-dependencies/
             freetype[bzip2,png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1

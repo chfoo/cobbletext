@@ -6,7 +6,7 @@
 
 namespace cobbletext {
 
-class COBBLETEXT_API Math {
+class Math {
 public:
     static uint32_t alpha_blend_over_argb(uint32_t background,
         uint32_t foreground);

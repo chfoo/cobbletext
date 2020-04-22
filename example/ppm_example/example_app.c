@@ -68,7 +68,7 @@ void example_app_load_font(ExampleApp * app) {
         "Please run the program with an environment variable "
         "name 'FONT_PATH' and value containing a file path to a font file.\n"
         "Use export FONT_PATH=/usr/share/fonts/your_path_here\n"
-        "or $env:PATH = $Env:WinDir\\Fonts\\your_filename_here\n"
+        "or $env:FONT_PATH = $Env:WinDir\\Fonts\\your_filename_here\n"
         "set to a session enviornment variable.\n"
         "");
 
