@@ -8,6 +8,7 @@ set(COBBLETEXT_BUILD_DOCS true CACHE BOOL "Whether to include documentation to t
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(C_STANDARD 11)
 
 find_package(Boost REQUIRED)
 find_package(Freetype REQUIRED)

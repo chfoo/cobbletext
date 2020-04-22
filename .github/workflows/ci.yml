@@ -25,6 +25,8 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
       - uses: actions/checkout@v2.1.0
         with:
@@ -37,7 +39,7 @@ jobs:
       - run: |
           mkdir -p ./vcpkg
           cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
-          ./vcpkg/vcpkg install --triplet ${{ matrix.triplet }} \
+          ./vcpkg/vcpkg install \
             freetype[bzip2,png] harfbuzz[ucdn] icu ms-gsl catch2 \
             boost-stacktrace boost-exception boost-container-hash
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -80,7 +82,7 @@ jobs:
           name: bin-${{ matrix.triplet }}
           path: build-release/bin/
       - run: >-
-          ./vcpkg/vcpkg export --triplet ${{ matrix.triplet }}
+          ./vcpkg/vcpkg export
             --raw --output build-release/bin-dependencies/
             freetype[bzip2,png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1

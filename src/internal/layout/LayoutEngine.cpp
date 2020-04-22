@@ -77,23 +77,29 @@ void LayoutEngine::layOut() {
     }
     textHeight_ = 0;
 
+    #ifdef COBBLETEXT_DEBUG
     for (const auto & run : textSource->runs) {
         COBBLETEXT_DEBUG_PRINT(run);
     }
+    #endif
 
     bidiTable.analyze(defaultDirection);
     createInternalRuns();
 
+    #ifdef COBBLETEXT_DEBUG
     for (const auto & run : internalRuns) {
         COBBLETEXT_DEBUG_PRINT(run);
     }
+    #endif
 
     shapeResults = std::make_shared<std::vector<ShapeResult>>(
         shaper.shapeRuns(internalRuns));
 
+    #ifdef COBBLETEXT_DEBUG
     for (const auto & shapeResult : *shapeResults) {
         COBBLETEXT_DEBUG_PRINT(shapeResult);
     }
+    #endif
 
     registerGlyphsAndMakeTiles();
 

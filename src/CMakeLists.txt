@@ -35,13 +35,12 @@ set_target_properties(cobbletext_static PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(cobbletext PROPERTIES SOVERSION 0)
 
 if(MSVC)
-    target_compile_options(cobbletext PRIVATE /Wall)
-    target_compile_options(cobbletext_static PRIVATE /Wall)
+    target_compile_options(cobbletext PRIVATE /W4)
+    target_compile_options(cobbletext_static PRIVATE /W4)
 else()
-    target_compile_options(cobbletext PRIVATE -Wall)
-    target_compile_options(cobbletext_static PRIVATE -Wall)
+    target_compile_options(cobbletext PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(cobbletext_static PRIVATE -Wall -Wextra -Wpedantic)
 endif()
-
 
 if(${COBBLETEXT_DEBUG})
     add_compile_definitions(COBBLETEXT_DEBUG=1)
