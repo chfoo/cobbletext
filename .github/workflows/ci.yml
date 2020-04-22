@@ -58,7 +58,9 @@ jobs:
           cmake .. -D CMAKE_BUILD_TYPE=Debug \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake \
             -D UTHASH_INCLUDE_PATH=$GITHUB_WORKSPACE/lib/uthash/src/uthash.h
-      - run: cmake --build .
+      - run: |
+          cmake --build . --target test_main
+          cmake --build . --target ppm_example
         working-directory: build/
       - run: ctest --verbose
         working-directory: build/
