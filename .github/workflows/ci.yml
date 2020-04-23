@@ -17,24 +17,28 @@ jobs:
             cmake_platform_flag: "-A Win32"
             test_link_static: "true"
             test_build_type: Debug
+            release_build_flag: "--config Release"
           - target: windows-x64
             vm: windows-latest
             triplet: x64-windows
             cmake_platform_flag: "-A x64"
             test_link_static: "true"
             test_build_type: Debug
+            release_build_flag: "--config Release"
           - target: ubuntu
             vm: ubuntu-latest
-            triplet: x64-linux-dynamic-release
+            triplet: x64-linux-dynamic-release # freetype won't link bz2 correctly with vcpkg debug
             cmake_platform_flag: ""
             test_link_static: "false"
-            test_build_type: Release # freetype won't link bz2 correctly
+            test_build_type: Release # can't use debug because vcpkg toolchain links debug libs
+            release_build_flag: ""
           - target: macos
             vm: macos-latest
-            triplet: x64-osx-dynamic
+            triplet: x64-osx-dynamic-release # libicudata doesn't get built or link properly with vcpkg debug
             cmake_platform_flag: ""
             test_link_static: "false"
-            test_build_type: Debug
+            test_build_type: Release # same reason above
+            release_build_flag: ""
     runs-on: ${{ matrix.vm }}
     defaults:
       run:
@@ -99,19 +103,23 @@ jobs:
             -D VCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake
       - run: |
-          cmake --build . --target cobbletext
+          cmake --build . --target cobbletext ${{ matrix.release_build_flag }}
         working-directory: build-release/
       - uses: actions/upload-artifact@v1
         with:
           name: bin-${{ matrix.triplet }}
           path: build-release/bin/
       - run: |
+          rm -f ./vcpkg/vcpkg-export* \
           ./vcpkg/vcpkg export \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
-            --raw --output=exports/bin-dependencies/ \
+            --7zip \
             freetype[png] harfbuzz[ucdn] icu
+      -run: |
+          mkdir -p build-release/bin-dependencies/ \
+          mv ./vcpkg/vcpkg-export* build-release/bin-dependencies/
       - uses: actions/upload-artifact@v1
         with:
           name: bin-dependencies-${{ matrix.triplet }}
-          path: vcpkg/exports/bin-dependencies/
+          path: build-release/bin-dependencies/
