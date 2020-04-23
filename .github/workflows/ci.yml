@@ -109,9 +109,9 @@ jobs:
           ./vcpkg/vcpkg export \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
-            --raw --output=build-release/bin-dependencies/ \
+            --raw --output=exports/bin-dependencies/ \
             freetype[png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1
         with:
           name: bin-dependencies-${{ matrix.triplet }}
-          path: build-release/bin-dependencies/
+          path: vcpkg/exports/bin-dependencies/
