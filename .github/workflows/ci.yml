@@ -13,22 +13,22 @@ jobs:
           # because it uses C++ API which is not properly supported yet
           - target: windows-x86
             vm: windows-latest
-            triplet: x86-windows
+            triplet: x86-windows-dynamic-release
             cmake_platform_flag: "-A Win32"
             test_link_static: "true"
           - target: windows-x64
             vm: windows-latest
-            triplet: x64-windows
+            triplet: x64-windows-dynamic-release
             cmake_platform_flag: "-A x64"
             test_link_static: "true"
           - target: ubuntu
             vm: ubuntu-latest
-            triplet: x64-linux-dynamic
+            triplet: x64-linux-dynamic-release
             cmake_platform_flag: ""
             test_link_static: "false"
           - target: macos
             vm: macos-latest
-            triplet: x64-osx-dynamic
+            triplet: x64-osx-dynamic-release
             cmake_platform_flag: ""
             test_link_static: "false"
     runs-on: ${{ matrix.vm }}
@@ -91,6 +91,8 @@ jobs:
           cmake .. -D CMAKE_BUILD_TYPE=Release ${{ matrix.cmake_platform_flag }} \
             -D CMAKE_VERBOSE_MAKEFILE=true \
             -D COBBLETEXT_BUILD_DOCS=false \
+            -D COBBLETEXT_BUILD_TESTS=false \
+            -D COBBLETEXT_BUILD_EXAMPLES=false \
             -D VCPKG_TARGET_TRIPLET=$VCPKG_DEFAULT_TRIPLET \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake
       - run: |

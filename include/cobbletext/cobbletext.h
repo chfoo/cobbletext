@@ -46,11 +46,13 @@ extern "C" {
 #include "font_info.h"
 #include "glyph_info.h"
 #include "library.h"
+#include "macros.h"
 #include "math_.h"
 #include "output_info.h"
 #include "script_direction.h"
 #include "text_properties.h"
 #include "tile_info.h"
+#include "uchar_helper.h"
 
 #ifdef COBBLETEXT_TYPEDEF_STRUCTS
     typedef struct CobbletextFontInfo CobbletextFontInfo;
