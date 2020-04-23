@@ -32,6 +32,7 @@ typedef struct CobbletextEngine CobbletextEngine;
  *
  * - Can error.
  * - Free only using library.
+ * - Null on error.
  */
 COBBLETEXT_API
 CobbletextEngine * cobbletext_engine_new(CobbletextLibrary * library);
@@ -190,6 +191,8 @@ bool cobbletext_engine_pack_tiles(CobbletextEngine * engine, uint32_t width,
  *
  * If you have rasterized the glyphs, use
  * `cobbletext_library_get_glyph_info()` to retreive the images.
+ *
+ * - Can error.
  */
 COBBLETEXT_API
 void cobbletext_engine_prepare_tiles(CobbletextEngine * engine);
@@ -216,6 +219,8 @@ const struct CobbletextTileInfo ** cobbletext_engine_get_tiles(
 
 /**
  * Prepare an array of advances required for positioning glyphs.
+ *
+ * - Can error
  */
 COBBLETEXT_API
 void cobbletext_engine_prepare_advances(CobbletextEngine * engine);

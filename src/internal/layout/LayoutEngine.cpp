@@ -413,7 +413,7 @@ int32_t LayoutEngine::getTextAlignmentOffset(const LineRun & lineRun) {
 
     bool isRTL = lineRun.shapeResults.front().get().run.direction
         == HB_DIRECTION_RTL;
-    char action;
+    char action = '?';
 
     switch (textAlignment) {
         case TextAlignment::Left:
@@ -433,7 +433,7 @@ int32_t LayoutEngine::getTextAlignmentOffset(const LineRun & lineRun) {
             action = 'C';
             break;
         default:
-            assert(false);
+            Debug::abort("missed a case in TextAlignment");
     }
 
     switch (action) {
@@ -445,7 +445,7 @@ int32_t LayoutEngine::getTextAlignmentOffset(const LineRun & lineRun) {
             return textWidth_ - lineRun.totalAdvance;
             break;
         default:
-            assert(false);
+            Debug::abort("missed a case in action");
     }
 }
 

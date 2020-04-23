@@ -5,14 +5,16 @@
 #include "Exception.hpp"
 
 CobbletextLibrary * cobbletext_library_new() {
-    CobbletextLibrary * handle;
+    CobbletextLibrary * handle = nullptr;
 
     try {
         handle = new CobbletextLibrary();
         handle->obj = std::make_shared<cobbletext::Library>();
         cobbletext::c::handleSuccess(handle);
     } catch (std::exception & exception) {
-        cobbletext::c::handleException(handle, &exception);
+        if (handle) {
+            cobbletext::c::handleException(handle, &exception);
+        }
     }
 
     return handle;

@@ -22,6 +22,7 @@ typedef struct CobbletextLibrary CobbletextLibrary;
  *
  * - Can error.
  * - Free only using library.
+ * - Null on handle allocation error. Otherwise, not null.
  */
 COBBLETEXT_API
 CobbletextLibrary * cobbletext_library_new();

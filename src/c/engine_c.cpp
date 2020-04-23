@@ -1,5 +1,7 @@
 #include "c/engine_c.hpp"
 
+#include <assert.h>
+
 #include "c/util_c.hpp"
 #include "c/library_c.hpp"
 #include "internal/Debug.hpp"
@@ -10,8 +12,16 @@ CobbletextEngine * cobbletext_engine_new(CobbletextLibrary * library) {
     try {
         handle = new CobbletextEngine();
         cobbletext::c::handleSuccess(library);
+
         handle->obj = std::make_unique<cobbletext::Engine>(library->obj);
         handle->library = library;
+
+        handle->properties =
+            std::make_unique<struct CobbletextEngineProperties>();
+        handle->textProperties =
+            std::make_unique<struct CobbletextTextProperties>();
+        handle->outputInfo = std::make_unique<struct CobbletextOutputInfo>();
+
     } catch (std::exception & exception) {
         cobbletext::c::handleException(library, &exception);
         return nullptr;
@@ -26,10 +36,7 @@ void cobbletext_engine_delete(CobbletextEngine * engine) {
 
 const struct CobbletextEngineProperties * cobbletext_engine_get_properties(
         CobbletextEngine * engine) {
-    if (!engine->properties) {
-        auto properties = new struct CobbletextEngineProperties;
-        engine->properties.reset(properties);
-    }
+    assert(engine->properties);
 
     engine->properties->line_length = engine->obj->lineLength;
     engine->properties->locale = engine->obj->locale.c_str();
@@ -75,10 +82,7 @@ void cobbletext_engine_set_properties(CobbletextEngine * engine,
 
 const struct CobbletextTextProperties * cobbletext_engine_get_text_properties(
         CobbletextEngine * engine) {
-    if (!engine->textProperties) {
-        auto textProperties = new struct CobbletextTextProperties;
-        engine->textProperties.reset(textProperties);
-    }
+    assert(engine->textProperties);
 
     engine->textProperties->language = engine->obj->language.c_str();
     engine->textProperties->script = engine->obj->script.c_str();
@@ -248,14 +252,12 @@ const struct CobbletextAdvanceInfo ** cobbletext_engine_get_advances(
 const struct CobbletextOutputInfo * cobbletext_engine_get_output_info(
         CobbletextEngine * engine) {
 
-    struct CobbletextOutputInfo * info = new struct CobbletextOutputInfo();
+    assert(engine->outputInfo);
 
-    engine->outputInfo.reset(info);
+    engine->outputInfo->text_width = engine->obj->outputInfo.textWidth;
+    engine->outputInfo->text_height = engine->obj->outputInfo.textHeight;
 
-    info->text_width = engine->obj->outputInfo.textWidth;
-    info->text_height = engine->obj->outputInfo.textHeight;
-
-    return info;
+    return engine->outputInfo.get();
 }
 
 

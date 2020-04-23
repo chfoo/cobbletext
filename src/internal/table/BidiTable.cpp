@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "internal/ICUError.hpp"
+#include "internal/Debug.hpp"
 
 namespace cobbletext::internal {
 
@@ -40,6 +41,8 @@ void BidiTable::analyze(ScriptDirection direction) {
         case ScriptDirection::RTL:
             paragraphLevel = UBIDI_DEFAULT_RTL;
             break;
+        default:
+            Debug::abort("unknown script direction");
     }
 
     ICUError errorCode;
@@ -55,8 +58,6 @@ bool BidiTable::isMixed() {
 }
 
 ScriptDirection BidiTable::getDirection(int32_t codeUnitIndex) {
-    std::vector<ScriptDirection> directions;
-
     UBiDiLevel level = ubidi_getLevelAt(bidiStruct.get(), codeUnitIndex);
 
     if (level % 2 == 0) {

@@ -73,7 +73,7 @@ jobs:
             -D COBBLETEXT_STATIC=${{ matrix.test_link_static }} \
             -D VCPKG_TARGET_TRIPLET=$VCPKG_DEFAULT_TRIPLET \
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -D UTHASH_INCLUDE_PATH=$GITHUB_WORKSPACE/lib/uthash/src/uthash.h
+            -D UTHASH_INCLUDE_PATH=$GITHUB_WORKSPACE/lib/uthash/src/
       - run: |
           cmake --build . --target test_main
           cmake --build . --target ppm_example

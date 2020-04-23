@@ -18,7 +18,7 @@ struct CobbletextEngine {
     std::vector<std::unique_ptr<const struct CobbletextAdvanceInfo>> advances;
     std::unique_ptr<const struct CobbletextTileInfo *[]> tilesPointer;
     std::unique_ptr<const struct CobbletextAdvanceInfo *[]> advancesPointer;
-    std::unique_ptr<const struct CobbletextOutputInfo> outputInfo;
+    std::unique_ptr<struct CobbletextOutputInfo> outputInfo;
     bool tilesPrepared;
     bool advancesPrepared;
 };
