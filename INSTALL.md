@@ -28,7 +28,7 @@ Optional for examples and tests:
 
 Install [vcpkg](https://github.com/microsoft/vcpkg), then use the command to install all the needed dependencies:
 
-    ./vcpkg install freetype[bzip2,png] harfbuzz[ucdn] icu ms-gsl boost-container-hash
+    ./vcpkg install freetype[png] harfbuzz[ucdn] icu ms-gsl boost-container-hash
 
 To specify architecture, specify the triplet using `--triplet`, for example, `x86-windows`.
 

@@ -27,7 +27,13 @@ LibraryError FreeType::makeError(FT_Error errorCode) {
 #if FREETYPE_MAJOR * 100 + FREETYPE_MINOR < 210
     return LibraryError("freetype error " + std::to_string(errorCode), errorCode);
 #else
-    return LibraryError(FT_Error_String(errorCode), errorCode);
+    auto message = FT_Error_String(errorCode);
+
+    if (message) {
+        return LibraryError(FT_Error_String(errorCode), errorCode);
+    } else {
+        return LibraryError("freetype error " + std::to_string(errorCode), errorCode);
+    }
 #endif
 }
 

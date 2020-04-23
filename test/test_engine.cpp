@@ -113,12 +113,12 @@ TEST_CASE("engine text") {
     }
 
     SECTION("add text 16") {
-        char16_t text[] = {0xD83D, 0xDE00, 0};
+        CobbletextChar16 text[] = {0xD83D, 0xDE00, 0};
         cobbletext_engine_add_text_utf16(engine, text, -1);
     }
 
     SECTION("add text 32") {
-        char32_t text[] = {0x1F600, 0};
+        CobbletextChar32 text[] = {0x1F600, 0};
         cobbletext_engine_add_text_utf32(engine, text, -1);
     }
 

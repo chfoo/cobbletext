@@ -14,18 +14,22 @@ jobs:
           - target: windows-x86
             vm: windows-latest
             triplet: x86-windows
+            cmake_platform_flag: "-A Win32"
             test_link_static: "true"
           - target: windows-x64
             vm: windows-latest
             triplet: x64-windows
+            cmake_platform_flag: "-A x64"
             test_link_static: "true"
           - target: ubuntu
             vm: ubuntu-latest
             triplet: x64-linux-dynamic
+            cmake_platform_flag: ""
             test_link_static: "false"
           - target: macos
             vm: macos-latest
             triplet: x64-osx-dynamic
+            cmake_platform_flag: ""
             test_link_static: "false"
     runs-on: ${{ matrix.vm }}
     defaults:
@@ -49,7 +53,7 @@ jobs:
           cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
           ./vcpkg/vcpkg install \
             --overlay-triplets=misc/vcpkg_custom_triplets \
-            freetype[bzip2,png] harfbuzz[ucdn] icu ms-gsl catch2 \
+            freetype[png] harfbuzz[ucdn] icu ms-gsl catch2 \
             boost-container-hash
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       - uses: actions/cache@v1
@@ -67,7 +71,7 @@ jobs:
       - run: |
           mkdir build
           cd build
-          cmake .. -D CMAKE_BUILD_TYPE=Debug \
+          cmake .. -D CMAKE_BUILD_TYPE=Debug ${{ matrix.cmake_platform_flag }} \
             -D CMAKE_VERBOSE_MAKEFILE=true \
             -D COBBLETEXT_BUILD_DOCS=false \
             -D COBBLETEXT_STATIC=${{ matrix.test_link_static }} \
@@ -78,13 +82,13 @@ jobs:
           cmake --build . --target test_main
           cmake --build . --target ppm_example
         working-directory: build/
-      - run: ctest --verbose
+      - run: ctest --verbose -C Debug
         working-directory: build/
       # Now build dynamic library:
       - run: |
           mkdir build-release
           cd build-release
-          cmake .. -D CMAKE_BUILD_TYPE=Release \
+          cmake .. -D CMAKE_BUILD_TYPE=Release ${{ matrix.cmake_platform_flag }} \
             -D CMAKE_VERBOSE_MAKEFILE=true \
             -D COBBLETEXT_BUILD_DOCS=false \
             -D VCPKG_TARGET_TRIPLET=$VCPKG_DEFAULT_TRIPLET \
@@ -100,7 +104,7 @@ jobs:
           ./vcpkg/vcpkg export
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --raw --output=build-release/bin-dependencies/
-            freetype[bzip2,png] harfbuzz[ucdn] icu
+            freetype[png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1
         with:
           name: bin-dependencies-${{ matrix.triplet }}
