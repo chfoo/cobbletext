@@ -110,15 +110,6 @@ GlyphInfo GlyphTable::getGlyphInfo(GlyphID glyphID) {
     return glyphInfo;
 }
 
-void GlyphTable::clearRasterCache() {
-    for (auto & item : glyphs) {
-        item.second.image.clear();
-        item.second.imageWidth = 0;
-        item.second.imageHeight = 0;
-        item.second.hasImage = false;
-    }
-}
-
 GlyphID GlyphTable::getFreeID() {
     GlyphID id = idCounter;
 
@@ -130,5 +121,10 @@ GlyphID GlyphTable::getFreeID() {
     return id;
 }
 
+void GlyphTable::clear() {
+    idCounter = 1;
+    idMap.clear();
+    glyphs.clear();
+}
 
 }

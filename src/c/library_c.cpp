@@ -132,6 +132,11 @@ CobbletextFontID cobbletext_library_get_font_alternative(
     return library->obj->getFontAlternative(font_id);
 }
 
+void cobbletext_library_clear_glyphs(CobbletextLibrary * library) {
+    library->obj->clearGlyphs();
+}
+
+
 namespace cobbletext::c {
 
 }

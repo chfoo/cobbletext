@@ -37,7 +37,7 @@ public:
 
     GlyphInfo getGlyphInfo(GlyphID glyphID);
 
-    void clearRasterCache();
+    void clear();
 
 private:
     GlyphID getFreeID();

@@ -138,3 +138,18 @@ const struct CobbletextFontInfo * cobbletext_library_get_font_info(
 COBBLETEXT_API
 const struct CobbletextGlyphInfo * cobbletext_library_get_glyph_info(
     CobbletextLibrary * library, CobbletextFontID glyph);
+
+/**
+ * Clear and reset any glyph information and state.
+ *
+ * The library context caches glyphs until the library context is deleted.
+ * This function can be called to reduce memory usage especially if your
+ * text sources are from user generated content.
+ *
+ * All registered glyphs and images will be removed and the
+ * unique glyph ID assignment counter will be reset. This means that
+ * glyph IDs will be reassigned and no longer unique unless you clear
+ * glyph ID references in your application.
+ */
+COBBLETEXT_API
+void cobbletext_library_clear_glyphs(CobbletextLibrary * library);

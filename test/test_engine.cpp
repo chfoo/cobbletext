@@ -226,6 +226,35 @@ TEST_CASE("engine tile validity") {
     cobbletext_library_delete(library);
 }
 
+TEST_CASE("engine clear glyphs") {
+    CobbletextLibrary * library = cobbletext_library_new();
+    CobbletextEngine * engine = cobbletext_engine_new(library);
+
+    cobbletext_engine_add_text_utf8(engine, "h", -1);
+    cobbletext_engine_lay_out(engine);
+
+    cobbletext_engine_prepare_tiles(engine);
+    uint32_t tile_count = cobbletext_engine_get_tile_count(engine);
+    const CobbletextTileInfo ** tiles =
+        cobbletext_engine_get_tiles(engine);
+
+    CHECK( tiles[0]->glyph_id == 1 );
+
+    cobbletext_library_clear_glyphs(library);
+
+    cobbletext_engine_add_text_utf8(engine, "b", -1);
+    cobbletext_engine_lay_out(engine);
+
+    cobbletext_engine_prepare_tiles(engine);
+    tile_count = cobbletext_engine_get_tile_count(engine);
+    tiles = cobbletext_engine_get_tiles(engine);
+
+    CHECK( tiles[0]->glyph_id == 1 );
+
+    cobbletext_engine_delete(engine);
+    cobbletext_library_delete(library);
+}
+
 TEST_CASE("engine raster and tile packing") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);
