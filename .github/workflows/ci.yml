@@ -107,8 +107,8 @@ jobs:
           path: build-release/bin/
       - run: >-
           ./vcpkg/vcpkg export
-            --triplet ${{ matrix.triplet }} \
-            --overlay-triplets=misc/vcpkg_custom_triplets \
+            --triplet ${{ matrix.triplet }}
+            --overlay-triplets=misc/vcpkg_custom_triplets
             --raw --output=build-release/bin-dependencies/
             freetype[png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1
