@@ -318,7 +318,7 @@ engine.clear();
 | Bidirectional text | Yes |
 | Vertical text | No |
 | Font name matching (family, style, weight, etc.) | No |
-| Font fallback | No |
+| Font fallback | Yes |
 | Language-specific display | Yes |
 | Kerning | Yes |
 | Ligatures | Yes |

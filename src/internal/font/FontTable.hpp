@@ -17,6 +17,7 @@ class FontTable {
 private:
     unsigned long int idCounter = 1;
     std::unordered_map<FontID,Font> fonts;
+    std::unordered_map<FontID,FontID> alternativeMAp;
     std::shared_ptr<FreeType> freeType;
 
 public:
@@ -37,6 +38,10 @@ public:
     bool setFontSize(FontID fontID, double fontSize);
 
     int32_t fontUnitsToPixels(FontID fontID, int32_t value);
+
+    void setFontAlternative(FontID fontID, FontID fallbackFontID);
+
+    FontID getFontAlternative(FontID fontID);
 
 private:
     FontID getFreeID();

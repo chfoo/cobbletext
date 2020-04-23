@@ -60,7 +60,7 @@ COBBLETEXT_API
 void cobbletext_clear_error(CobbletextLibrary * library);
 
 /**
- * Returns the ID for the fallback font.
+ * Returns the ID for the built-in fallback font when there is no font loaded.
  */
 COBBLETEXT_API
 CobbletextFontID cobbletext_library_get_fallback_font(
@@ -88,6 +88,34 @@ CobbletextFontID cobbletext_library_load_font(CobbletextLibrary * library,
 COBBLETEXT_API
 CobbletextFontID cobbletext_library_load_font_bytes(
     CobbletextLibrary * library, const uint8_t * data, uint32_t length);
+
+/**
+ * Sets an alternative font to be used if glyphs are not in the font.
+ *
+ * By default, the engine does not try another font if a font does not
+ * have the required glyphs. By specifying an alternative font, the engine
+ * will try to use another font. This is also known as font fallback.
+ *
+ * This function can be used to chain multiple fonts so the engine can try
+ * them in order. You can also add the built-in fallback font at the of
+ * the chain to guarantee something will be drawn.
+ *
+ * @param font_id The font in interest.
+ * @param fallback_font_id The alternative font to select when the font in
+ *      interest does not have the required glyphs.
+ */
+COBBLETEXT_API
+void cobbletext_library_set_font_alternative(CobbletextLibrary * library,
+    CobbletextFontID font_id, CobbletextFontID fallback_font_id);
+
+/**
+ * Returns the alternative font for the given font.
+ *
+ * @return A font ID if there is an alternative set, otherwise 0.
+ */
+COBBLETEXT_API
+CobbletextFontID cobbletext_library_get_font_alternative(
+    CobbletextLibrary * library, CobbletextFontID font_id);
 
 /**
  * Returns information about a loaded font.

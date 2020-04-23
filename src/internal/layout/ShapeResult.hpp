@@ -16,6 +16,7 @@ public:
     int32_t yOffset;
     uint32_t cluster;
     uint32_t glyphIndex;
+    FontID fontID;
 
 #ifdef COBBLETEXT_DEBUG
     uint32_t codePoint;

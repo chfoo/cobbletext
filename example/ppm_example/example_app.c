@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <string.h>
 
 #include "sample_text.h"
 
@@ -70,13 +71,46 @@ void example_app_load_font(ExampleApp * app) {
         "Use export FONT_PATH=/usr/share/fonts/your_path_here\n"
         "or $env:FONT_PATH = $Env:WinDir\\Fonts\\your_filename_here\n"
         "set to a session enviornment variable.\n"
+        "Use semicolon (;) to separate multiple font paths."
         "");
 
         return;
     }
 
-    app->fontID = cobbletext_library_load_font(app->library, font_path);
-    example_app_check_error(app);
+    char * buffer = malloc(strlen(font_path) + 1);
+    ABORT_IF_NULL(buffer, "malloc fail");
+    strcpy(buffer, font_path);
+
+    CobbletextFontID fonts[100] = {0};
+    size_t font_count = 0;
+
+    for (size_t index = 0; index < 100; index++) {
+        char * path = strtok(index == 0 ? buffer : NULL, ";");
+
+        if (path == NULL) {
+            break;
+        }
+
+        printf("Loading font %s\n", path);
+        fonts[index] = cobbletext_library_load_font(app->library, path);
+        example_app_check_error(app);
+        font_count++;
+    }
+
+    for (size_t index = 0; index < font_count; index++) {
+        if (index == 0) {
+            app->font_id = fonts[index];
+        }
+
+        if (index < font_count - 1) {
+            printf("Setting font alternative %d->%d\n",
+                fonts[index], fonts[index + 1]);
+            cobbletext_library_set_font_alternative(app->library,
+                fonts[index], fonts[index + 1]);
+        }
+    }
+
+    free(buffer);
 }
 
 void example_app_set_text(ExampleApp * app) {
@@ -118,7 +152,7 @@ void example_app_set_text(ExampleApp * app) {
     struct CobbletextTextProperties text_properties = {0};
     text_properties.font_size = 16;
     text_properties.custom_property = PROPERTY_NONE;
-    text_properties.font = app->fontID;
+    text_properties.font = app->font_id;
     cobbletext_engine_set_text_properties(app->engine, &text_properties);
 
     cobbletext_engine_add_text_utf8(app->engine, EAT_GLASS_TEXT, -1);

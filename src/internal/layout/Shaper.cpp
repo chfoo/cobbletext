@@ -1,6 +1,9 @@
 #include "internal/layout/Shaper.hpp"
 
+#include <cmath>
 #include <cassert>
+
+#include "internal/Debug.hpp"
 
 namespace cobbletext::internal {
 
@@ -34,8 +37,44 @@ void Shaper::shapeRun(const InternalTextRun & run,
 
     if (!fontTable->hasFont(fontID)) {
         fontID = fontTable->fallbackFont;
+        shapeRunWithFont(run, fontID, results, INFINITY);
+        return;
     }
 
+    bool hasAlternative = fontTable->getFontAlternative(fontID);
+
+    if (!hasAlternative) {
+        shapeRunWithFont(run, fontID, results, INFINITY);
+        return;
+    }
+
+    auto currentID = fontID;
+
+    while (true) {
+        bool success = shapeRunWithFont(run, currentID, results,
+            FONT_ALTERNATIVE_THRESHOLD);
+
+        if (success) {
+            return;
+        }
+
+        currentID = fontTable->getFontAlternative(currentID);
+
+        if (!currentID) {
+            break;
+        }
+
+        if (!fontTable->hasFont(currentID)) {
+            currentID = fontTable->fallbackFont;
+        }
+    }
+
+    shapeRunWithFont(run, fontID, results, INFINITY);
+}
+
+
+bool Shaper::shapeRunWithFont(const InternalTextRun & run, FontID fontID,
+        std::vector<ShapeResult> & results, double notDefThreshold) {
     auto font = fontTable->getFont(fontID);
 
     hb_buffer_clear_contents(harfBuzzBuffer.get());
@@ -66,6 +105,42 @@ void Shaper::shapeRun(const InternalTextRun & run,
     hb_glyph_position_t * glyphPositions = hb_buffer_get_glyph_positions(
         harfBuzzBuffer.get(), &glyphCount);
 
+    unsigned int notDefCount = 0;
+
+    for (size_t index = 0; index < glyphCount; index++) {
+        auto glyphInfo = glyphInfos[index];
+
+        if (glyphInfo.codepoint == 0) {
+            notDefCount++;
+        }
+    }
+
+    double notDefScore;
+
+    if (glyphCount > 0) {
+        notDefScore = notDefCount / (double) glyphCount;
+    } else {
+        notDefScore = 0;
+    }
+
+    COBBLETEXT_DEBUG_PRINT("notDefScore=" << notDefScore
+        << " notDefCount=" << notDefCount
+        << " glyphCount=" << glyphCount);
+
+    if (notDefScore < notDefThreshold) {
+        pushBufferResults(run, glyphInfos, glyphPositions, glyphCount, fontID, results);
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+void Shaper::pushBufferResults(const InternalTextRun & run,
+        hb_glyph_info_t * glyphInfos,
+        hb_glyph_position_t * glyphPositions,
+        unsigned int glyphCount, FontID fontID,
+        std::vector<ShapeResult> & results) {
     if (!glyphCount) {
         return;
     }
@@ -89,6 +164,7 @@ void Shaper::shapeRun(const InternalTextRun & run,
         result.yOffset = glyphPosition.y_offset / 64.0;
         result.glyphIndex = glyphInfo.codepoint;
         result.cluster = glyphInfo.cluster;
+        result.fontID = fontID;
 
         #ifdef COBBLETEXT_DEBUG
         result.codePoint = text->char32At(glyphInfo.cluster);

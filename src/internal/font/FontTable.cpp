@@ -138,4 +138,18 @@ int32_t FontTable::fontUnitsToPixels(FontID fontID, int32_t value) {
 }
 
 
+void FontTable::setFontAlternative(FontID fontID, FontID fallbackFontID) {
+    alternativeMAp[fontID] = fallbackFontID;
+}
+
+FontID FontTable::getFontAlternative(FontID fontID) {
+    const auto & iter = alternativeMAp.find(fontID);
+
+    if (iter != alternativeMAp.end()) {
+        return iter->second;
+    } else {
+        return 0;
+    }
+}
+
 }

@@ -122,7 +122,15 @@ const struct CobbletextGlyphInfo * cobbletext_library_get_glyph_info(
     return library->glyphInfo.get();
 }
 
+void cobbletext_library_set_font_alternative(CobbletextLibrary * library,
+        CobbletextFontID font_id, CobbletextFontID fallback_font_id) {
+    library->obj->setFontAlternative(font_id, fallback_font_id);
+}
 
+CobbletextFontID cobbletext_library_get_font_alternative(
+        CobbletextLibrary * library, CobbletextFontID font_id) {
+    return library->obj->getFontAlternative(font_id);
+}
 
 namespace cobbletext::c {
 

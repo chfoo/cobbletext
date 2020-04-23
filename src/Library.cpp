@@ -54,4 +54,12 @@ GlyphInfo Library::getGlyphInfo(GlyphID id) {
     return impl->context->glyphTable->getGlyphInfo(id);
 }
 
+void Library::setFontAlternative(FontID id, FontID fallbackID) {
+    impl->context->fontTable->setFontAlternative(id, fallbackID);
+}
+
+FontID Library::getFontAlternative(FontID id) {
+    return impl->context->fontTable->getFontAlternative(id);
+}
+
 }

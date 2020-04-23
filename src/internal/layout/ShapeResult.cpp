@@ -25,6 +25,7 @@ std::ostream & operator<<(std::ostream & stream, const ShapeResult & shapeResult
         << "cluster=" << shapeResult.cluster << " "
         << "advance=" << shapeResult.xAdvance << "," << shapeResult.yAdvance << " "
         << "offset=" << shapeResult.xOffset << "," << shapeResult.yOffset << " "
+        << "fontID=" << shapeResult.fontID << " "
         << "]";
 
     return stream;

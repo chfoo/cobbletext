@@ -27,6 +27,7 @@ private:
     std::shared_ptr<FontTable> fontTable;
     std::unique_ptr<hb_buffer_t,HarfBuzzBufferDeleter> harfBuzzBuffer;
     std::shared_ptr<const icu::UnicodeString> text;
+    static constexpr double FONT_ALTERNATIVE_THRESHOLD = 0.2;
 
 public:
     explicit Shaper(std::shared_ptr<FontTable> fontTable);
@@ -37,6 +38,15 @@ public:
 
 private:
     void shapeRun(const InternalTextRun & run,
+        std::vector<ShapeResult> & results);
+
+    bool shapeRunWithFont(const InternalTextRun & run, FontID fontID,
+        std::vector<ShapeResult> & results, double notDefThreshold);
+
+    void pushBufferResults(const InternalTextRun & run,
+        hb_glyph_info_t * glyphInfos,
+        hb_glyph_position_t * glyphPositions,
+        unsigned int glyphCount, FontID fontID,
         std::vector<ShapeResult> & results);
 
 };

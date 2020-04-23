@@ -33,6 +33,10 @@ public:
 
     GlyphInfo getGlyphInfo(GlyphID id);
 
+    void setFontAlternative(FontID id, FontID fallbackID);
+
+    FontID getFontAlternative(FontID id);
+
 private:
     class Impl;
     std::unique_ptr<Impl> impl;

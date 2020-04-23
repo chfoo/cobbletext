@@ -30,7 +30,7 @@ typedef struct ExampleApp {
     CobbletextLibrary * library;
     CobbletextEngine * engine;
     struct AtlasEntry * atlas_table;
-    CobbletextFontID fontID;
+    CobbletextFontID font_id;
     uint8_t * atlas;
     uint32_t atlas_size;
     uint32_t * image;

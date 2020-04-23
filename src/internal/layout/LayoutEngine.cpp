@@ -263,7 +263,7 @@ void LayoutEngine::registerGlyphsAndMakeTiles() {
         }
 
         auto const & textFormat = shapeResult.run.source.textFormat;
-        auto key = GlyphKey(textFormat.fontFace, textFormat.fontSize,
+        auto key = GlyphKey(shapeResult.fontID, textFormat.fontSize,
             shapeResult.glyphIndex);
 
         if (glyphsSeen.find(key) != glyphsSeen.end()) {
@@ -366,7 +366,7 @@ void LayoutEngine::processLineRun(const LineRun & lineRun) {
         AdvanceInfo advance;
 
         const auto & textFormat = shapeResult.run.source.textFormat;
-        GlyphKey glyphKey(textFormat.fontFace, textFormat.fontSize,
+        GlyphKey glyphKey(shapeResult.fontID, textFormat.fontSize,
             shapeResult.glyphIndex);
 
         if (shapeResult.run.source.inlineObject) {
