@@ -126,6 +126,8 @@ bool FontTable::setFontSize(FontID fontID, double fontSize) {
 
     FreeType::throwIfError(errorCode);
 
+    font.fontSize = fontSize;
+
     return true;
 }
 
