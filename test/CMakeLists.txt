@@ -22,6 +22,6 @@ if(NOT COBBLETEXT_STATIC)
     endif()
 endif()
 
-add_test(NAME main COMMAND test_main)
+add_test(NAME main COMMAND test_main WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set_property(TEST main APPEND PROPERTY ENVIRONMENT
     "TEST_FONT_PATH=${CMAKE_SOURCE_DIR}/lib/adobe-notdef/AND-Regular.otf")

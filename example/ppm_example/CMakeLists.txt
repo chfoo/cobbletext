@@ -17,4 +17,4 @@ if(NOT WIN32)
     target_link_libraries(ppm_example PRIVATE dl)
 endif()
 
-add_test(NAME ppm_example COMMAND ppm_example)
+add_test(NAME ppm_example COMMAND ppm_example WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

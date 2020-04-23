@@ -34,10 +34,10 @@ jobs:
             release_build_flag: ""
           - target: macos
             vm: macos-latest
-            triplet: x64-osx-dynamic-release # libicudata doesn't get built or link properly with vcpkg debug
+            triplet: x64-osx-dynamic
             cmake_platform_flag: ""
             test_link_static: "false"
-            test_build_type: Release # same reason above
+            test_build_type: Debug
             release_build_flag: ""
     runs-on: ${{ matrix.vm }}
     defaults:
@@ -89,6 +89,10 @@ jobs:
           cmake --build . --target test_main
           cmake --build . --target ppm_example
         working-directory: build/
+      - run: cp -a vcpkg/installed/${{ matrix.triplet }}/lib/. build/bin/
+        if: matrix.target == 'macos'
+          # ctest copies automatically on Windows. On other OS, cmake sets
+          # RPATH for debugging, but vcpkg builds are glitchy
       - run: ctest --verbose -C Debug
         working-directory: build/
       # Now build dynamic library:
