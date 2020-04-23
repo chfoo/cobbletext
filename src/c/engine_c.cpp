@@ -150,12 +150,12 @@ void cobbletext_engine_add_text_utf8(CobbletextEngine * engine, const char * tex
     engine->obj->addTextUTF8(text, length);
 }
 
-void cobbletext_engine_add_text_utf16(CobbletextEngine * engine, const char16_t * text, int32_t length) {
-    engine->obj->addTextUTF16(text, length);
+void cobbletext_engine_add_text_utf16(CobbletextEngine * engine, const CobbletextChar16 * text, int32_t length) {
+    engine->obj->addTextUTF16(reinterpret_cast<const char16_t*>(text), length);
 }
 
-void cobbletext_engine_add_text_utf32(CobbletextEngine * engine, const char32_t * text, int32_t length) {
-    engine->obj->addTextUTF32(text, length);
+void cobbletext_engine_add_text_utf32(CobbletextEngine * engine, const CobbletextChar32 * text, int32_t length) {
+    engine->obj->addTextUTF32(reinterpret_cast<const char32_t*>(text), length);
 }
 
 void cobbletext_engine_add_inline_object(CobbletextEngine * engine, CobbletextInlineObjectID id, uint32_t size) {

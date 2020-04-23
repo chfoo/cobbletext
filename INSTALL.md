@@ -36,6 +36,12 @@ Optional for tests, install catch2 using vcpkg. uthash needs to be manually down
 
 ### Homebrew (MacOS)
 
+Use:
+
+    brew install python freetype harfbuzz icu4c cpp-gsl boost
+
+uthash needs to be manually downloaded to somewhere and specified to CMake as described later.
+
 ### Linux package manager
 
 On Debian based system, install
@@ -74,6 +80,8 @@ To generate build files using CMake:
 For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`. To let the toolchain file know which triplet you want to use, use something like `-D VCPKG_TARGET_TRIPLET=x64-windows`.
 
 If CMake can't find something, you can manually edit CMakeCache.txt (or use a GUI if available). Use `cmake .. -L` to list out configurable variables. Cobbletext also provides its own variables for debugging or disabling things like documentation configs.
+
+With Homebrew, CMake may not find ICU. Set your shell environment variable with `export ICU_ROOT=/usr/local/opt/icu4c` or `export CMAKE_PREFIX_PATH=/usr/local/opt/icu4c`.
 
 In the same build directory, build the library either the shared or static library:
 

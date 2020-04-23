@@ -105,11 +105,11 @@ jobs:
         with:
           name: bin-${{ matrix.triplet }}
           path: build-release/bin/
-      - run: >-
-          ./vcpkg/vcpkg export
-            --triplet ${{ matrix.triplet }}
-            --overlay-triplets=misc/vcpkg_custom_triplets
-            --raw --output=build-release/bin-dependencies/
+      - run: |
+          ./vcpkg/vcpkg export \
+            --triplet ${{ matrix.triplet }} \
+            --overlay-triplets=misc/vcpkg_custom_triplets \
+            --raw --output=build-release/bin-dependencies/ \
             freetype[png] harfbuzz[ucdn] icu
       - uses: actions/upload-artifact@v1
         with:

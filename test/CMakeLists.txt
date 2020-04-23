@@ -9,6 +9,7 @@ target_include_directories(test_main PRIVATE
     "${CMAKE_SOURCE_DIR}/include/"
     "${CMAKE_SOURCE_DIR}/src/"
     "${CMAKE_CURRENT_BINARY_DIR}"
+    "${ICU_INCLUDE_DIR}"
     "${CATCH2_INCLUDE_PATH}"
 )
 
