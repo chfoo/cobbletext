@@ -116,7 +116,7 @@ jobs:
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --7zip \
             freetype[png] harfbuzz[ucdn] icu
-      -run: |
+      - run: |
           mkdir -p build-release/bin-dependencies/ \
           mv ./vcpkg/vcpkg-export* build-release/bin-dependencies/
       - uses: actions/upload-artifact@v1
