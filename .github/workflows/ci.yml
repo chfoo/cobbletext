@@ -14,6 +14,7 @@ jobs:
           - target: windows-x86
             vm: windows-latest
             triplet: x86-windows
+            vcpkg_extras: "getopt-win32"
             cmake_platform_flag: "-A Win32"
             test_link_static: "true"
             test_build_type: Debug
@@ -21,6 +22,7 @@ jobs:
           - target: windows-x64
             vm: windows-latest
             triplet: x64-windows
+            vcpkg_extras: "getopt-win32"
             cmake_platform_flag: "-A x64"
             test_link_static: "true"
             test_build_type: Debug
@@ -28,6 +30,7 @@ jobs:
           - target: ubuntu
             vm: ubuntu-latest
             triplet: x64-linux-dynamic-release # freetype won't link bz2 correctly with vcpkg debug
+            vcpkg_extras: ""
             cmake_platform_flag: ""
             test_link_static: "false"
             test_build_type: Release # can't use debug because vcpkg toolchain links debug libs
@@ -35,6 +38,7 @@ jobs:
           - target: macos
             vm: macos-latest
             triplet: x64-osx-dynamic
+            vcpkg_extras: ""
             cmake_platform_flag: ""
             test_link_static: "false"
             test_build_type: Debug
@@ -52,7 +56,7 @@ jobs:
       - uses: actions/cache@v1
         id: cache-vcpkg
         with:
-          key: vcpkg-${{ matrix.target }}-v2
+          key: vcpkg-${{ matrix.target }}-v3
           path: vcpkg/
       - run: |
           mkdir -p ./vcpkg
@@ -61,7 +65,7 @@ jobs:
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
             freetype[png] harfbuzz[ucdn] icu ms-gsl catch2 \
-            boost-container-hash
+            boost-container-hash ${{ matrix.vcpkg_extras }}
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       - uses: actions/cache@v1
         id: cache-uthash
