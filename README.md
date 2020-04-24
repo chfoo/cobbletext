@@ -348,3 +348,4 @@ Dependencies used within the library:
   * zlib: BSD-like license
 * HarfBuzz: MIT license
 * ICU/ICU4C: BSD-like license
+* Adobe NotDef: SIL Open Font license

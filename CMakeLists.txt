@@ -52,6 +52,7 @@ add_subdirectory(src cobbletext)
 
 if(COBBLETEXT_BUILD_EXAMPLES)
     add_subdirectory(example/ppm_example)
+    add_subdirectory(example/sdl_example)
 endif()
 
 if(COBBLETEXT_BUILD_TESTS)
