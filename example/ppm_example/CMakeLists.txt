@@ -1,5 +1,5 @@
 
-add_executable(ppm_example example.c example_app.c)
+add_executable(ppm_example ppm_example.c)
 
 find_path(UTHASH_INCLUDE_PATH "uthash.h")
 target_include_directories(ppm_example PRIVATE
