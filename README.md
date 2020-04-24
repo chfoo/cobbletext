@@ -337,3 +337,14 @@ If you have any issues or improvements, please use the GitHub Issues and Pull Re
 ## License
 
 Copyright 2020 Christopher Foo. Licensed under Mozilla Public License Version 2.0.
+
+Dependencies used within the library:
+
+* Microsoft GSL: MIT license
+* Boost: BSD-like license
+* FreeType: BSD-like license or GPLv2
+  * Bzip2/libbz2: BSD-like license
+  * Libpng: BSD-like license
+  * zlib: BSD-like license
+* HarfBuzz: MIT license
+* ICU/ICU4C: BSD-like license

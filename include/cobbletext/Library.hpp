@@ -22,6 +22,7 @@ public:
     friend class Engine;
 
     Library();
+    ~Library();
 
     FontID fallbackFont();
 

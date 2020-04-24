@@ -12,6 +12,8 @@ namespace cobbletext {
 Engine::Engine(std::shared_ptr<Library> library) :
     impl(std::make_unique<Impl>(*this, library->impl->context)) {}
 
+Engine::~Engine() = default; // for pimpl
+
 std::vector<TileInfo> Engine::tiles() {
     return impl->layoutEngine->tiles();
 }

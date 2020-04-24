@@ -35,6 +35,7 @@ public:
     std::vector<AdvanceInfo> advances();
 
     explicit Engine(std::shared_ptr<Library> library);
+    ~Engine();
 
     void addText(const uint8_t * data, uint32_t length, Encoding encoding);
     void addTextUTF8(std::string_view text);

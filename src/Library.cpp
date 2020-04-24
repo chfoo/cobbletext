@@ -34,6 +34,8 @@ std::string Library::version() {
 Library::Library() :
     impl(std::make_unique<Impl>()) {}
 
+Library::~Library() = default; // for pimpl
+
 FontID Library::fallbackFont() {
     return impl->context->fontTable->fallbackFont;
 }
