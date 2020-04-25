@@ -13,6 +13,8 @@ namespace cobbletext {
 
 
 class Library {
+    static std::string version_;
+
 public:
     static int32_t versionMajor();
     static int32_t versionMinor();

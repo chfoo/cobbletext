@@ -25,10 +25,13 @@ int32_t Library::versionPatch() {
     return COBBLETEXT_VERSION_PATCH;
 }
 
+std::string Library::version_ =
+    std::to_string(COBBLETEXT_VERSION_MAJOR) + "." +
+    std::to_string(COBBLETEXT_VERSION_MINOR) + "." +
+    std::to_string(COBBLETEXT_VERSION_PATCH);
+
 std::string Library::version() {
-    return std::to_string(COBBLETEXT_VERSION_MAJOR) + "." +
-        std::to_string(COBBLETEXT_VERSION_MINOR) + "." +
-        std::to_string(COBBLETEXT_VERSION_PATCH);
+    return version_;
 }
 
 Library::Library() :
