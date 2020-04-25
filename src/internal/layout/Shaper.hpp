@@ -5,8 +5,14 @@
 #include <optional>
 #include <functional>
 
-#include <harfbuzz/hb.h>
 #include <unicode/unistr.h>
+
+#ifdef __EMSCRIPTEN__
+    #include <hb.h>
+#else
+    #include <harfbuzz/hb.h>
+#endif
+
 
 #include "internal/layout/InternalTextRun.hpp"
 #include "internal/font/FontTable.hpp"

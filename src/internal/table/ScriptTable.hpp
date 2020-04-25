@@ -7,7 +7,13 @@
 
 #include <unicode/uscript.h>
 #include <unicode/unistr.h>
-#include <harfbuzz/hb.h>
+
+#ifdef __EMSCRIPTEN__
+    #include <hb.h>
+#else
+    #include <harfbuzz/hb.h>
+#endif
+
 
 namespace cobbletext::internal {
 

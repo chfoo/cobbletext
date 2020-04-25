@@ -3,7 +3,12 @@
 #include <cstdint>
 #include <ostream>
 
-#include <harfbuzz/hb.h>
+#ifdef __EMSCRIPTEN__
+    #include <hb.h>
+#else
+    #include <harfbuzz/hb.h>
+#endif
+
 
 #include "internal/input/TextRun.hpp"
 

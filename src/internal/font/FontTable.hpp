@@ -5,7 +5,12 @@
 #include <memory>
 
 #include <gsl/span>
-#include <harfbuzz/hb-ft.h>
+
+#ifdef __EMSCRIPTEN__
+    #include <hb-ft.h>
+#else
+    #include <harfbuzz/hb-ft.h>
+#endif
 
 #include "FontInfo.hpp"
 #include "internal/font/Font.hpp"

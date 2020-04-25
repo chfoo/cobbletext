@@ -29,6 +29,19 @@ int main(int argc, char *argv[]) {
     std::cerr << "Done" << std::endl;
 }
 
+#ifdef __EMSCRIPTEN__
+
+static double emWidth = 0;
+static double emHeight = 0;
+
+void setRendererSize(double width, double height) {
+    emWidth = width;
+    emHeight = height;
+}
+
+#endif
+
+
 namespace example {
 
 App::App() :
@@ -119,27 +132,61 @@ void App::run() {
     checkSDLError(SDL_SetRenderDrawBlendMode(
         renderer.get(), SDL_BLENDMODE_BLEND));
 
+    #ifdef __EMSCRIPTEN__
+
+    emscripten_set_main_loop_arg(emCallback, this, 0, true);
+
+    #else
+
     while (running) {
+        runOnce();
+    }
 
-        SDL_Event event;
+    #endif
+}
 
-        while (SDL_PollEvent(&event)) {
-            processEvent(event);
+#ifdef __EMSCRIPTEN__
+
+void App::emCallback(void* userData) {
+    App * app = reinterpret_cast<App*>(userData);
+
+    app->runOnce();
+}
+
+#endif
+
+void App::runOnce() {
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event)) {
+        processEvent(event);
+    }
+
+    #ifdef __EMSCRIPTEN__
+    if (emWidth > 0 && emHeight > 0) {
+        auto isDifferent = emWidth != rendererWidth
+            || emHeight != rendererHeight;
+
+        if (isDifferent) {
+            SDL_SetWindowSize(window.get(), emWidth, emHeight);
         }
+    }
+    #endif
 
-        if (windowDirty) {
-            checkSDLError(SDL_SetRenderDrawColor(renderer.get(),
-                255,255, 255, 255));
-            SDL_RenderClear(renderer.get());
-            layOutText();
-            drawText();
-            SDL_RenderPresent(renderer.get());
-            windowDirty = false;
-        }
+    if (windowDirty || true) {
+        checkSDLError(SDL_SetRenderDrawColor(renderer.get(),
+            255,255, 255, 255));
+        SDL_RenderClear(renderer.get());
+        layOutText();
+        drawText();
+        SDL_RenderPresent(renderer.get());
+        windowDirty = false;
     }
 }
 
 void App::processEvent(SDL_Event & event) {
+    bool wasResized = false;
+
     switch (event.type) {
         case SDL_QUIT:
             running = false;
@@ -147,10 +194,17 @@ void App::processEvent(SDL_Event & event) {
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
                 case SDL_WINDOWEVENT_SIZE_CHANGED:
+                case SDL_WINDOWEVENT_RESIZED:
                     windowDirty = true;
+                    wasResized = true;
                     break;
             }
             break;
+    }
+
+    if (wasResized) {
+        checkSDLError(SDL_GetRendererOutputSize(
+            renderer.get(), &rendererWidth, &rendererHeight));
     }
 }
 
@@ -201,14 +255,6 @@ void App::setUpText() {
 }
 
 void App::layOutText() {
-
-    int rendererWidth;
-    int rendererHeight;
-
-    checkSDLError(
-        SDL_GetRendererOutputSize(renderer.get(),
-        &rendererWidth, &rendererHeight));
-
     engine->lineLength = rendererWidth;
     engine->layOut();
 
@@ -310,6 +356,9 @@ void App::drawText() {
         switch (advance.type) {
             case cobbletext::AdvanceType::Glyph:
                 drawGlyph(advance);
+                break;
+            default:
+                break;
         }
 
         penX += advance.advanceX;

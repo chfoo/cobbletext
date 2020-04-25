@@ -8,6 +8,7 @@ set(COBBLETEXT_BUILD_EXAMPLES true CACHE BOOL "Whether to include example progra
 set(COBBLETEXT_BUILD_TESTS true CACHE BOOL "Whether to include tests into the build config")
 set(COBBLETEXT_BUILD_DOCS true CACHE BOOL "Whether to include documentation to the build config")
 set(COBBLETEXT_STATIC false CACHE BOOL "Enable to build the library as a static library. Default is dynamic library.")
+set(COBBLETEXT_EMSCRIPTEN false CACHE BOOL "Enables config to build to Emscripten with emcmake and emmake.")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -23,12 +24,50 @@ if(COBBLETEXT_STATIC)
     add_compile_definitions(COBBLETEXT_STATIC=1)
 endif()
 
-find_package(Boost REQUIRED)
-find_package(Freetype REQUIRED)
+if(COBBLETEXT_EMSCRIPTEN)
+    add_compile_options("SHELL:-s USE_BOOST_HEADERS=1")
+    # add_compile_options("SHELL:-s USE_ICU=1")
+    add_compile_options("SHELL:-s USE_SDL=2")
+    add_compile_options("SHELL:-s USE_FREETYPE=1")
+    add_compile_options("SHELL:-s USE_HARFBUZZ=1")
+
+    add_link_options("SHELL:-s USE_BOOST_HEADERS=1")
+    # add_link_options("SHELL:-s USE_ICU=1")
+    add_link_options("SHELL:-s USE_SDL=2")
+    add_link_options("SHELL:-s USE_FREETYPE=1")
+    add_link_options("SHELL:-s USE_HARFBUZZ=1")
+
+    add_link_options("SHELL:-s TOTAL_MEMORY=41943040")  # actually INTITAL_MEMORY
+    add_link_options("SHELL:-s ALLOW_MEMORY_GROWTH=1")
+
+    include(FetchContent)
+    FetchContent_Declare(
+      icu-emscripten
+      GIT_REPOSITORY https://github.com/TartanLlama/icu-emscripten.git
+      GIT_TAG        master
+    )
+    # FetchContent_MakeAvailable(icu-emscripten)
+
+    # Backwards compatible MakeAvailable
+    FetchContent_GetProperties(icu-emscripten)
+    if(NOT icu-emscripten_POPULATED)
+        FetchContent_Populate(icu-emscripten)
+        # add_subdirectory(${icu-emscripten_SOURCE_DIR} ${icu-emscripten_BINARY_DIR})
+    endif()
+
+    # Make sure CMake doesn't try to pull in system installations of ICU
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+    set(ICU_ROOT ${icu-emscripten_SOURCE_DIR})
+else()
+    find_package(Boost REQUIRED)
+    find_package(Freetype REQUIRED)
+    find_path(HARFBUZZ_INCLUDE_PATH "harfbuzz")
+    find_library(HARFBUZZ_LIB_PATH "harfbuzz")
+endif()
+
 find_package(ICU REQUIRED COMPONENTS data i18n tu uc)
-find_path(HARFBUZZ_INCLUDE_PATH "harfbuzz")
 find_path(MS_GSL_INCLUDE_PATH "gsl")
-find_library(HARFBUZZ_LIB_PATH "harfbuzz")
 
 set(COBBLETEXT_DEPENDENCY_INCLUDES
     ${Boost_INCLUDE_DIRS}

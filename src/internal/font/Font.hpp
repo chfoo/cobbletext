@@ -1,6 +1,10 @@
 #pragma once
 
-#include <harfbuzz/hb.h>
+#ifdef __EMSCRIPTEN__
+    #include <hb.h>
+#else
+    #include <harfbuzz/hb.h>
+#endif
 
 #include "internal/FreeType.hpp"
 

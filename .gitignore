@@ -1,6 +1,7 @@
 
 ## Cmake output directory
 build/
+build_em/
 
 
 ## Visual Studio Code

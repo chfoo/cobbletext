@@ -101,3 +101,63 @@ Alternatively, you can run the generated build files yourself as described below
 Ensure the C++ workload is installed. See Tools -> Get tools and features.
 
 * Project `cobbletext` is the library.
+
+## Emscripten
+
+Assumes Linux-like environment.
+
+Install the emsdk and activate version 1.38.48.
+
+### Building the library
+
+Make a build directory:
+
+    mkdir build_em
+    cd build_em
+
+Generate the build files:
+
+    emcmake cmake .. -D COBBLETEXT_EMSCRIPTEN=true -D COBBLETEXT_BUILD_DOCS=false -D COBBLETEXT_STATIC=true
+
+Fix CMakeCache.txt with paths to library headers if needed. *Do not* include system headers! For example, don't add `/usr/include`. Copy the headers somewhere isolated if needed.
+
+Build the makefile with GNU Make:
+
+    emmake make VERBOSE=1 cobbletext
+
+By default ICU included with Emscripten is not a working port. Instead, use the libraries from [this GitHub repo](https://github.com/tartanllama/icu-emscripten).
+
+This will output `cobbletext/libcobbletext.a` which is LLVM bitcode file is for linking into your Emscripten application. Use this bitcode along with the ICU bitcode to build your application.
+
+Example manual linking:
+
+    em++ -O3 -s USE_SDL=2 -s USE_FREETYPE=1 -s USE_HARFBUZZ=1 \
+        -s TOTAL_MEMORY=41943040 -s ALLOW_MEMORY_GROWTH=1 \
+        [your bitcode files here] \
+        -o [your output js or html file]
+
+### Build cobblescript.js
+
+Run:
+
+    emmake make VERBOSE cobbletext_js
+
+This will generate `bin\cobbletext.wasm` and `bin\cobbletext.js` for including into a JavaScript application.
+
+Use this if you aren't building an Emscripten application, but want to use Cobbletext directly from JavaScript. The module will be built with the modularize flag to module named `Cobbletext`.
+
+```js
+Cobbletext().then(function(Module) {
+    // do things with Module
+});
+```
+
+### Building example
+
+To generate example executable:
+
+    emmake make VERBOSE=1 sdl_example
+
+### Further details
+
+Please check CMakeFiles.txt files in this project, look for "COBBLETEXT_EMSCRIPTEN" for details.

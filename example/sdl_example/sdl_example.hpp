@@ -4,6 +4,11 @@
 #include <vector>
 #include <unordered_map>
 
+#ifdef __EMSCRIPTEN__
+    #include <emscripten.h>
+    #include <emscripten/html5.h>
+#endif
+
 #define SDL_MAIN_HANDLED
 
 #ifdef EXAMPLE_INCLUDE_SDL_STYLE_1
@@ -15,6 +20,12 @@
 #endif
 
 #include <cobbletext/cobbletext.hpp>
+
+#ifdef __EMSCRIPTEN__
+extern "C" {
+    void EMSCRIPTEN_KEEPALIVE setRendererSize(double width, double height);
+}
+#endif
 
 namespace example {
 
@@ -81,14 +92,23 @@ class App {
     int32_t penX;
     int32_t penY;
 
+    int rendererWidth;
+    int rendererHeight;
+
 public:
     App();
     void parseArgs(int argc, char * argv[]);
     void run();
 
 private:
+    #ifdef __EMSCRIPTEN__
+    static void emCallback(void* userData);
+    #endif
+
     void checkSDLError(int errorCode);
     [[noreturn]] void reportSDLError();
+
+    void runOnce();
 
     void printHelp();
     void processEvent(SDL_Event & event);

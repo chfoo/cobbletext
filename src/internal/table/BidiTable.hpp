@@ -4,9 +4,15 @@
 #include <optional>
 #include <memory>
 
+#ifdef __EMSCRIPTEN__
+    #include <hb.h>
+#else
+    #include <harfbuzz/hb.h>
+#endif
+
 #include <unicode/ubidi.h>
 #include <unicode/unistr.h>
-#include <harfbuzz/hb.h>
+
 
 #include "ScriptDirection.hpp"
 

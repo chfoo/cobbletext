@@ -9,6 +9,9 @@
     #else
         #define COBBLETEXT_API __declspec(dllimport)
     #endif
+#elif defined(__EMSCRIPTEN__)
+    #include <emscripten.h>
+    #define COBBLETEXT_API EMSCRIPTEN_KEEPALIVE
 #else
     #define COBBLETEXT_API
 #endif
