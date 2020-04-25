@@ -4,6 +4,8 @@
 #include <vector>
 #include <unordered_map>
 
+#define SDL_MAIN_HANDLED
+
 #ifdef EXAMPLE_INCLUDE_SDL_STYLE_1
     #include <SDL2/SDL.h>
 #elif defined(EXAMPLE_INCLUDE_SDL_STYLE_2)

@@ -14,6 +14,13 @@ target_include_directories(sdl_example PRIVATE
     ${SDL2_INCLUDE_PATH}
 )
 
+if(WIN32)
+    find_path(GETOPT_INCLUDE_PATH "getopt.h")
+    find_library(GETOPT_LIBRARY getopt)
+    target_include_directories(sdl_example PRIVATE "${GETOPT_INCLUDE_PATH}")
+    target_link_libraries(sdl_example PRIVATE "${GETOPT_LIBRARY}")
+endif()
+
 target_link_libraries(sdl_example PRIVATE cobbletext ${SDL2_LIBRARY})
 
 if(NOT WIN32)

@@ -2,13 +2,15 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <unistd.h>
+#include <inttypes.h>
 #include <getopt.h>
 #include <cassert>
 
 #include "../common/sample_text.h"
 
 int main(int argc, char *argv[]) {
+    SDL_SetMainReady();
+
     std::cerr << "Start" << std::endl;
 
     int errorCode = SDL_Init(SDL_INIT_VIDEO);
