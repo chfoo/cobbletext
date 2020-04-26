@@ -66,7 +66,13 @@ else()
     find_library(HARFBUZZ_LIB_PATH "harfbuzz")
 endif()
 
-find_package(ICU REQUIRED COMPONENTS data i18n tu uc)
+# dt = data
+# uc = common
+# in = i18n: locale i18n functions
+# lx = layout extensions, optional engine
+# io = I/O, optional support for I/O with Unicode
+# tu = tool utility library, internal API for optional tools
+find_package(ICU REQUIRED COMPONENTS data uc)
 find_path(MS_GSL_INCLUDE_PATH "gsl")
 
 set(COBBLETEXT_DEPENDENCY_INCLUDES
