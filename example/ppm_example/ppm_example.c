@@ -352,9 +352,12 @@ void app_draw_glyph(App * app,
         uint8_t coverage = app->atlas[atlas_index];
         uint32_t foreground = (coverage << 24) | color;
 
+        background = cobbletext_math_gamma_argb(background, 2.2);
+        foreground = cobbletext_math_gamma_argb(foreground, 2.2);
+
         uint32_t pixel = cobbletext_math_alpha_blend_over_argb(background,
             foreground);
-        pixel = cobbletext_math_gamma_correction_argb(pixel, 1.8);
+        pixel = cobbletext_math_gamma_argb(pixel, 1 / 1.8);
 
         app->image[image_index] = pixel;
     }
