@@ -1,6 +1,8 @@
 #pragma once
 
 /**
+ * Macro for Windows symbol import and export
+ *
  * @private
  */
 #if defined(_WIN32) && !defined(COBBLETEXT_STATIC)

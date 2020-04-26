@@ -2,6 +2,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Glyph properties
  */
@@ -50,3 +54,7 @@ struct CobbletextGlyphInfo {
      */
     int32_t image_offset_y;
 };
+
+#ifdef __cplusplus
+}
+#endif

@@ -4,6 +4,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Type of information contained in `#CobbletextAdvanceInfo`.
  *
@@ -111,3 +115,7 @@ struct CobbletextAdvanceInfo {
      */
     CobbletextCustomPropertyID custom_property;
 };
+
+#ifdef __cplusplus
+}
+#endif

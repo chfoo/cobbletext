@@ -2,6 +2,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Representation of a rendered glyph for an `#CobbletextEngine`.
  */
@@ -25,3 +29,7 @@ struct CobbletextTileInfo {
      */
     uint32_t atlas_y;
 };
+
+#ifdef __cplusplus
+}
+#endif

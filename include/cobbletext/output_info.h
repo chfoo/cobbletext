@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Sizes for the rendered text.
  *
@@ -27,3 +31,7 @@ struct CobbletextOutputInfo {
      */
     uint32_t text_height;
 };
+
+#ifdef __cplusplus
+}
+#endif

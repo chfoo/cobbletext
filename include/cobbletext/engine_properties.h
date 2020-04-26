@@ -4,6 +4,10 @@
 
 #include "text_alignment.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Properties for controlling output parameters on a
  * `struct CobbletextEngine` instance.
@@ -41,3 +45,7 @@ struct CobbletextEngineProperties {
      */
     CobbletextTextAlignment text_alignment;
 };
+
+#ifdef __cplusplus
+}
+#endif

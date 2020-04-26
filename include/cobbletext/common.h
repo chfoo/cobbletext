@@ -4,6 +4,10 @@
 
 #include "macros.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Unique font face ID.
  *
@@ -66,3 +70,7 @@ int32_t cobbletext_get_version_patch();
  */
 COBBLETEXT_API
 const char * cobbletext_get_version();
+
+#ifdef __cplusplus
+}
+#endif

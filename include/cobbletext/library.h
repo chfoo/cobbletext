@@ -2,6 +2,10 @@
 
 #include "macros.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Opaque handle to the library's context.
  *
@@ -153,3 +157,7 @@ const struct CobbletextGlyphInfo * cobbletext_library_get_glyph_info(
  */
 COBBLETEXT_API
 void cobbletext_library_clear_glyphs(CobbletextLibrary * library);
+
+#ifdef __cplusplus
+}
+#endif

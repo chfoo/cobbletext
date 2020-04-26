@@ -13,6 +13,9 @@
 #include "script_direction.h"
 #include "text_properties.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Opaque handle to a layout and render engine.
@@ -252,3 +255,7 @@ const struct CobbletextAdvanceInfo ** cobbletext_engine_get_advances(
 COBBLETEXT_API
 const struct CobbletextOutputInfo * cobbletext_engine_get_output_info(
     CobbletextEngine * engine);
+
+#ifdef __cplusplus
+}
+#endif

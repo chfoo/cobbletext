@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Specifies the encoding of bytes.
  *
@@ -21,3 +25,7 @@ typedef uint8_t CobbletextEncoding;
  * UTF-16 little endian encoding
  */
 #define COBBLETEXT_ENCODING_UTF16LE 2
+
+#ifdef __cplusplus
+}
+#endif

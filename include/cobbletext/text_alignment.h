@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Alignment of text within a line.
  *
@@ -45,3 +49,7 @@ typedef uint8_t CobbletextTextAlignment;
  * Centers each line.
  */
 #define COBBLETEXT_TEXT_ALIGNMENT_CENTER 5
+
+#ifdef __cplusplus
+}
+#endif

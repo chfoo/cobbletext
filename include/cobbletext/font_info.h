@@ -2,6 +2,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Font face properties.
  */
@@ -59,3 +63,7 @@ struct CobbletextFontInfo {
      */
     int16_t underline_thickness;
 };
+
+#ifdef __cplusplus
+}
+#endif

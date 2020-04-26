@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Script direction of a run of text.
  *
@@ -25,3 +29,7 @@ typedef uint8_t CobbletextScriptDirection;
  * Force script to be left-to-right.
  */
 #define COBBLETEXT_SCRIPT_DIRECTION_RTL 2
+
+#ifdef __cplusplus
+}
+#endif

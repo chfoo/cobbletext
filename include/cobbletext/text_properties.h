@@ -3,6 +3,10 @@
 #include "common.h"
 #include "script_direction.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Properties for text runs on a `struct CobbletextEngine` instance.
  */
@@ -64,3 +68,7 @@ struct CobbletextTextProperties {
      */
     CobbletextCustomPropertyID custom_property;
 };
+
+#ifdef __cplusplus
+}
+#endif
