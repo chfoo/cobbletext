@@ -138,6 +138,9 @@ void App::run() {
 
     #else
 
+    checkSDLError(SDL_GetRendererOutputSize(
+        renderer.get(), &rendererWidth, &rendererHeight));
+
     while (running) {
         runOnce();
     }
@@ -173,7 +176,7 @@ void App::runOnce() {
     }
     #endif
 
-    if (windowDirty || true) {
+    if (windowDirty) {
         checkSDLError(SDL_SetRenderDrawColor(renderer.get(),
             255,255, 255, 255));
         SDL_RenderClear(renderer.get());
