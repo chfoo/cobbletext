@@ -2,7 +2,7 @@ set(COBBLETEXT_DEBUG false CACHE BOOL "Enable dev features such as debug printin
 set(COBBLETEXT_ADDRESS_SANITIZER false CACHE BOOL "Add address sanitizer flags (gcc/clang)")
 set(COBBLETEXT_USE_STACK_TRACE false CACHE BOOL "Add stack traces to the library exceptions (requires boost-stacktrace, boost-exception)")
 
-file(GLOB_RECURSE COBBLETEXT_LIBRARY_SOURCES *.cpp)
+file(GLOB COBBLETEXT_LIBRARY_SOURCES "*.cpp" "c/*.cpp" "internal/*.cpp" "internal/*/*.cpp")
 
 if(COBBLETEXT_STATIC)
     add_library(cobbletext STATIC ${COBBLETEXT_LIBRARY_SOURCES} "Resource.cpp" )
@@ -55,3 +55,7 @@ if(COBBLETEXT_ADDRESS_SANITIZER)
 endif()
 
 target_link_libraries(cobbletext PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})
+
+if(COBBLETEXT_EMSCRIPTEN)
+    add_subdirectory(em)
+endif()

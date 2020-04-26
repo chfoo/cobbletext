@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * Macro for Windows symbol import and export
+ * Macro for Windows C symbol import and export, Emscripten attribute
  *
  * @private
  */
@@ -11,7 +11,7 @@
     #else
         #define COBBLETEXT_API __declspec(dllimport)
     #endif
-#elif defined(__EMSCRIPTEN__)
+#elif defined(__EMSCRIPTEN__) && defined(COBBLETEXT_ENABLE_EM_API)
     #include <emscripten.h>
     #define COBBLETEXT_API EMSCRIPTEN_KEEPALIVE
 #else

@@ -75,7 +75,8 @@ To generate build files using CMake:
 
 1. `mkdir build`
 2. `cd build`
-3. `cmake ..`
+3. `cmake .. -D CMAKE_BUILD_TYPE=Release`
+   * Omit `CMAKE_BUILD_TYPE` option if compiling with msbuild / Visual Studio.
 
 For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`. To let the toolchain file know which triplet you want to use, use something like `-D VCPKG_TARGET_TRIPLET=x64-windows`.
 
@@ -85,8 +86,10 @@ With Homebrew, CMake may not find ICU. Set your shell environment variable with 
 
 In the same build directory, build the library either the shared or static library:
 
-    cmake --build . --target cobbletext
-    cmake --build . --target cobbletext -D COBBLETEXT_STATIC=true
+    cmake --build . --target cobbletext --config Release
+    cmake --build . --target cobbletext --config Release -D COBBLETEXT_STATIC=true
+
+Omit `--config` option if using Makefile.
 
 Binaries are stored in the `build/bin` directory.
 
@@ -117,37 +120,40 @@ Make a build directory:
 
 Generate the build files:
 
-    emcmake cmake .. -D COBBLETEXT_EMSCRIPTEN=true -D COBBLETEXT_BUILD_DOCS=false -D COBBLETEXT_STATIC=true
+    emcmake cmake .. -D -D CMAKE_BUILD_TYPE=Release \
+        -D COBBLETEXT_EMSCRIPTEN=true -D COBBLETEXT_BUILD_DOCS=false \
+        -D COBBLETEXT_BUILD_TESTS=false -D COBBLETEXT_STATIC=true \
+        -D EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=true
 
 Fix CMakeCache.txt with paths to library headers if needed. *Do not* include system headers! For example, don't add `/usr/include`. Copy the headers somewhere isolated if needed.
+
+By default ICU included with Emscripten is not a working port. Instead, use the libraries from [this GitHub repo](https://github.com/tartanllama/icu-emscripten).
 
 Build the makefile with GNU Make:
 
     emmake make VERBOSE=1 cobbletext
 
-By default ICU included with Emscripten is not a working port. Instead, use the libraries from [this GitHub repo](https://github.com/tartanllama/icu-emscripten).
-
-This will output `cobbletext/libcobbletext.a` which is LLVM bitcode file is for linking into your Emscripten application. Use this bitcode along with the ICU bitcode to build your application.
+This will output `cobbletext/libcobbletext.bc` which is LLVM bitcode file is for linking into your Emscripten application. Use this bitcode along with the ICU bitcode to build your application.
 
 Example manual linking:
 
     em++ -O3 -s USE_SDL=2 -s USE_FREETYPE=1 -s USE_HARFBUZZ=1 \
         -s TOTAL_MEMORY=41943040 -s ALLOW_MEMORY_GROWTH=1 \
-        [your bitcode files here] \
+        [your bitcode files here (.bc, .a, .so, .dll, .dylib)] \
         -o [your output js or html file]
 
 ### Build cobblescript.js
 
 Run:
 
-    emmake make VERBOSE cobbletext_js
+    emmake make VERBOSE=1 cobbletext_js
 
 This will generate `bin\cobbletext.wasm` and `bin\cobbletext.js` for including into a JavaScript application.
 
-Use this if you aren't building an Emscripten application, but want to use Cobbletext directly from JavaScript. The module will be built with the modularize flag to module named `Cobbletext`.
+Use this if you aren't building an Emscripten application, but want to use Cobbletext directly from JavaScript. The module will be built with the modularize flag to module named `CobbletextModule`.
 
 ```js
-Cobbletext().then(function(Module) {
+CobbletextModule().then(function(Module) {
     // do things with Module
 });
 ```
