@@ -41,7 +41,7 @@ Use:
 
     brew install python freetype harfbuzz icu4c cpp-gsl boost
 
-uthash needs to be manually downloaded to somewhere and specified to CMake as described later.
+uthash and stb needs to be manually downloaded to somewhere and specified to CMake as described later.
 
 ### Linux package manager
 
@@ -53,6 +53,7 @@ On Debian based system, install
 * libicu-dev
 * libboost1.XX-dev (where XX is the latest version)
 * libmsgsl-dev
+* libstb-dev
 
 Optional:
 
@@ -64,7 +65,7 @@ Optional:
 Requirements:
 
 * C++17 compiler
-* [CMake](https://cmake.org/) 3.13+ for generating the build files.
+* [CMake](https://cmake.org/) 3.15+ for generating the build files.
 * [Python](https://www.python.org/) 3 for `script/embed_resource.py`. CMake will call Python automatically.
 * GNU Make or Visual Studio for running the build files.
 
@@ -92,7 +93,9 @@ In the same build directory, build the library either the shared or static libra
 
 Omit `--config` option if using Makefile.
 
-Binaries are stored in the `build/bin` directory.
+Binaries are stored in the `build/bin` directory. To invoke CMake's package install command for a release build, use:
+
+    cmake --install . --config Release --strip --prefix your_install_directory_here/
 
 Alternatively, you can run the generated build files yourself as described below.
 

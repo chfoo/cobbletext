@@ -109,3 +109,13 @@ endif()
 if(COBBLETEXT_BUILD_DOCS)
     add_subdirectory("doc")
 endif()
+
+install(TARGETS cobbletext DESTINATION lib)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/cobbletext/"
+    DESTINATION "include/cobbletext"
+)
+
+if(COBBLETEXT_EMSCRIPTEN)
+    install(TARGETS cobbletext_js DESTINATION bin)
+    install(FILES "${CMAKE_BINARY_DIR}/bin/cobbletext.wasm" DESTINATION bin)
+endif()

@@ -112,11 +112,12 @@ jobs:
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake
       - run: |
           cmake --build . --target cobbletext ${{ matrix.release_build_flag }}
+          cmake --install . --config Release --prefix ./install_dir/ --verbose
         working-directory: build-release/
       - uses: actions/upload-artifact@v1
         with:
           name: bin-${{ matrix.triplet }}
-          path: build-release/bin/
+          path: build-release/install_dir/
       - run: |
           rm -f ./vcpkg/vcpkg-export*
           ./vcpkg/vcpkg export \

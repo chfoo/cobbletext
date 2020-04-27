@@ -31,8 +31,8 @@ set(COBBLETEXT_LIBRARY_ALL_INCLUDES
 )
 
 target_include_directories(cobbletext PRIVATE ${COBBLETEXT_LIBRARY_ALL_INCLUDES})
-set_target_properties(cobbletext PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(cobbletext PROPERTIES SOVERSION 0)
+set_target_properties(cobbletext PROPERTIES VERSION ${cobbletext_VERSION})
+set_target_properties(cobbletext PROPERTIES SOVERSION ${cobbletext_VERSION_MAJOR})
 
 if(MSVC)
     target_compile_options(cobbletext PRIVATE /W4)
