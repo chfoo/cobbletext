@@ -30,7 +30,8 @@ public:
 
     FontID loadFont(const std::string path);
 
-    FontID loadFontBytes(const uint8_t * bytes, size_t length);
+    FontID loadFontBytes(const uint8_t * bytes, size_t length,
+        int32_t faceIndex = 0);
 
     FontInfo getFontInfo(FontID id);
 

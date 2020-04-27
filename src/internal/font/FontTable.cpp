@@ -24,11 +24,11 @@ FontTable::~FontTable() {
     }
 }
 
-FontID FontTable::load(const char * path) {
+FontID FontTable::load(const char * path, int32_t faceIndex) {
     auto library = freeType->library.get();
     FT_Face fontFace;
 
-    auto errorCode = FT_New_Face(library, path, 0, &fontFace);
+    auto errorCode = FT_New_Face(library, path, faceIndex, &fontFace);
 
     FreeType::throwIfError(errorCode);
 
@@ -40,7 +40,8 @@ FontID FontTable::load(const char * path) {
     return id;
 }
 
-FontID FontTable::loadBytes(const gsl::span<const uint8_t> & data) {
+FontID FontTable::loadBytes(const gsl::span<const uint8_t> & data,
+        int32_t faceIndex) {
     auto library = freeType->library.get();
     FT_Face fontFace;
 
@@ -49,7 +50,7 @@ FontID FontTable::loadBytes(const gsl::span<const uint8_t> & data) {
 
     auto errorCode = FT_New_Memory_Face(library,
         reinterpret_cast<const FT_Byte *>(dataVector->data()),
-        dataVector->size(), 0, &fontFace);
+        dataVector->size(), faceIndex, &fontFace);
 
     FreeType::throwIfError(errorCode);
 

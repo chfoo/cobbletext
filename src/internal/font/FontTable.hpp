@@ -31,8 +31,9 @@ public:
     explicit FontTable(std::shared_ptr<FreeType> freeType);
     ~FontTable();
 
-    FontID load(const char * path);
-    FontID loadBytes(const gsl::span<const uint8_t> & data);
+    FontID load(const char * path, int32_t faceIndex = 0);
+    FontID loadBytes(const gsl::span<const uint8_t> & data,
+        int32_t faceIndex = 0);
 
     bool hasFont(FontID fontID);
 

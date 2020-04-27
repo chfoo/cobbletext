@@ -72,9 +72,21 @@ TEST_CASE("library heavy methods") {
         CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
     }
 
+    SECTION("load nonexistant file with face index") {
+        cobbletext_library_load_font(library, "/nonexistant/font.ttf#123");
+
+        CHECK( cobbletext_get_error_code(library) );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+
+        cobbletext_library_load_font(library, "/nonexistant/font.ttf#123invalid");
+
+        CHECK( cobbletext_get_error_code(library) );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+    }
+
     SECTION("load nonsense bytes") {
         uint8_t * bytes = new uint8_t[100];
-        cobbletext_library_load_font_bytes(library, bytes, 100);
+        cobbletext_library_load_font_bytes(library, bytes, 100, 0);
         delete [] bytes;
 
         CHECK( cobbletext_get_error_code(library) );

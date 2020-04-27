@@ -73,7 +73,9 @@ CobbletextFontID cobbletext_library_get_fallback_font(
 /**
  * Loads a font face from a file.
  *
- * @param path Filename of the font file.
+ * @param path Filename of the font file. If the file has multiple faces,
+ *      use the fragment notation by adding `#` and the face index such as
+ *      `myfont.ttc#0`.
  *
  * - Can error.
  */
@@ -86,12 +88,15 @@ CobbletextFontID cobbletext_library_load_font(CobbletextLibrary * library,
  *
  * @param data Binary contents of a font file. Tbe value is copied.
  * @param length Size in bytes.
+ * @param face_index Face index if the file has multiple faces. Use 0 if this
+ *      parameter is irrelevant.
  *
  * - Can error.
  */
 COBBLETEXT_API
 CobbletextFontID cobbletext_library_load_font_bytes(
-    CobbletextLibrary * library, const uint8_t * data, uint32_t length);
+    CobbletextLibrary * library, const uint8_t * data, uint32_t length,
+    int32_t face_index);
 
 /**
  * Sets an alternative font to be used if glyphs are not in the font.

@@ -16,6 +16,9 @@ public:
     std::shared_ptr<internal::Context> context;
 
     Impl();
+
+    FontID loadFont(const std::string & path);
+
 };
 
 }

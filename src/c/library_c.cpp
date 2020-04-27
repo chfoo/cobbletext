@@ -55,9 +55,9 @@ CobbletextFontID cobbletext_library_load_font(CobbletextLibrary * library,
 }
 
 CobbletextFontID cobbletext_library_load_font_bytes(CobbletextLibrary * library,
-        const uint8_t * data, uint32_t length) {
+        const uint8_t * data, uint32_t length, int32_t face_index) {
     try {
-        auto fontID = library->obj->loadFontBytes(data, length);
+        auto fontID = library->obj->loadFontBytes(data, length, face_index);
         cobbletext::c::handleSuccess(library);
         return fontID;
     } catch (std::exception & exception) {

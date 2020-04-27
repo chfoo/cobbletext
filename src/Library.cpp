@@ -44,11 +44,13 @@ FontID Library::fallbackFont() {
 }
 
 FontID Library::loadFont(const std::string path) {
-    return impl->context->fontTable->load(path.c_str());
+    return impl->loadFont(path);
 }
 
-FontID Library::loadFontBytes(const uint8_t * bytes, size_t length) {
-    return impl->context->fontTable->loadBytes(gsl::span(bytes, length));
+FontID Library::loadFontBytes(const uint8_t * bytes, size_t length,
+        int32_t faceIndex) {
+    return impl->context->fontTable->loadBytes(gsl::span(bytes, length),
+        faceIndex);
 }
 
 FontInfo Library::getFontInfo(FontID id) {
