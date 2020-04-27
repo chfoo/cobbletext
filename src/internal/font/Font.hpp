@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #ifdef __EMSCRIPTEN__
     #include <hb.h>
