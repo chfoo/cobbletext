@@ -28,7 +28,7 @@ jobs:
             test_build_type: Debug
             release_build_flag: "--config Release"
           - target: ubuntu
-            vm: ubuntu-latest
+            vm: ubuntu-18.04
             triplet: x64-linux-dynamic-release # freetype won't link bz2 correctly with vcpkg debug
             vcpkg_extras: ""
             cmake_platform_flag: ""
