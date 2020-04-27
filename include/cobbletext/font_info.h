@@ -31,6 +31,10 @@ struct CobbletextFontInfo {
 
     /**
      * Number of font units per EM square.
+     *
+     * If value is 0, the font is a bitmap font and not a vector font.
+     * Additionally, properties, such as ascender or height,
+     * related to this EM size is not valid.
      */
     uint16_t units_per_em;
 
@@ -50,6 +54,8 @@ struct CobbletextFontInfo {
 
     /**
      * Distance between two baselines in font units.
+     *
+     * If 0, it is not a vector, but a bitmap font.
      */
     int16_t height;
 

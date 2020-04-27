@@ -223,25 +223,32 @@ void LineBreaker::analyzeLineHeight() {
 
         context->fontTable->setFontSize(fontID, fontSize);
 
-        auto fontPixelHeight = context->fontTable->fontUnitsToPixels(
-            fontID, font.freeTypeFace->height);
+        auto scaleFactor = 1 / 64.0; // FreeType pixel units
+        if (font.bitmapScale) {
+            // Not a vector font, but a bitmap font. Scale the bitmap
+            // to fit size.
+            scaleFactor *= font.bitmapScale;
+        }
+
+        auto fontPixelHeight =
+            font.freeTypeFace->size->metrics.height * scaleFactor;
 
         currentLine.lineHeight =
             std::max<uint32_t>(currentLine.lineHeight, fontPixelHeight);
 
         // Positive above the baseline
-        if (font.freeTypeFace->ascender > 0) {
-            auto fontPixelAscent = context->fontTable->fontUnitsToPixels(
-                fontID, font.freeTypeFace->ascender);
+        if (font.freeTypeFace->size->metrics.ascender > 0) {
+            auto fontPixelAscent =
+                font.freeTypeFace->size->metrics.ascender * scaleFactor;
 
             currentLine.ascent =
                 std::max<uint32_t>(currentLine.ascent, fontPixelAscent);
         }
 
         // Negative below the baseline
-        if (font.freeTypeFace->descender < 0) {
-            auto fontPixelAscent = context->fontTable->fontUnitsToPixels(
-                fontID, font.freeTypeFace->descender);
+        if (font.freeTypeFace->size->metrics.descender < 0) {
+            auto fontPixelAscent =
+                font.freeTypeFace->size->metrics.descender * scaleFactor;
 
             currentLine.descent =
                 std::max<uint32_t>(currentLine.descent, -fontPixelAscent);

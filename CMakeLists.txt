@@ -74,6 +74,7 @@ endif()
 # tu = tool utility library, internal API for optional tools
 find_package(ICU REQUIRED COMPONENTS data uc)
 find_path(MS_GSL_INCLUDE_PATH "gsl")
+find_path(STB_INCLUDE_PATH "stb.h" PATH_SUFFIXES "stb")
 
 set(COBBLETEXT_DEPENDENCY_INCLUDES
     ${Boost_INCLUDE_DIRS}
@@ -81,6 +82,7 @@ set(COBBLETEXT_DEPENDENCY_INCLUDES
     "${HARFBUZZ_INCLUDE_PATH}"
     "${ICU_INCLUDE_DIR}"
     "${MS_GSL_INCLUDE_PATH}"
+    "${STB_INCLUDE_PATH}"
 )
 set(COBBLETEXT_DEPENDENCY_LIBS
     ${FREETYPE_LIBRARIES}

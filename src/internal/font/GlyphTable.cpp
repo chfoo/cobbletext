@@ -6,13 +6,21 @@
 #include "internal/Debug.hpp"
 #include "Exception.hpp"
 #include "internal/ExceptionUtil.hpp"
+#include "internal/image/ImageResize.hpp"
 
 namespace cobbletext::internal {
 
 GlyphTable::GlyphTable(std::shared_ptr<FreeType> freeType,
     std::shared_ptr<FontTable> fontTable) :
     freeType(freeType),
-    fontTable(fontTable) {}
+    fontTable(fontTable) {
+
+    FT_Bitmap_Init(&tempBitmap);
+}
+
+GlyphTable::~GlyphTable() {
+    FT_Bitmap_Done(freeType->library.get(), &tempBitmap);
+}
 
 bool GlyphTable::registerGlyph(const GlyphKey & glyphKey) {
     const auto & result = glyphs.find(glyphKey);
@@ -57,14 +65,12 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
         return;
     }
 
-    auto font = fontTable->getFontWithFallback(glyphKey.fontFace);
+    auto font = fontTable->getFont(glyphKey.fontFace);
 
-    FT_Error errorCode = FT_Set_Char_Size(font.freeTypeFace,
-        0, glyphKey.fontSize * 64, 0, 0);
+    fontTable->setFontSize(glyphKey.fontFace,
+        glyphKey.fontSize);
 
-    FreeType::throwIfError(errorCode);
-
-    errorCode = FT_Load_Glyph(font.freeTypeFace,
+    auto errorCode = FT_Load_Glyph(font.freeTypeFace,
         glyphKey.index, FT_LOAD_DEFAULT);
 
     FreeType::throwIfError(errorCode);
@@ -76,16 +82,80 @@ void GlyphTable::rasterize(const GlyphKey & glyphKey) {
         FreeType::throwIfError(errorCode);
     }
 
-    auto bitmap = font.freeTypeFace->glyph->bitmap;
-    glyph.imageWidth = bitmap.width;
-    glyph.imageHeight = bitmap.rows;
-    auto buffer = static_cast<uint8_t *>(bitmap.buffer);
-    glyph.image = std::vector<uint8_t>(buffer,
-        buffer + bitmap.width * bitmap.rows);
+    auto & bitmap = font.freeTypeFace->glyph->bitmap;
 
-    glyph.imageOffsetX = font.freeTypeFace->glyph->bitmap_left;
-    glyph.imageOffsetY = -font.freeTypeFace->glyph->bitmap_top;
+    if (!font.bitmapScale) {
+        // vector font
+        glyph.imageWidth = bitmap.width;
+        glyph.imageHeight = bitmap.rows;
+
+        auto buffer = static_cast<uint8_t *>(bitmap.buffer);
+
+        glyph.image = std::vector<uint8_t>(buffer,
+            buffer + bitmap.width * bitmap.rows);
+
+        glyph.imageOffsetX = font.freeTypeFace->glyph->bitmap_left;
+        glyph.imageOffsetY = -font.freeTypeFace->glyph->bitmap_top;
+    } else {
+        scaleBitmapGlyph(bitmap, glyph, font);
+    }
+
     glyph.hasImage = true;
+}
+
+void GlyphTable::scaleBitmapGlyph(FT_Bitmap & bitmap, Glyph & glyph, Font & font) {
+    switch (bitmap.pixel_mode) {
+        case FT_PIXEL_MODE_MONO:
+            scaleBitmapMono(bitmap, glyph, font);
+            break;
+        case FT_PIXEL_MODE_GRAY:
+            scaleBitmapGrayscale(bitmap, glyph, font);
+            break;
+        default:
+            COBBLETEXT_DEBUG_PRINT(
+                "unknown bitmap pixel_mode=" << bitmap.pixel_mode);
+    }
+}
+
+void GlyphTable::scaleBitmapMono(FT_Bitmap & bitmap, Glyph & glyph,
+        Font & font) {
+    auto errorCode = FT_Bitmap_Convert(freeType->library.get(),
+        &bitmap, &tempBitmap, 1);
+
+    FreeType::throwIfError(errorCode);
+
+    if (tempBitmap.num_grays != 256) {
+        // FT_Bitmap_Convert doesn't ramp the values
+        size_t size = bitmap.width * bitmap.rows;
+
+        for (size_t index = 0; index < size; index++) {
+            tempBitmap.buffer[index] = tempBitmap.buffer[index] ? 255 : 0;
+        }
+    }
+
+    scaleBitmapGrayscale(tempBitmap, glyph, font);
+}
+
+void GlyphTable::scaleBitmapGrayscale(FT_Bitmap & bitmap, Glyph & glyph,
+        Font & font) {
+    uint32_t scaledWidth = bitmap.width * font.bitmapScale;
+    uint32_t scaledHeight = bitmap.rows * font.bitmapScale;
+
+    glyph.imageWidth = scaledWidth;
+    glyph.imageHeight = scaledHeight;
+
+    glyph.image = std::vector<uint8_t>(scaledWidth * scaledHeight, 0);
+
+    auto buffer = static_cast<uint8_t *>(bitmap.buffer);
+
+    stbir_resize_uint8(buffer, bitmap.width, bitmap.rows, 0,
+        reinterpret_cast<unsigned char *>(glyph.image.data()),
+        scaledWidth, scaledHeight, 0, 1);
+
+    glyph.imageOffsetX = font.freeTypeFace->glyph->bitmap_left
+        * font.bitmapScale;
+    glyph.imageOffsetY = -font.freeTypeFace->glyph->bitmap_top
+        * font.bitmapScale;
 }
 
 GlyphInfo GlyphTable::getGlyphInfo(GlyphID glyphID) {

@@ -22,7 +22,7 @@ class FontTable {
 private:
     unsigned long int idCounter = 1;
     std::unordered_map<FontID,Font> fonts;
-    std::unordered_map<FontID,FontID> alternativeMAp;
+    std::unordered_map<FontID,FontID> alternativeMap;
     std::shared_ptr<FreeType> freeType;
 
 public:

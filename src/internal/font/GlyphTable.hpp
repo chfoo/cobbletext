@@ -2,8 +2,11 @@
 
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include "internal/FreeType.hpp"
+#include FT_BITMAP_H
+
 #include "internal/font/GlyphKey.hpp"
 #include "internal/font/Glyph.hpp"
 #include "internal/font/FontTable.hpp"
@@ -20,8 +23,11 @@ private:
     std::unordered_map<GlyphID,GlyphKey> idMap;
     std::unordered_map<GlyphKey,Glyph,GlyphKeyHasher> glyphs;
 
+    FT_Bitmap tempBitmap;
+
 public:
     GlyphTable(std::shared_ptr<FreeType> freeType, std::shared_ptr<FontTable> fontTable);
+    ~GlyphTable();
 
     bool registerGlyph(const GlyphKey & glyphKey);
 
@@ -41,6 +47,12 @@ public:
 
 private:
     GlyphID getFreeID();
+
+    void scaleBitmapGlyph(FT_Bitmap & bitmap, Glyph & glyph, Font & font);
+    void scaleBitmapMono(FT_Bitmap & bitmap, Glyph & glyph, Font & font);
+    void scaleBitmapGrayscale(FT_Bitmap & bitmap, Glyph & glyph, Font & font);
+
+
 };
 
 }

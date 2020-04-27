@@ -14,6 +14,7 @@ Header-only libraries:
 
 * [Boost](https://www.boost.org/)
 * [Microsoft GSL](https://github.com/microsoft/GSL)
+* [STB](https://github.com/nothings/stb)
 
 Resources:
 

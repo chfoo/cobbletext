@@ -52,7 +52,7 @@ private:
     void pushBufferResults(const InternalTextRun & run,
         hb_glyph_info_t * glyphInfos,
         hb_glyph_position_t * glyphPositions,
-        unsigned int glyphCount, FontID fontID,
+        unsigned int glyphCount, FontID fontID, Font & font,
         std::vector<ShapeResult> & results);
 
 };

@@ -75,7 +75,7 @@ void Shaper::shapeRun(const InternalTextRun & run,
 
 bool Shaper::shapeRunWithFont(const InternalTextRun & run, FontID fontID,
         std::vector<ShapeResult> & results, double notDefThreshold) {
-    auto font = fontTable->getFont(fontID);
+    auto & font = fontTable->getFont(fontID);
 
     hb_buffer_clear_contents(harfBuzzBuffer.get());
 
@@ -128,7 +128,8 @@ bool Shaper::shapeRunWithFont(const InternalTextRun & run, FontID fontID,
         << " glyphCount=" << glyphCount);
 
     if (notDefScore < notDefThreshold) {
-        pushBufferResults(run, glyphInfos, glyphPositions, glyphCount, fontID, results);
+        pushBufferResults(run, glyphInfos, glyphPositions, glyphCount, fontID,
+            font, results);
         return true;
     } else {
         return false;
@@ -139,7 +140,7 @@ bool Shaper::shapeRunWithFont(const InternalTextRun & run, FontID fontID,
 void Shaper::pushBufferResults(const InternalTextRun & run,
         hb_glyph_info_t * glyphInfos,
         hb_glyph_position_t * glyphPositions,
-        unsigned int glyphCount, FontID fontID,
+        unsigned int glyphCount, FontID fontID, Font & font,
         std::vector<ShapeResult> & results) {
     if (!glyphCount) {
         return;
@@ -158,10 +159,19 @@ void Shaper::pushBufferResults(const InternalTextRun & run,
         auto glyphPosition = glyphPositions[index];
 
         ShapeResult result = ShapeResult(run);
-        result.xAdvance = glyphPosition.x_advance / 64.0;
-        result.yAdvance = glyphPosition.y_advance / 64.0;
-        result.xOffset = glyphPosition.x_offset / 64.0;
-        result.yOffset = glyphPosition.y_offset / 64.0;
+
+        double scaleFactor = 1 / 64.0; // FreeType pixel units
+
+        if (font.bitmapScale) {
+            // Not a vector font, but a bitmap font. HarfBuzz uses the raw
+            // selected bitmap size.
+            scaleFactor *= font.bitmapScale;
+        }
+
+        result.xAdvance = glyphPosition.x_advance * scaleFactor;
+        result.yAdvance = glyphPosition.y_advance * scaleFactor;
+        result.xOffset = glyphPosition.x_offset * scaleFactor;
+        result.yOffset = glyphPosition.y_offset * scaleFactor;
         result.glyphIndex = glyphInfo.codepoint;
         result.cluster = glyphInfo.cluster;
         result.fontID = fontID;

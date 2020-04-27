@@ -58,6 +58,9 @@ struct CobbletextTextProperties {
      * The current font size in points.
      *
      * Default is 12.
+     *
+     * If the font file contains bitmaps and not vectors, the value
+     * represented is in pixels.
      */
     double font_size;
 

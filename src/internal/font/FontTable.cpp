@@ -127,10 +127,36 @@ bool FontTable::setFontSize(FontID fontID, double fontSize) {
         return false;
     }
 
-    auto errorCode = FT_Set_Char_Size(font.freeTypeFace,
-        0, fontSize * 64, 0, 0);
+    if (FT_IS_SCALABLE(font.freeTypeFace)) {
+        auto errorCode = FT_Set_Char_Size(font.freeTypeFace,
+            0, fontSize * 64, 0, 0);
 
-    FreeType::throwIfError(errorCode);
+        FreeType::throwIfError(errorCode);
+    } else {
+        FT_Int sizeCount = font.freeTypeFace->num_fixed_sizes;
+        FT_Int selectedIndex = 0;
+        int16_t selectedSize = 0;
+
+        for (FT_Int index = 0; index < sizeCount; index++) {
+            auto strikeInfo = &font.freeTypeFace->available_sizes[index];
+            int16_t candidateSize = strikeInfo->height;
+
+            if (fontSize > candidateSize && candidateSize > selectedSize) {
+                selectedIndex = index;
+                selectedSize = candidateSize;
+            }
+        }
+
+        auto errorCode = FT_Select_Size(font.freeTypeFace, selectedIndex);
+
+        FreeType::throwIfError(errorCode);
+
+        auto strikeInfo = &font.freeTypeFace->available_sizes[selectedIndex];
+
+        if (strikeInfo->height) {
+            font.bitmapScale = fontSize / strikeInfo->height;
+        }
+    }
 
     font.fontSize = fontSize;
 
@@ -145,13 +171,13 @@ int32_t FontTable::fontUnitsToPixels(FontID fontID, int32_t value) {
 
 
 void FontTable::setFontAlternative(FontID fontID, FontID fallbackFontID) {
-    alternativeMAp[fontID] = fallbackFontID;
+    alternativeMap[fontID] = fallbackFontID;
 }
 
 FontID FontTable::getFontAlternative(FontID fontID) {
-    const auto & iter = alternativeMAp.find(fontID);
+    const auto & iter = alternativeMap.find(fontID);
 
-    if (iter != alternativeMAp.end()) {
+    if (iter != alternativeMap.end()) {
         return iter->second;
     } else {
         return 0;

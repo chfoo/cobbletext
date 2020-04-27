@@ -16,7 +16,8 @@ class Font {
 public:
     FT_Face const freeTypeFace;
     hb_font_t * const harfBuzzFont;
-    double fontSize = 0;
+    double fontSize = 0; // in points
+    double bitmapScale = 0; // if non-zero, scale bitmap font to fit font size
     std::shared_ptr<std::vector<uint8_t>> fontData;
 
     Font(FT_Face freeTypeFace, hb_font_t * harfBuzzFont) :

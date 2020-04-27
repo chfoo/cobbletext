@@ -342,6 +342,7 @@ Dependencies used within the library:
 
 * Microsoft GSL: MIT license
 * Boost: BSD-like license
+* STB: MIT license
 * FreeType: BSD-like license or GPLv2
   * Bzip2/libbz2: BSD-like license
   * Libpng: BSD-like license
