@@ -44,8 +44,12 @@ FontID FontTable::loadBytes(const gsl::span<const uint8_t> & data) {
     auto library = freeType->library.get();
     FT_Face fontFace;
 
+    auto dataVector = std::make_shared<std::vector<uint8_t>>(
+        data.data(), data.data() + data.size());
+
     auto errorCode = FT_New_Memory_Face(library,
-        (const FT_Byte *)data.data(), data.size(), 0, &fontFace);
+        reinterpret_cast<const FT_Byte *>(dataVector->data()),
+        dataVector->size(), 0, &fontFace);
 
     FreeType::throwIfError(errorCode);
 
@@ -53,6 +57,7 @@ FontID FontTable::loadBytes(const gsl::span<const uint8_t> & data) {
     auto id = getFreeID();
 
     fonts.emplace(id, Font(fontFace, hbFont));
+    fonts.at(id).fontData = dataVector;
 
     return id;
 }

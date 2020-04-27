@@ -84,7 +84,7 @@ CobbletextFontID cobbletext_library_load_font(CobbletextLibrary * library,
 /**
  * Loads a font face from the given bytes of a font file.
  *
- * @param data Binary contents of a font file.
+ * @param data Binary contents of a font file. Tbe value is copied.
  * @param length Size in bytes.
  *
  * - Can error.

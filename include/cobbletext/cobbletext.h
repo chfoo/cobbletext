@@ -24,13 +24,13 @@
  * `cobbletext_get_error_code()` before continuing. If there is an error,
  * the returned value or the internal state may be invalid.
  *
+ * Pointer parameters are copied by the function unless noted. Pointer
+ * return types should not be freed and become invalid on the next function
+ * call unless noted.
+ *
  * Whenever a pointer is described "free only using library", use
  * Cobbletext's corresponding delete function for that handle.
  * Do not call `free()` on it.
- *
- * Whenever a parameter is described as "ownership transfer", the function
- * does not make a copy of the argument. This means the resource must not be
- * freed for the lifetime of the function's instance.
  */
 
 
