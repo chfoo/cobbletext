@@ -1,4 +1,7 @@
 #!/bin/bash
+# Builds WASM version of ICU using an unmerged pull request
+# The build only works with Emscripten SDK version 1.38.48
+
 set -e
 set -x
 
@@ -14,11 +17,11 @@ fi
 mkdir -p icu_build icu_installed
 cd icu_build
 ICU_DATA_FILTER_FILE=$SCRIPT_DIR/../misc/icu/icu_data_filter.json \
-    ../icu/icu4c/source/runConfigureICU wasm32 \
+    emconfigure ../icu/icu4c/source/runConfigureICU wasm32 \
         --with-library-suffix=cobbletext \
         --prefix=`pwd`/../icu_installed
 cp ../icu/icu4c/source/tools/toolutil/nodejs-system.js tools/toolutil/
-make
-make install
+emmake make
+emmake make install
 
 echo "Done"

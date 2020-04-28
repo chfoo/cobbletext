@@ -137,7 +137,7 @@ The path in `ICU_ROOT` option should contain the path to the directory with "inc
 
 Assumes Linux-like environment.
 
-Install the emsdk and activate the SDK. The latest SDK should work, except for older pre-compiled bitcode.
+Install the emsdk and activate the SDK version 1.38.48
 
 ### Building the library
 
@@ -167,10 +167,10 @@ Build by unmerged [Wasm Pull Request](https://github.com/unicode-org/icu/pull/78
     mkdir icu_build
     mkdir icu_installed
     cd icu_build
-    ../icu/icu4c/source/runConfigureICU wasm32 --prefix=`pwd`/../icu_installed
+    emconfigure ../icu/icu4c/source/runConfigureICU wasm32 --prefix=`pwd`/../icu_installed
     cp ../icu/icu4c/source/tools/toolutil/nodejs-system.js icu4c/source/tools/toolutil/
-    make
-    make install
+    emmake make
+    emmake make install
 
 A script is included that runs the same commands above but builds a custom ICU:
 
