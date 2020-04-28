@@ -1,0 +1,3 @@
+vcpkg source git commits
+
+icu 89d112b839a61f81fb5f341c908d6412e3855228

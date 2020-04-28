@@ -8,6 +8,7 @@ set(COBBLETEXT_BUILD_EXAMPLES true CACHE BOOL "Whether to include example progra
 set(COBBLETEXT_BUILD_TESTS true CACHE BOOL "Whether to include tests into the build config")
 set(COBBLETEXT_BUILD_DOCS true CACHE BOOL "Whether to include documentation to the build config")
 set(COBBLETEXT_STATIC false CACHE BOOL "Enable to build the library as a static library. Default is dynamic library.")
+set(COBBLETEXT_CUSTOM_ICU false CACHE BOOL "Whether to use link with ICU libraries compiled with --with-library-suffix=cobbletext")
 set(COBBLETEXT_EMSCRIPTEN false CACHE BOOL "Enables config to build to Emscripten with emcmake and emmake.")
 
 set(CMAKE_CXX_STANDARD 17)
@@ -72,7 +73,18 @@ endif()
 # lx = layout extensions, optional engine
 # io = I/O, optional support for I/O with Unicode
 # tu = tool utility library, internal API for optional tools
-find_package(ICU REQUIRED COMPONENTS data uc)
+if(COBBLETEXT_CUSTOM_ICU)
+    find_path(CUSTOM_ICU_INCLUDE_DIR "unicode/utypes.h")
+    find_library(CUSTOM_ICU_DATA_LIBARARY NAMES "icudatacobbletext" "icudtcobbletext")
+    find_library(CUSTOM_ICU_COMMON_LIBARARY NAMES "icuuccobbletext")
+    set(ICU_INCLUDE_DIR "${CUSTOM_ICU_INCLUDE_DIR}")
+    set(ICU_LIBRARIES "${CUSTOM_ICU_DATA_LIBARARY}" "${CUSTOM_ICU_COMMON_LIBARARY}")
+    add_compile_definitions(U_HAVE_LIB_SUFFIX=1)
+    add_compile_definitions(U_LIB_SUFFIX_C_NAME=_cobbletext)
+else()
+    find_package(ICU REQUIRED COMPONENTS data uc)
+endif()
+
 find_path(MS_GSL_INCLUDE_PATH "gsl")
 find_path(STB_INCLUDE_PATH "stb.h" PATH_SUFFIXES "stb")
 

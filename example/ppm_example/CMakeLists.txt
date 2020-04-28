@@ -18,7 +18,7 @@ endif()
 
 add_compile_definitions(HASH_DEBUG=1)
 
-target_link_libraries(ppm_example PRIVATE cobbletext)
+target_link_libraries(ppm_example PRIVATE cobbletext ${COBBLETEXT_DEPENDENCY_LIBS})
 
 if(NOT WIN32)
     target_link_libraries(ppm_example PRIVATE dl)

@@ -26,10 +26,9 @@ if(NOT COBBLETEXT_EMSCRIPTEN)
     endif()
 
 elseif(COBBLETEXT_EMSCRIPTEN)
-    target_link_libraries(sdl_example PRIVATE cobbletext ${COBBLETEXT_DEPENDENCY_LIBS})
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     target_link_options(sdl_example PRIVATE "SHELL:-s EXIT_RUNTIME=1")
     target_link_options(sdl_example PRIVATE --shell-file "${CMAKE_CURRENT_SOURCE_DIR}/emscripten_shell.html")
 endif()
 
-target_link_libraries(sdl_example PRIVATE cobbletext ${SDL2_LIBRARY})
+target_link_libraries(sdl_example PRIVATE cobbletext ${COBBLETEXT_DEPENDENCY_LIBS} ${SDL2_LIBRARY})

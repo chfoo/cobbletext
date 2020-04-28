@@ -1,0 +1,28 @@
+{
+    "strategy": "additive",
+    "featureFilters": {
+        "brkitr_rules": "include",
+        "brkitr_dictionaries": "include",
+        "brkitr_tree": "include",
+        "conversion_mappings": "exclude",
+        "coll_ucadata": "exclude",
+        "coll_tree": "exclude",
+        "confusables": "exclude",
+        "misc": "include",
+        "curr_supplemental": "exclude",
+        "curr_tree": "exclude",
+        "lang_tree": "exclude",
+        "normalization": "exclude",
+        "region_tree": "exclude",
+        "rbnf_tree": "exclude",
+        "stringprep": "exclude",
+        "zone_tree": "exclude",
+        "zone_supplemental": "exclude",
+        "translit": "exclude",
+        "unames": "exclude",
+        "ulayout": "include",
+        "unit_tree": "exclude",
+        "cnvalias": "include",
+        "locales_tree": "exclude"
+    }
+}

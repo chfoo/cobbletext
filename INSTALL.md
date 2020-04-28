@@ -2,6 +2,8 @@
 
 Instructions on how to build Cobbletext and dependencies.
 
+Note: If you want prebuilt libraries, check the Releases section on the GitHub repository website.
+
 ## Dependencies
 
 Libraries:
@@ -171,3 +173,25 @@ To generate example executable:
 ### Further details
 
 Please check CMakeFiles.txt files in this project, look for "COBBLETEXT_EMSCRIPTEN" for details.
+
+## Reducing ICU size
+
+The ICU library is relatively large, but the data can be customized.
+
+There is a custom ICU data filter which can be used like so:
+
+    ICU_DATA_FILTER_FILE=cobbletext/misc/icu/icu_data_filter.json \
+        PATH_TO_ICU/icu/source/runConfigureICU Linux
+        --with-library-suffix=cobbletext
+
+There is also a custom vcpkg port "icu-cobbletext" in `misc/vcpkg_custom_ports/` which can be supplied to vcpkg like so:
+
+    vcpkg YOUR_COMMAND_HERE --overlay-ports=put_path_to_cobbletext_here/misc/vcpkg_custom_ports/
+
+To request Cobbletext to link against a library prefixed version of ICU, provide `-D COBBLETEXT_CUSTOM_ICU=true` to cmake.
+
+Ensure the CMake variables are set correctly:
+
+* `CUSTOM_ICU_INCLUDE_DIR` should be a directory containing ICU headers
+* `CUSTOM_ICU_DATA_LIBARARY` should be a path to library "libicu{dt,data}cobbletext.{a,lib,so,dylib}"
+* `CUSTOM_ICU_COMMON_LIBARARY` should be a path to library "libicuuccobbletext.{a,lib,so,dylib}"
