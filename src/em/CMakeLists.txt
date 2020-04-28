@@ -1,10 +1,11 @@
+file(GLOB COBBLETEXT_LIBRARY_SOURCES "../*.cpp" "../c/*.cpp" "../internal/*.cpp" "../internal/*/*.cpp")
 file(GLOB COBBLETEXT_EM_SOURCES "*.cpp")
 
 add_executable(cobbletext_js
     js/cobbletext_js.cpp
     ${COBBLETEXT_LIBRARY_SOURCES}
     ${COBBLETEXT_EM_SOURCES}
-    "../Resource.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/Resource.cpp"
 )
 
 configure_file(../Version.h.in "${CMAKE_CURRENT_BINARY_DIR}/Version.h")
@@ -19,8 +20,15 @@ add_custom_command(OUTPUT Resource.cpp
     VERBATIM
 )
 
-add_compile_definitions(COBBLETEXT_ENABLE_EM_API=1)
+set(COBBLETEXT_LIBRARY_ALL_INCLUDES
+    "${CMAKE_SOURCE_DIR}/include/"
+    "${CMAKE_SOURCE_DIR}/include/cobbletext/"
+    "${CMAKE_SOURCE_DIR}/src/"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    ${COBBLETEXT_DEPENDENCY_INCLUDES}
+)
 
+target_compile_definitions(cobbletext_js PRIVATE COBBLETEXT_ENABLE_EM_API=1)
 target_include_directories(cobbletext_js PRIVATE ${COBBLETEXT_LIBRARY_ALL_INCLUDES})
 
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
@@ -31,9 +39,9 @@ target_link_options(cobbletext_js PRIVATE "SHELL:-s EXPORT_NAME=CobbletextModule
 target_link_options(cobbletext_js PRIVATE "--bind")
 
 # If LINKABLE is disabled, EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=true
-# should be set to generate .bc files intead of .a files.
+# should be set to generate .bc files intead of .a files
+# https://github.com/emscripten-core/emscripten/issues/5465
 
-# TODO: figure out how to keep icudt65_dat from being deleted.
-target_link_options(cobbletext_js PRIVATE "SHELL:-s LINKABLE=1")
+# target_link_options(cobbletext_js PRIVATE "SHELL:-s LINKABLE=1")
 
 target_link_libraries(cobbletext_js PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})

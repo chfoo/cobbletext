@@ -11,6 +11,11 @@ set(COBBLETEXT_STATIC false CACHE BOOL "Enable to build the library as a static 
 set(COBBLETEXT_CUSTOM_ICU false CACHE BOOL "Whether to use link with ICU libraries compiled with --with-library-suffix=cobbletext")
 set(COBBLETEXT_EMSCRIPTEN false CACHE BOOL "Enables config to build to Emscripten with emcmake and emmake.")
 
+if(COBBLETEXT_EMSCRIPTEN)
+    set(COBBLETEXT_EMSCRIPTEN_ICU_STRATEGY "manual" CACHE STRING "Sets how to get ICU"
+        STRINGS "download_from_tartanllama" "manual")
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(C_STANDARD 11)
@@ -41,25 +46,9 @@ if(COBBLETEXT_EMSCRIPTEN)
     add_link_options("SHELL:-s TOTAL_MEMORY=41943040")  # actually INTITAL_MEMORY
     add_link_options("SHELL:-s ALLOW_MEMORY_GROWTH=1")
 
-    include(FetchContent)
-    FetchContent_Declare(
-      icu-emscripten
-      GIT_REPOSITORY https://github.com/TartanLlama/icu-emscripten.git
-      GIT_TAG        master
-    )
-    # FetchContent_MakeAvailable(icu-emscripten)
-
-    # Backwards compatible MakeAvailable
-    FetchContent_GetProperties(icu-emscripten)
-    if(NOT icu-emscripten_POPULATED)
-        FetchContent_Populate(icu-emscripten)
-        # add_subdirectory(${icu-emscripten_SOURCE_DIR} ${icu-emscripten_BINARY_DIR})
+    if(COBBLETEXT_EMSCRIPTEN_ICU_STRATEGY STREQUAL "download_from_tartanllama")
+        include(script/get_precompiled_icu_tartanllama.cmake)
     endif()
-
-    # Make sure CMake doesn't try to pull in system installations of ICU
-    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
-    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
-    set(ICU_ROOT ${icu-emscripten_SOURCE_DIR})
 else()
     find_package(Boost REQUIRED)
     find_package(Freetype REQUIRED)
@@ -74,15 +63,14 @@ endif()
 # io = I/O, optional support for I/O with Unicode
 # tu = tool utility library, internal API for optional tools
 if(COBBLETEXT_CUSTOM_ICU)
-    find_path(CUSTOM_ICU_INCLUDE_DIR "unicode/utypes.h")
-    find_library(CUSTOM_ICU_DATA_LIBARARY NAMES "icudatacobbletext" "icudtcobbletext")
-    find_library(CUSTOM_ICU_COMMON_LIBARARY NAMES "icuuccobbletext")
-    set(ICU_INCLUDE_DIR "${CUSTOM_ICU_INCLUDE_DIR}")
-    set(ICU_LIBRARIES "${CUSTOM_ICU_DATA_LIBARARY}" "${CUSTOM_ICU_COMMON_LIBARARY}")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/misc/cmake_modules/")
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+    find_package(ICUCobbletext REQUIRED COMPONENTS uc data)  # data needs to be linked last
     add_compile_definitions(U_HAVE_LIB_SUFFIX=1)
     add_compile_definitions(U_LIB_SUFFIX_C_NAME=_cobbletext)
 else()
-    find_package(ICU REQUIRED COMPONENTS data uc)
+    find_package(ICU REQUIRED COMPONENTS uc data)
 endif()
 
 find_path(MS_GSL_INCLUDE_PATH "gsl")
@@ -120,6 +108,10 @@ endif()
 
 if(COBBLETEXT_BUILD_DOCS)
     add_subdirectory("doc")
+endif()
+
+if(COBBLETEXT_EMSCRIPTEN)
+    add_subdirectory(src/em cobbletext_em)
 endif()
 
 install(TARGETS cobbletext DESTINATION lib)

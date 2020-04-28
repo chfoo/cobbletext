@@ -141,3 +141,58 @@ jobs:
         with:
           name: bin-dependencies-${{ matrix.triplet }}
           path: build-release/bin-dependencies/
+  build_emscripten:
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v2.1.0
+        with:
+          submodules: true
+      # System dependencies
+      - run: |
+          sudo apt install libfreetype6-dev libharfbuzz-dev libicu-dev \
+            libboost-dev libmsgsl-dev libstb-dev
+      # Emscripten
+      - uses: actions/cache@v1
+        id: emscripten-cache
+        with:
+          key: emscripten-cache-1.39.13-v1
+          path: emsdk-cache
+      - uses: mymindstorm/setup-emsdk@v4
+        with:
+          version: 1.39.13
+          actions-cache-folder: 'emsdk-cache'
+          no-cache: true
+      # Emscripten ICU
+      - uses: actions/cache@v1
+        id: cache-emscripten-icu
+        with:
+          key: emscripten-icu-v1
+          path: icu_emscripten_prefixed/
+      - run: script/build_icu_emscripten_prefixed.sh
+        if: steps.cache-emscripten-icu.outputs.cache-hit != 'true'
+      # Build release
+      - run: |
+          mkdir build-release
+          cd build-release
+          emcmake cmake .. -D CMAKE_BUILD_TYPE=Release
+            -D CMAKE_VERBOSE_MAKEFILE=true \
+            -D COBBLETEXT_CUSTOM_ICU=true \
+            -D COBBLETEXT_BUILD_DOCS=false \
+            -D COBBLETEXT_BUILD_TESTS=false \
+            -D COBBLETEXT_BUILD_EXAMPLES=false \
+            -D COBBLETEXT_EMSCRIPTEN=true \
+            -D EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=true \
+            -D COBBLETEXT_STATIC=true \
+            -D ICU_ROOT=$GITHUB_WORKSPACE/icu_emscripten_prefixed/icu_installed/
+      - run: |
+          emmake cmake --build . --target cobbletext
+          emmake cmake --build . --target cobbletext_js
+          emmake cmake --install . --prefix ./install_dir/ --verbose
+        working-directory: build-release/
+      - uses: actions/upload-artifact@v1
+        with:
+          name: bin-emscripten
+          path: build-release/install_dir/

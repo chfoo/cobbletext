@@ -39,13 +39,14 @@ function loadEmscripten() {
     var script = document.createElement("script");
     script.src = "cobbletext.js";
     script.onload = function () {
-        cobbletext = CobbletextModule().then(cobbletextLoadedCallback);
+        CobbletextModule().then(cobbletextLoadedCallback);
     };
 
     document.body.appendChild(script);
 }
 
-function cobbletextLoadedCallback() {
+function cobbletextLoadedCallback(module) {
+    cobbletext = module;
     console.debug("creating engine...");
 
     loadingDiv.style.display = "none";

@@ -55,7 +55,3 @@ if(COBBLETEXT_ADDRESS_SANITIZER)
 endif()
 
 target_link_libraries(cobbletext PRIVATE ${COBBLETEXT_DEPENDENCY_LIBS})
-
-if(COBBLETEXT_EMSCRIPTEN)
-    add_subdirectory(em)
-endif()

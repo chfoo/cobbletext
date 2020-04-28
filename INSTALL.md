@@ -53,7 +53,7 @@ On Debian based system, install
 * libfreetype6-dev
 * libharfbuzz-dev
 * libicu-dev
-* libboost1.XX-dev (where XX is the latest version)
+* llibboost-dev
 * libmsgsl-dev
 * libstb-dev
 
@@ -111,11 +111,33 @@ Ensure the C++ workload is installed. See Tools -> Get tools and features.
 
 * Project `cobbletext` is the library.
 
+## Reducing ICU size
+
+The ICU library is relatively large, but the data can be customized.
+
+There is a custom ICU data filter which can be used like so:
+
+    ICU_DATA_FILTER_FILE=cobbletext/misc/icu/icu_data_filter.json \
+        PATH_TO_ICU/icu/source/runConfigureICU Linux \
+        --with-library-suffix=cobbletext \
+        --prefix=/usr/local/
+
+There is also a custom vcpkg port "icu-cobbletext" in `misc/vcpkg_custom_ports/` which can be supplied to vcpkg like so:
+
+    vcpkg YOUR_COMMAND_HERE --overlay-ports=put_path_to_cobbletext_here/misc/vcpkg_custom_ports/
+
+To request Cobbletext to link against a library prefixed version of ICU, provide to Cmake the options:
+
+    -D COBBLETEXT_CUSTOM_ICU=true
+    -D ICU_ROOT=path_to_custom_icu_here
+
+The path in `ICU_ROOT` option should contain the path to the directory with "include" and "lib".
+
 ## Emscripten
 
 Assumes Linux-like environment.
 
-Install the emsdk and activate version 1.38.48.
+Install the emsdk and activate the SDK. The latest SDK should work, except for older pre-compiled bitcode.
 
 ### Building the library
 
@@ -126,14 +148,45 @@ Make a build directory:
 
 Generate the build files:
 
-    emcmake cmake .. -D -D CMAKE_BUILD_TYPE=Release \
+    emcmake cmake .. -D CMAKE_BUILD_TYPE=Release \
         -D COBBLETEXT_EMSCRIPTEN=true -D COBBLETEXT_BUILD_DOCS=false \
         -D COBBLETEXT_BUILD_TESTS=false -D COBBLETEXT_STATIC=true \
         -D EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=true
 
 Fix CMakeCache.txt with paths to library headers if needed. *Do not* include system headers! For example, don't add `/usr/include`. Copy the headers somewhere isolated if needed.
 
-By default ICU included with Emscripten is not a working port. Instead, use the libraries from [this GitHub repo](https://github.com/tartanllama/icu-emscripten).
+### Getting ICU
+
+By default ICU included with Emscripten is not a working port. You can compile ICU manually or use use pre-compiled libraries.
+
+#### Building source
+
+Build by unmerged [Wasm Pull Request](https://github.com/unicode-org/icu/pull/784):
+
+    git clone https://github.com/mabels/icu/ --depth 10 --branch wasm32
+    mkdir icu_build
+    mkdir icu_installed
+    cd icu_build
+    ../icu/icu4c/source/runConfigureICU wasm32 --prefix=`pwd`/../icu_installed
+    cp ../icu/icu4c/source/tools/toolutil/nodejs-system.js icu4c/source/tools/toolutil/
+    make
+    make install
+
+A script is included that runs the same commands above but builds a custom ICU:
+
+    ./script/build_icu_emscripten_prefixed.sh
+
+#### Link ICU bitcode
+
+There's a few sources of pre-compiled bitcode:
+
+* This project's Releases on GitHub
+* [Full ICU bitcode](https://github.com/tartanllama/icu-emscripten) for SDK version 1.38.48.
+  * To have this automatically done as part of the build system, use option `-D COBBLETEXT_EMSCRIPTEN_ICU_STRATEGY=download_from_tartanllama`.
+
+`-D ICU_ROOT=path_to_icu_install_dir` should be set to a path containing ICU with the `include` and `lib` directories.
+
+### Build bitcode
 
 Build the makefile with GNU Make:
 
@@ -173,25 +226,3 @@ To generate example executable:
 ### Further details
 
 Please check CMakeFiles.txt files in this project, look for "COBBLETEXT_EMSCRIPTEN" for details.
-
-## Reducing ICU size
-
-The ICU library is relatively large, but the data can be customized.
-
-There is a custom ICU data filter which can be used like so:
-
-    ICU_DATA_FILTER_FILE=cobbletext/misc/icu/icu_data_filter.json \
-        PATH_TO_ICU/icu/source/runConfigureICU Linux
-        --with-library-suffix=cobbletext
-
-There is also a custom vcpkg port "icu-cobbletext" in `misc/vcpkg_custom_ports/` which can be supplied to vcpkg like so:
-
-    vcpkg YOUR_COMMAND_HERE --overlay-ports=put_path_to_cobbletext_here/misc/vcpkg_custom_ports/
-
-To request Cobbletext to link against a library prefixed version of ICU, provide `-D COBBLETEXT_CUSTOM_ICU=true` to cmake.
-
-Ensure the CMake variables are set correctly:
-
-* `CUSTOM_ICU_INCLUDE_DIR` should be a directory containing ICU headers
-* `CUSTOM_ICU_DATA_LIBARARY` should be a path to library "libicu{dt,data}cobbletext.{a,lib,so,dylib}"
-* `CUSTOM_ICU_COMMON_LIBARARY` should be a path to library "libicuuccobbletext.{a,lib,so,dylib}"
