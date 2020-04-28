@@ -64,7 +64,7 @@ jobs:
           ./vcpkg/vcpkg install \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
-            --overlay-ports=misc/vcpkg_custom_ports \
+            --overlay-ports=$GITHUB_WORKSPACE/misc/vcpkg_custom_ports \
             freetype[png] harfbuzz[ucdn] icu-cobbletext ms-gsl catch2 \
             boost-container-hash sdl2 stb ${{ matrix.vcpkg_extras }}
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
