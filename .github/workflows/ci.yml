@@ -153,7 +153,12 @@ jobs:
       # System dependencies
       - run: |
           sudo apt install libfreetype6-dev libharfbuzz-dev libicu-dev \
-            libboost-dev libmsgsl-dev libstb-dev
+            libboost-dev libmsgsl-dev
+      - uses: actions/checkout@v2
+        with:
+          repository: nothings/stb
+          path: stb
+          ref: f54acd4e13430c5122cab4ca657705c84aa61b08
       # Emscripten
       - uses: actions/cache@v1
         id: emscripten-cache
@@ -186,6 +191,7 @@ jobs:
             -D COBBLETEXT_EMSCRIPTEN=true \
             -D EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=true \
             -D COBBLETEXT_STATIC=true \
+            -D STB_INCLUDE_PATH=$GITHUB_WORKSPACE/stb \
             -D ICU_ROOT=$GITHUB_WORKSPACE/icu_emscripten_prefixed/icu_installed/
       - run: |
           emmake cmake --build . --target cobbletext
