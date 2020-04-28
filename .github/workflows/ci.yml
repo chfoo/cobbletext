@@ -61,6 +61,7 @@ jobs:
       - run: |
           mkdir -p ./vcpkg
           cp -a $VCPKG_INSTALLATION_ROOT/. ./vcpkg/
+          cd vcpkg/ && git pull && git checkout 89d112b839a61f81fb5f341c908d6412e3855228 && cd ../
           ./vcpkg/vcpkg install \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
@@ -105,7 +106,7 @@ jobs:
         env:
           # On Ubuntu, copying the libraries won't work because it doesn't
           # search in the executable's directory, but LD_LIBRARY_PATH works
-          LD_LIBRARY_PATH: "vcpkg/installed/${{ matrix.triplet }}/lib/"
+          LD_LIBRARY_PATH: "${{ github.workspace }}/vcpkg/installed/${{ matrix.triplet }}/lib/"
       # Now build dynamic library:
       - run: |
           mkdir build-release
