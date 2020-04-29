@@ -154,7 +154,7 @@ jobs:
       - run: |
           sudo apt install libmsgsl-dev
           mkdir -p local_headers/
-          cp /usr/include/gsl local_headers/
+          cp -r /usr/include/gsl local_headers/
       - uses: actions/checkout@v2
         with:
           repository: nothings/stb
