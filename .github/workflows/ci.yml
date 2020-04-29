@@ -150,10 +150,11 @@ jobs:
       - uses: actions/checkout@v2.1.0
         with:
           submodules: true
-      # System dependencies
+      # System dependencies (boost, freetype, and harfbuzz already in emsdk)
       - run: |
-          sudo apt install libfreetype6-dev libharfbuzz-dev libicu-dev \
-            libboost-dev libmsgsl-dev
+          sudo apt install libmsgsl-dev
+          mkdir -p local_headers/
+          cp /usr/include/gsl local_headers/
       - uses: actions/checkout@v2
         with:
           repository: nothings/stb
@@ -191,6 +192,7 @@ jobs:
             -D COBBLETEXT_EMSCRIPTEN=true \
             -D EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=true \
             -D COBBLETEXT_STATIC=true \
+            -D MS_GSL_INCLUDE_PATH=$GITHUB_WORKSPACE/local_headers \
             -D STB_INCLUDE_PATH=$GITHUB_WORKSPACE/stb \
             -D ICU_ROOT=$GITHUB_WORKSPACE/icu_emscripten_prefixed/icu_installed/
       - run: |
