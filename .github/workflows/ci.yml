@@ -123,10 +123,7 @@ jobs:
           cmake --build . --target cobbletext ${{ matrix.release_build_flag }}
           cmake --install . --config Release --prefix ./install_dir/ --verbose
         working-directory: build-release/
-      - uses: actions/upload-artifact@v1
-        with:
-          name: bin-${{ matrix.triplet }}
-          path: build-release/install_dir/
+      # Packup up binaries
       - run: |
           rm -f ./vcpkg/vcpkg-export*
           ./vcpkg/vcpkg export \
@@ -134,13 +131,17 @@ jobs:
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --7zip \
             freetype[png] harfbuzz[ucdn] icu-cobbletext
-      - run: |
           mkdir -p build-release/bin-dependencies/
           mv ./vcpkg/vcpkg-export* build-release/bin-dependencies/
+      - run: |
+          mkdir -p artifact_output/
+          tar --create --file artifact_output/cobbletext.tar.bz2 --bzip2 \
+            build-release/install_dir/ \
+            build-release/bin-dependencies/
       - uses: actions/upload-artifact@v1
         with:
-          name: bin-dependencies-${{ matrix.triplet }}
-          path: build-release/bin-dependencies/
+          name: bin-${{ matrix.triplet }}
+          path: artifact_output/
   build_emscripten:
     runs-on: ubuntu-18.04
     defaults:
@@ -200,7 +201,13 @@ jobs:
           emmake cmake --build . --target cobbletext_js
           emmake cmake --install . --prefix ./install_dir/ --verbose
         working-directory: build-release/
+      # Package up binaries
+      - run: |
+          mkdir -p artifact_output/
+          tar --create --file artifact_output/cobbletext.tar.bz2 --bzip2 \
+            build-release/install_dir/ \
+            icu_emscripten_prefixed/icu_installed/
       - uses: actions/upload-artifact@v1
         with:
           name: bin-emscripten
-          path: build-release/install_dir/
+          path: artifact_output/
