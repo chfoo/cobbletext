@@ -195,6 +195,7 @@ void GlyphTable::clear() {
     idCounter = 1;
     idMap.clear();
     glyphs.clear();
+    generationID++;
 }
 
 }

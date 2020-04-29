@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_set>
 
 #include <unicode/uloc.h>
 
@@ -51,6 +52,9 @@ class LayoutEngine {
 
     uint32_t previousTextIndex;
 
+    unsigned long int glyphTableGenerationID;
+    std::unordered_set<GlyphKey,GlyphKeyHasher> glyphsSeen;
+
 public:
     uint32_t lineLength = 0;
     TextAlignment textAlignment = TextAlignment::NotSpecified;
@@ -66,7 +70,8 @@ public:
     LayoutEngine(std::shared_ptr<Context> context,
         std::shared_ptr<TextSource> textSource);
 
-    void clear();
+    void clearText();
+    void clearGlyphs();
 
     void layOut();
 

@@ -1,7 +1,6 @@
 #include "internal/layout/LayoutEngine.hpp"
 
 #include <cassert>
-#include <unordered_set>
 
 #include <unicode/schriter.h>
 
@@ -17,7 +16,8 @@ LayoutEngine::LayoutEngine(std::shared_ptr<Context> context,
         shaper(context->fontTable),
         lineBreaker(context),
         context(context),
-        textSource(textSource) {
+        textSource(textSource),
+        glyphTableGenerationID(context->glyphTable->generationID) {
     bidiTable.setTextBuffer(textSource->textBuffer);
     scriptTable.setTextBuffer(textSource->textBuffer);
     shaper.setTextBuffer(textSource->textBuffer);
@@ -45,9 +45,8 @@ bool LayoutEngine::tilesValid() {
     return tilesValid_;
 }
 
-void LayoutEngine::clear() {
+void LayoutEngine::clearText() {
     textSource->clear();
-    // TODO:
 }
 
 void LayoutEngine::layOut() {
@@ -254,8 +253,11 @@ void LayoutEngine::fastPathTextRun(const TextRun & textRun) {
 }
 
 void LayoutEngine::registerGlyphsAndMakeTiles() {
-    tiles_.clear();
-    std::unordered_set<GlyphKey,GlyphKeyHasher> glyphsSeen;
+    if (glyphTableGenerationID != context->glyphTable->generationID) {
+        tiles_.clear();
+        glyphsSeen.clear();
+        glyphTableGenerationID = context->glyphTable->generationID;
+    }
 
     for (auto const & shapeResult : *shapeResults) {
         if (shapeResult.run.source.inlineObject) {

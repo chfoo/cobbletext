@@ -26,6 +26,8 @@ private:
     FT_Bitmap tempBitmap;
 
 public:
+    unsigned long int generationID = 1;
+
     GlyphTable(std::shared_ptr<FreeType> freeType, std::shared_ptr<FontTable> fontTable);
     ~GlyphTable();
 

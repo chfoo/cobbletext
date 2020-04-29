@@ -35,7 +35,7 @@ void Engine::Impl::addInlineObject(InlineObjectID id, uint32_t size) {
 
 void Engine::Impl::clear() {
     textSource->clear();
-    layoutEngine->clear();
+    layoutEngine->clearText();
     parent.outputInfo.textWidth = parent.outputInfo.textHeight = 0;
 }
 
