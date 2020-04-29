@@ -3,14 +3,18 @@
 var cobbletext;
 var library;
 var engine;
+var atlasTable = new Map();
+var fontIds = [];
+
 var loadingDiv;
 var inputTextarea;
 var renderCanvas;
 var colorCanvas;
 var atlasCanvas;
-var atlasTable = new Map();
 var colorInputElement;
 var textSizeElement;
+var localeElement;
+var renderClearButton;
 
 if (document.readyState == "loading") {
     document.addEventListener("DOMContentLoaded", documentLoadedCallback);
@@ -28,6 +32,8 @@ function documentLoadedCallback() {
     colorCanvas = document.getElementById("colorCanvas");
     colorInputElement = document.getElementById("textStyle-color");
     textSizeElement = document.getElementById("textStyle-size");
+    localeElement = document.getElementById("textStyle-locale");
+    renderClearButton = document.getElementById("renderClearButton");
 
     loadingDiv.style.display = "block";
     loadEmscripten();
@@ -45,16 +51,62 @@ function loadEmscripten() {
     document.body.appendChild(script);
 }
 
-function cobbletextLoadedCallback(module) {
+async function cobbletextLoadedCallback(module) {
     cobbletext = module;
-    console.debug("creating engine...");
 
-    loadingDiv.style.display = "none";
+    let libraryInfoElement = document.getElementById("libraryInfo");
+    libraryInfoElement.textContent = "Library version: "
+        + cobbletext.Library.version();
+
+    console.debug("creating engine...");
 
     library = new cobbletext.Library();
     engine = new cobbletext.Engine(library);
 
+    await loadFonts();
+
+    loadingDiv.style.display = "none";
+
     attachUIEventHandlers();
+}
+
+async function loadFonts() {
+    console.debug("loading fonts...");
+
+    let pendingFonts = ["NotoSans-Regular.ttf",
+        "NotoSansCJK-Regular.ttc",
+        "NotoSansArabic-Regular.ttf",
+        "NotoSansHebrew-Regular.ttf",
+        "NotoEmoji-Regular.ttf"];
+
+    while (pendingFonts.length) {
+        let font = pendingFonts.shift();
+        let fontLink = 'fonts/' + font;
+
+        console.debug("loading font " + fontLink);
+
+        let response = await fetch(fontLink);
+
+        console.debug("loaded font " + response.status + " " + response.statusText);
+
+        if (response.ok) {
+            let buffer = await response.arrayBuffer();
+            fontIds.push(library.loadFontBytes(buffer, 0));
+
+            updateFontFallback();
+            updateText();
+        }
+    }
+}
+
+function updateFontFallback() {
+    if (fontIds.length < 2) {
+        return;
+    }
+
+    for (let index = 0; index < fontIds.length - 1; index++) {
+        library.setFontAlternative(fontIds[index], fontIds[index + 1]);
+    }
 }
 
 function attachUIEventHandlers() {
@@ -64,6 +116,11 @@ function attachUIEventHandlers() {
     inputTextarea.addEventListener("input", updateText);
     colorInputElement.addEventListener("change", updateText);
     textSizeElement.addEventListener("change", updateText);
+    localeElement.addEventListener("change", updateText);
+    renderClearButton.addEventListener("click", function () {
+        library.clearGlyphs();
+        updateText();
+    })
 
     window.addEventListener("resize", updateCanvasSize);
     updateCanvasSize();
@@ -77,9 +134,14 @@ function updateCanvasSize() {
 
 function updateText() {
     engine.clear();
+
+    if (fontIds.length) {
+        engine.font = fontIds[0];
+    }
+
     engine.lineLength = renderCanvas.width;
     engine.fontSize = parseInt(textSizeElement.value, 10);
-    engine.locale = navigator.language;
+    engine.locale = localeElement.value;
     engine.addTextUTF8(inputTextarea.value);
     engine.layOut();
 
@@ -93,9 +155,9 @@ function updateText() {
 function prepareAtlas() {
     console.debug("prepare atlas...");
 
-    let atlasSize = packTiles();
-
     engine.rasterize();
+
+    let atlasSize = packTiles();
 
     colorCanvas.width = atlasCanvas.width = atlasSize;
     colorCanvas.height = atlasCanvas.height = atlasSize;
@@ -147,6 +209,10 @@ function packTiles() {
 }
 
 function drawAtlasTile(context, tile, glyph) {
+    if (glyph.imageWidth == 0 && glyph.imageHeight == 0) {
+        return;
+    }
+
     let glyphImage = new ImageData(glyph.imageWidth, glyph.imageHeight);
     let pixelCount = glyph.imageWidth * glyph.imageHeight;
 

@@ -45,6 +45,10 @@
                 background-color: turquoise;
                 image-rendering: pixelated;
             }
+
+            .textStyle {
+                display: inline-block;
+            }
         </style>
     </head>
     <body>
@@ -58,16 +62,30 @@
                 <div>
                     <label id="textInput-label" for="textInput-textarea">Type some text:</label>
                     <!-- "I can eat glass" text from http://kermitproject.org/utf8.html -->
-                    <textarea id="textInput-textarea">I can eat glass and it doesn't hurt me. Je peux manger du verre, ça ne me fait pas mal. Puedo comer vidrio, no me hace daño. Я могу есть стекло, оно мне не вредит. मैं काँच खा सकता हूँ और मुझे उससे कोई चोट नहीं पहुंचती. أنا قادر على أكل الزجاج و هذا لا يؤلمني. אני יכול לאכול זכוכית וזה לא מזיק לי. Tôi có thể ăn thủy tinh mà không hại gì. ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ 我能吞下玻璃而不伤身体。 我能吞下玻璃而不傷身體。 私はガラスを食べられます。それは私を傷つけません。 나는 유리를 먹을 수 있어요. 그래도 아프지 않아요</textarea>
+                    <textarea id="textInput-textarea">I can eat glass and it doesn't hurt me. Je peux manger du verre, ça ne me fait pas mal. Puedo comer vidrio, no me hace daño. Я могу есть стекло, оно мне не вредит. मैं काँच खा सकता हूँ और मुझे उससे कोई चोट नहीं पहुंचती. أنا قادر على أكل الزجاج و هذا لا يؤلمني. אני יכול לאכול זכוכית וזה לא מזיק לי. Tôi có thể ăn thủy tinh mà không hại gì. ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ 我能吞下玻璃而不伤身体。 我能吞下玻璃而不傷身體。 私はガラスを食べられます。それは私を傷つけません。 나는 유리를 먹을 수 있어요. 그래도 아프지 않아요 I🙂can😋eat🍽️glass👓🔍🪞🥂🪟and☝️it🙅doesn’t🤕hurt👍me.🐕🦮🐕‍🦺🇦🇶🏴‍☠️</textarea>
                 </div>
 
-                <div>
+                <div class="textStyle">
                     <label for="textStyle-color">Text color: </label>
                     <input id="textStyle-color" type="color" value="#000000">
                 </div>
-                <div>
+                <div class="textStyle">
                     <label for="textStyle-size">Text size: </label>
                     <input id="textStyle-size" type="number" value="16" min="1" max="128">
+                </div>
+                <div class="textStyle">
+                    <label for="textStyle-locale">Locale: </label>
+                    <select id="textStyle-locale">
+                        <option value="default"><script>document.write(navigator.language);</script> - default</option>
+                        <option value="ar">ar - Arabic</option>
+                        <option value="en">en - English</option>
+                        <option value="he">he - Hebrew</option>
+                        <option value="jp">jp - Japanese</option>
+                        <option value="ko">ko - Korean</option>
+                        <option value="zh-CN">zh-CN - Chinese</option>
+                        <option value="zh-HK">zh-HK - Chinese</option>
+                        <option value="zh-TW">zh-TW - Chinese</option>
+                    </select>
                 </div>
             </section>
 
@@ -84,6 +102,11 @@
                     <figcaption>HTML5 colored atlas:</figcaption>
                     <canvas id="colorCanvas"></canvas>
                 </figure>
+                <button id="renderClearButton">Clear</button>
+            </section>
+
+            <section>
+                <p id="libraryInfo"></p>
             </section>
         </div>
     </body>

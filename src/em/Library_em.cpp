@@ -4,6 +4,17 @@
 
 using namespace emscripten;
 
+namespace cobbletext::em {
+
+FontID loadFontBytesWrapper(Library & library, const std::string bytes,
+        int32_t faceIndex) {
+    return library.loadFontBytes(
+        reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size(),
+        faceIndex);
+}
+
+}
+
 EMSCRIPTEN_BINDINGS(cobbletext_Library) {
     class_<cobbletext::Library>("Library")
         .class_function("versionMajor", &cobbletext::Library::versionMajor)
@@ -17,7 +28,7 @@ EMSCRIPTEN_BINDINGS(cobbletext_Library) {
 
         .function("fallbackFont", &cobbletext::Library::fallbackFont)
         .function("loadFont", &cobbletext::Library::loadFont)
-        .function("loadFontBytes", &cobbletext::Library::loadFontBytes, allow_raw_pointers())
+        .function("loadFontBytes", &cobbletext::em::loadFontBytesWrapper)
         .function("getFontInfo", &cobbletext::Library::getFontInfo)
         .function("getGlyphInfo", &cobbletext::Library::getGlyphInfo)
         .function("setFontAlternative", &cobbletext::Library::setFontAlternative)

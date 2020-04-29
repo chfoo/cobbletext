@@ -4,7 +4,9 @@ Cobbletext is a complex text layout and rendering engine as a C/C++ library. It 
 
 It uses FreeType, HarfBuzz, and Unicode ICU for the actual dirty work.
 
-**Work in progress.**
+Online demos:
+
+* [js_example](https://chfoo.github.io/cobbletext/example/js_example/) JavaScript with Emscripten bindings. Note: requires 25 MB of data download due to fonts.
 
 ## Quick start
 
@@ -302,7 +304,7 @@ engine.clear();
 ## Further reading
 
 * Please see the examples in the example directory.
-* API documentation: TODO
+* [API documentation](https://chfoo.github.io/cobbletext/doc/api/)
 * [HarfBuzz documentation](https://harfbuzz.github.io/index.html)
 * [FreeType documentation](https://www.freetype.org/freetype2/docs/documentation.html)
 * [ICU documentation](http://userguide.icu-project.org/)
