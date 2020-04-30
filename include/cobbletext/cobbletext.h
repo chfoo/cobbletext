@@ -1,6 +1,11 @@
 #ifndef COBBLETEXT_COBBLETEXT_H_
 #define COBBLETEXT_COBBLETEXT_H_
 
+//
+// Copyright 2020 Christopher Foo
+// License: Mozilla Public License Version 2.0
+//
+
 /**
  * @mainpage Cobbletext: complex text layout and rendering engine library.
  *
