@@ -10,7 +10,11 @@ Online demos:
 
 ## Quick start
 
-See [INSTALL.md](INSTALL.md) for building the library. For prebuilt libraries, check the Releases section in the GitHub repository. Note that on Windows, using the C++ API requires static linking at this time.
+See [INSTALL.md](INSTALL.md) for building the library.
+
+For prebuilt libraries, check the Releases section in the GitHub repository. Prebuilt libraries might not always work. Check the troubleshooting section for details.
+
+Note that on Windows, using the C++ API requires static linking at this time.
 
 ### Prepare context
 
@@ -191,14 +195,14 @@ for (auto & tile : tiles) {
         tile.atlasX, tile.atlasY // Destination
     );
     myAtlas.set(
-        tile.glyph_id, // Key
+        tile.glyphID, // Key
         tile.atlasX, tile.atlasY, // Location on atlas
         glyph.imageOffsetX, glyph.imageOffsetY // Drawing metadata
     );
 }
 ```
 
-In order to not process image data every time text is changed, use:
+In order to not process image data to every time text is changed, use:
 
 ```c++
 // C
@@ -272,8 +276,8 @@ for (auto & advance : advances) {
         case cobbletext::AdvanceType::Glyph:
             auto & entry = myAtlas.get(advance->glyphID);
 
-            int32_t x = pen_x + advance->glyphOffsetX + entry->imageOffsetX;
-            int32_t y = pen_y + advance->glyphOffsetY + entry->imageOffsetX;
+            int32_t x = penX + advance->glyphOffsetX + entry->imageOffsetX;
+            int32_t y = penY + advance->glyphOffsetY + entry->imageOffsetX;
 
             image.myDrawTile(
                 entry->atlasX, entry->atlasY, // Source position
@@ -300,6 +304,22 @@ cobbletext_engine_clear(engine);
 // C++
 engine.clear();
 ```
+
+## Troubleshooting libraries
+
+If you have trouble getting the libraries to work at runtime, ensure the libraries are located on the OS's search path. As well ensure the library's dependencies are also working.
+
+### Windows
+
+Libraries can be placed in the same directory as the executable. If library refuses to load despite it being there, check that its dependencies are found using Dependency Walker or Process Monitor. You might need the latest Visual C++ Redistributable.
+
+### MacOS
+
+Placing libraries in the same directory as the executable might not work. You can temporarily specify a search path using the `DYLIB_LIBRARY_PATH` environment variable. For example: `DYLIB_LIBRARY_PATH=my/path/to/dylib/directory/ ./my_application`.
+
+### Linux
+
+You can temporarily include library paths using the `LIB_LIBRARY_PATH` environment variable. For example: `LIB_LIBRARY_PATH=my/path/to/so/directory/ ./my_application`. The `ldd` command and setting the environment variable `LD_DEBUG=libs` can be useful.
 
 ## Further reading
 

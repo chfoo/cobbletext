@@ -25,7 +25,7 @@ struct CobbletextEngineProperties {
      * Locale as a BCP 47 language tag.
      *
      * This value is used for assisting lower-level functions to tailor the
-     * presention of the text to your application's user. It is typically
+     * presentation of the text to your application's user. It is typically
      * the GUI's locale or a document's language.
      *
      * The default is an empty string which indicates automatic detection of
