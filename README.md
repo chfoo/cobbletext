@@ -16,6 +16,8 @@ For prebuilt libraries, check the Releases section in the GitHub repository. Pre
 
 Note that on Windows, using the C++ API requires static linking at this time.
 
+On macOS, please define `COBBLETEXT_NO_UCHAR_H`.
+
 ### Prepare context
 
 Before any text processing can be done, a library context instance needs to be created:
@@ -315,11 +317,11 @@ Libraries can be placed in the same directory as the executable. If library refu
 
 ### MacOS
 
-Placing libraries in the same directory as the executable might not work. You can temporarily specify a search path using the `DYLIB_LIBRARY_PATH` environment variable. For example: `DYLIB_LIBRARY_PATH=my/path/to/dylib/directory/ ./my_application`.
+Placing libraries in the same directory as the executable might not work. You can temporarily specify a search path using the `DYLD_LIBRARY_PATH` environment variable. For example: `DYLD_LIBRARY_PATH=my/path/to/dylib/directory/ ./my_application`.
 
 ### Linux
 
-You can temporarily include library paths using the `LIB_LIBRARY_PATH` environment variable. For example: `LIB_LIBRARY_PATH=my/path/to/so/directory/ ./my_application`. The `ldd` command and setting the environment variable `LD_DEBUG=libs` can be useful.
+You can temporarily include library paths using the `LD_LIBRARY_PATH` environment variable. For example: `LD_LIBRARY_PATH=my/path/to/so/directory/ ./my_application`. The `ldd` command and setting the environment variable `LD_DEBUG=libs` can be useful.
 
 ## Further reading
 
