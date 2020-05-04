@@ -196,7 +196,7 @@ class Main:
     def create_package_archive(self, temp_dir, package_name, platform):
         if "windows" in platform:
             package_archive_path = os.path.abspath(
-                os.path.join(f"{self.run_id}",f"{package_name}.7z"))
+                os.path.join(f"{self.run_id}",f"{package_name}.zip"))
             subprocess.check_call(["7z",
                 "a", package_archive_path,
                 package_name], cwd=temp_dir)
