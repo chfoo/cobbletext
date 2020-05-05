@@ -144,7 +144,7 @@ TEST_CASE("engine inline object") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);
 
-    cobbletext_engine_add_inline_object(engine, 123, 400);
+    cobbletext_engine_add_inline_object(engine, 123, 400, 50);
     cobbletext_engine_lay_out(engine);
     cobbletext_engine_prepare_advances(engine);
 

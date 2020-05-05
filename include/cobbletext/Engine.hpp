@@ -45,7 +45,7 @@ public:
     void addTextUTF32(std::u32string_view text);
     void addTextUTF32(const char32_t * text, int32_t length);
 
-    void addInlineObject(InlineObjectID id, uint32_t size);
+    void addInlineObject(InlineObjectID id, uint32_t width, uint32_t height);
 
     void clear();
     void layOut();

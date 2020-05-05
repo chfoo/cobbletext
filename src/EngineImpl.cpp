@@ -29,8 +29,9 @@ void Engine::Impl::addUnicodeString(icu::UnicodeString string) {
     textSource->addText(string, makeCurrentTextFormat());
 }
 
-void Engine::Impl::addInlineObject(InlineObjectID id, uint32_t size) {
-    textSource->addInlineObject(id, size, makeCurrentTextFormat());
+void Engine::Impl::addInlineObject(InlineObjectID id, uint32_t width,
+        uint32_t height) {
+    textSource->addInlineObject(id, width, height, makeCurrentTextFormat());
 }
 
 void Engine::Impl::clear() {

@@ -115,7 +115,7 @@ void LineBreaker::fillLine() {
         uint32_t shapeLength;
 
         if (shapeResult.run.source.inlineObject) {
-            shapeLength = shapeResult.run.source.inlineObject->pixelSize;
+            shapeLength = shapeResult.run.source.inlineObject->pixelWidth;
         } else {
             // TODO: make this support vertical lines
             shapeLength = shapeResult.xAdvance;
@@ -258,7 +258,7 @@ void LineBreaker::analyzeLineHeight() {
 
 uint32_t LineBreaker::getShapeLength(const ShapeResult & shapeResult) {
     if (shapeResult.run.source.inlineObject) {
-        return shapeResult.run.source.inlineObject->pixelSize;
+        return shapeResult.run.source.inlineObject->pixelWidth;
     } else {
         // TODO: Support vertical lines
         return shapeResult.xAdvance;

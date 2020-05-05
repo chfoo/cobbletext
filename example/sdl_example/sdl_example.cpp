@@ -248,7 +248,7 @@ void App::setUpText() {
         CustomProperty::RedText);
 
     engine->addTextUTF8("Inline");
-    engine->addInlineObject(InlineObject1, 50);
+    engine->addInlineObject(InlineObject1, 50, 50);
     engine->addTextUTF8("object");
 
     engine->fontSize = 16;

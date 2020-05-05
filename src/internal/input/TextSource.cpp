@@ -29,13 +29,13 @@ void TextSource::addText(icu::UnicodeString text, TextFormat textFormat) {
     runs.push_back(run);
 }
 
-void TextSource::addInlineObject(int id, uint32_t pixelSize,
-        TextFormat textFormat) {
+void TextSource::addInlineObject(int id, uint32_t pixelWidth,
+        uint32_t pixelHeight, TextFormat textFormat) {
     TextRun run;
 
     run.textFormat = textFormat;
 
-    run.inlineObject.emplace(id, pixelSize);
+    run.inlineObject.emplace(id, pixelWidth, pixelHeight);
 
     run.textIndex = textBuffer->length();
     textBuffer->append(static_cast<UChar32>(OBJECT_REPLACEMENT_CODE_POINT));

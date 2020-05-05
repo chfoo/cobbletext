@@ -6,11 +6,12 @@ namespace cobbletext::internal {
 
 class InlineObject {
 public:
-    InlineObject(int id, uint32_t pixelSize)
-        : id(id), pixelSize(pixelSize) {}
+    InlineObject(int id, uint32_t pixelWidth, uint32_t pixelHeight)
+        : id(id), pixelWidth(pixelWidth), pixelHeight(pixelHeight) {}
 
     int id;
-    uint32_t pixelSize;
+    uint32_t pixelWidth;
+    uint32_t pixelHeight;
 };
 
 }

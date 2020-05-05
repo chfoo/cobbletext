@@ -29,7 +29,7 @@ public:
 
     void addUnicodeString(icu::UnicodeString string);
 
-    void addInlineObject(InlineObjectID id, uint32_t size);
+    void addInlineObject(InlineObjectID id, uint32_t width, uint32_t height);
 
     void clear();
 

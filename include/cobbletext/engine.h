@@ -136,11 +136,12 @@ void cobbletext_engine_add_text_utf32(CobbletextEngine * engine,
  * Append a placeholder for an object to the text buffer.
  *
  * @param id A user-provided value.
- * @param size Width in pixels of the object.
+ * @param width Width in pixels of the object.
+ * @param height Height in pixels of the object.
  */
 COBBLETEXT_API
 void cobbletext_engine_add_inline_object(CobbletextEngine * engine,
-    CobbletextInlineObjectID id, uint32_t size);
+    CobbletextInlineObjectID id, uint32_t width, uint32_t height);
 
 /**
  * Empty the text buffer.

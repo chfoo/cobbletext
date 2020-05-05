@@ -376,7 +376,7 @@ void LayoutEngine::processLineRun(const LineRun & lineRun) {
                 *shapeResult.run.source.inlineObject;
 
             advance.type = AdvanceType::InlineObject;
-            advance.advanceX = inlineObject.pixelSize;
+            advance.advanceX = inlineObject.pixelWidth;
             advance.inlineObject = inlineObject.id;
 
         } else {

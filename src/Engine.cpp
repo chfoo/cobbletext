@@ -88,8 +88,8 @@ void Engine::addTextUTF32(const char32_t * text, int32_t length) {
     impl->addUnicodeString(uString);
 }
 
-void Engine::addInlineObject(InlineObjectID id, uint32_t size) {
-    impl->addInlineObject(id, size);
+void Engine::addInlineObject(InlineObjectID id, uint32_t width, uint32_t height) {
+    impl->addInlineObject(id, width, height);
 }
 
 void Engine::clear() {

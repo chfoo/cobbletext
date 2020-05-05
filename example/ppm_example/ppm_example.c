@@ -172,7 +172,7 @@ void app_set_text(App * app) {
     text_properties.custom_property = PROPERTY_RED_TEXT;
     cobbletext_engine_set_text_properties(app->engine, &text_properties);
     cobbletext_engine_add_text_utf8(app->engine, "Inline", -1);
-    cobbletext_engine_add_inline_object(app->engine, INLINE_OBJECT_1, 50);
+    cobbletext_engine_add_inline_object(app->engine, INLINE_OBJECT_1, 50, 50);
     cobbletext_engine_add_text_utf8(app->engine, "object", -1);
     cobbletext_engine_add_text_utf8(app->engine, "\n", -1);
 

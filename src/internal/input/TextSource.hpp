@@ -26,7 +26,8 @@ public:
 
     void clear();
     void addText(icu::UnicodeString text, TextFormat textFormat);
-    void addInlineObject(int id, uint32_t pixelSize, TextFormat textFormat);
+    void addInlineObject(int id, uint32_t pixelWidth, uint32_t pixelHeight,
+        TextFormat textFormat);
 };
 
 

@@ -158,8 +158,8 @@ void cobbletext_engine_add_text_utf32(CobbletextEngine * engine, const Cobbletex
     engine->obj->addTextUTF32(reinterpret_cast<const char32_t*>(text), length);
 }
 
-void cobbletext_engine_add_inline_object(CobbletextEngine * engine, CobbletextInlineObjectID id, uint32_t size) {
-    engine->obj->addInlineObject(id, size);
+void cobbletext_engine_add_inline_object(CobbletextEngine * engine, CobbletextInlineObjectID id, uint32_t width, uint32_t height) {
+    engine->obj->addInlineObject(id, width, height);
 }
 
 void cobbletext_engine_clear(CobbletextEngine * engine) {
