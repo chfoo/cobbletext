@@ -319,6 +319,8 @@ Libraries can be placed in the same directory as the executable. If library refu
 
 Placing libraries in the same directory as the executable might not work. You can temporarily specify a search path using the `DYLD_LIBRARY_PATH` environment variable. For example: `DYLD_LIBRARY_PATH=my/path/to/dylib/directory/ ./my_application`.
 
+Use `otool` to inspect your application's library dependencies. The libraries may be linked into a hardcoded path which may not exist on another system. Or the libraries use `@rpath/` prefix but your application does not specify an rpath. Use `install_name_tool` to change the names.
+
 ### Linux
 
 You can temporarily include library paths using the `LD_LIBRARY_PATH` environment variable. For example: `LD_LIBRARY_PATH=my/path/to/so/directory/ ./my_application`. The `ldd` command and setting the environment variable `LD_DEBUG=libs` can be useful.
