@@ -18,7 +18,7 @@
 namespace cobbletext {
 
 
-class Engine {
+class COBBLETEXT_CPP_API Engine {
 public:
     uint32_t lineLength = 0;
     std::string locale;

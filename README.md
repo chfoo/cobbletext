@@ -14,8 +14,6 @@ See [INSTALL.md](INSTALL.md) for building the library.
 
 For prebuilt libraries, check the Releases section in the GitHub repository. Prebuilt libraries might not always work. Check the troubleshooting section for details.
 
-Note that on Windows, using the C++ API requires static linking at this time.
-
 On macOS, please define `COBBLETEXT_NO_UCHAR_H`.
 
 ### Prepare context

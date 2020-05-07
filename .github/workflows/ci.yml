@@ -9,14 +9,12 @@ jobs:
       matrix:
         target: [windows-x86, windows-x64, ubuntu, macos]
         include:
-          # We're using static linking on Windows for the tests
-          # because it uses C++ API which is not properly supported yet
           - target: windows-x86
             vm: windows-latest
             triplet: x86-windows
             vcpkg_extras: "getopt-win32"
             cmake_platform_flag: "-A Win32"
-            test_link_static: "true"
+            test_link_static: "false"
             test_build_type: Debug
             release_build_flag: "--config Release"
           - target: windows-x64
@@ -24,7 +22,7 @@ jobs:
             triplet: x64-windows
             vcpkg_extras: "getopt-win32"
             cmake_platform_flag: "-A x64"
-            test_link_static: "true"
+            test_link_static: "false"
             test_build_type: Debug
             release_build_flag: "--config Release"
           - target: ubuntu

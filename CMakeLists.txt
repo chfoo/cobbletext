@@ -8,6 +8,7 @@ set(COBBLETEXT_BUILD_EXAMPLES true CACHE BOOL "Whether to include example progra
 set(COBBLETEXT_BUILD_TESTS true CACHE BOOL "Whether to include tests into the build config")
 set(COBBLETEXT_BUILD_DOCS true CACHE BOOL "Whether to include documentation to the build config")
 set(COBBLETEXT_STATIC false CACHE BOOL "Enable to build the library as a static library. Default is dynamic library.")
+set(COBBLETEXT_CPP_API false CACHE BOOL "Enable the C++ API for dynamic library build on Windows.")
 set(COBBLETEXT_CUSTOM_ICU false CACHE BOOL "Whether to use link with ICU libraries compiled with --with-library-suffix=cobbletext")
 set(COBBLETEXT_EMSCRIPTEN false CACHE BOOL "Enables config to build to Emscripten with emcmake and emmake.")
 
@@ -28,6 +29,10 @@ endif()
 
 if(COBBLETEXT_STATIC)
     add_compile_definitions(COBBLETEXT_STATIC=1)
+endif()
+
+if(COBBLETEXT_CPP_API)
+    add_compile_definitions(COBBLETEXT_ENABLE_CPP_API=1)
 endif()
 
 if(COBBLETEXT_EMSCRIPTEN)

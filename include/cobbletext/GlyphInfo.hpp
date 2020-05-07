@@ -8,7 +8,7 @@
 
 namespace cobbletext {
 
-class GlyphInfo {
+class COBBLETEXT_CPP_API GlyphInfo {
 public:
     GlyphID id = 0;
     std::vector<uint8_t> image;

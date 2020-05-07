@@ -12,7 +12,7 @@
 namespace cobbletext {
 
 
-class Library {
+class COBBLETEXT_CPP_API Library {
     static std::string version_;
 
 public:

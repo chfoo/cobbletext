@@ -7,9 +7,11 @@
 #include <unicode/unistr.h>
 #include <unicode/schriter.h>
 
+#include "cobbletext/macros.h"
+
 namespace cobbletext::internal {
 
-class StringIndexer {
+class COBBLETEXT_CPP_API StringIndexer {
     std::shared_ptr<icu::UnicodeString> textBuffer;
     icu::StringCharacterIterator iterator;
     int32_t currentIndex32;

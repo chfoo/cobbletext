@@ -81,6 +81,7 @@ To generate build files using CMake:
 2. `cd build`
 3. `cmake .. -D CMAKE_BUILD_TYPE=Release`
    * Omit `CMAKE_BUILD_TYPE` option if compiling with msbuild / Visual Studio.
+   * Add `-D COBBLETEXT_CPP_API=true` if you're building a dynamic library on Windows and want to use the C++ API.
 
 For vcpkg, please include a flag similar to `-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`. To let the toolchain file know which triplet you want to use, use something like `-D VCPKG_TARGET_TRIPLET=x64-windows`.
 

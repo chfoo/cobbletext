@@ -5,6 +5,8 @@
 * Removed library `clear_glyphs()` and added engine `clear_tiles()`.
 * Changed `add_inline_object()` to accept width and height instead of size.
 * Fixed Engine OutputInfo containing uninitialized values if `lay_out()` was not called.
+* Fixed dynamic library symbol exports on Windows.
+* Added CMake variable `COBBLETEXT_CPP_API` to enable C++ API on a dynamic library build for Windows.
 
 ## 0.1.0 (2020-04-30)
 

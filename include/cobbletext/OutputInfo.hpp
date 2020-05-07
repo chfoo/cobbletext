@@ -7,7 +7,7 @@
 
 namespace cobbletext {
 
-class OutputInfo {
+class COBBLETEXT_CPP_API OutputInfo {
 public:
     uint32_t textWidth = 0;
     uint32_t textHeight = 0;

@@ -17,7 +17,7 @@ enum class AdvanceType {
     Layout = 5
 };
 
-class AdvanceInfo {
+class COBBLETEXT_CPP_API AdvanceInfo {
 public:
     AdvanceType type = AdvanceType::Invalid;
     uint32_t textIndex = 0;

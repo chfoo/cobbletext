@@ -8,7 +8,7 @@
 
 namespace cobbletext {
 
-class FontInfo {
+class COBBLETEXT_CPP_API FontInfo {
 public:
     FontID id = 0;
     std::string familyName;
