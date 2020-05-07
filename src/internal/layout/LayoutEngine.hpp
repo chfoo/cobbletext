@@ -42,6 +42,7 @@ class LayoutEngine {
     std::vector<InternalTextRun> internalRuns;
     std::shared_ptr<std::vector<ShapeResult>> shapeResults;
 
+    std::unordered_set<GlyphKey,GlyphKeyHasher> glyphs;
     std::vector<TileInfo> tiles_;
     std::vector<AdvanceInfo> advances_;
 
@@ -51,9 +52,6 @@ class LayoutEngine {
     bool tilesValid_ = true;
 
     uint32_t previousTextIndex;
-
-    unsigned long int glyphTableGenerationID;
-    std::unordered_set<GlyphKey,GlyphKeyHasher> glyphsSeen;
 
 public:
     uint32_t lineLength = 0;
@@ -69,9 +67,10 @@ public:
 
     LayoutEngine(std::shared_ptr<Context> context,
         std::shared_ptr<TextSource> textSource);
+    ~LayoutEngine();
 
     void clearText();
-    void clearGlyphs();
+    void clearTiles();
 
     void layOut();
 

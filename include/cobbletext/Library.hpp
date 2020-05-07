@@ -41,8 +41,6 @@ public:
 
     FontID getFontAlternative(FontID id);
 
-    void clearGlyphs();
-
 private:
     class Impl;
     std::unique_ptr<Impl> impl;

@@ -226,7 +226,7 @@ TEST_CASE("engine tile validity") {
     cobbletext_library_delete(library);
 }
 
-TEST_CASE("engine clear glyphs") {
+TEST_CASE("engine clear tiles") {
     CobbletextLibrary * library = cobbletext_library_new();
     CobbletextEngine * engine = cobbletext_engine_new(library);
 
@@ -240,7 +240,11 @@ TEST_CASE("engine clear glyphs") {
 
     CHECK( tiles[0]->glyph_id == 1 );
 
-    cobbletext_library_clear_glyphs(library);
+    cobbletext_library_get_glyph_info(library, 1);
+    CHECK( cobbletext_get_error_code(library) == 0);
+    cobbletext_engine_clear_tiles(engine);
+    cobbletext_library_get_glyph_info(library, 1);
+    CHECK( cobbletext_get_error_code(library) != 0);
 
     cobbletext_engine_add_text_utf8(engine, "b", -1);
     cobbletext_engine_lay_out(engine);

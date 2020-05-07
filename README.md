@@ -169,7 +169,7 @@ const struct CobbletextTileInfo ** tile_array cobbletext_engine_get_tiles(engine
 std::vector<TileInfo> tiles = engine.tiles();
 ```
 
-Draw the images to the texture atlas, and  store the image metadata to a hash table:
+Draw the images to the texture atlas, and store the atlas metadata to a hash table:
 
 ```c++
 // C
@@ -213,6 +213,14 @@ bool isValid = cobbletext_engine_tiles_valid(engine);
 // C++
 bool isValid = engine.tilesValid();
 ```
+
+For a texture atlas, this function can be used to determine whether a texture atlas should be rebuilt with new additional tiles. If the tiles are not valid, then:
+
+1. Clear texture.
+2. Call "rasterize" function.
+3. Call "pack tiles" function.
+4. Process tiles by adding or replacing tile metadata.
+5. Draw the glyphs to the texture.
 
 ### Prepare destination image
 
@@ -297,7 +305,7 @@ The text is finally rendered!
 
 ### Reuse engine
 
-To reuse the engine, use the clear function which will remove the text from its internal buffer, but keep all properties intact:
+To reuse the engine, use the clear function which will remove the text from its internal buffer, but keep all properties and tiles intact:
 
 ```c++
 // C
@@ -306,6 +314,20 @@ cobbletext_engine_clear(engine);
 // C++
 engine.clear();
 ```
+
+### Clearing tiles
+
+If your texture atlas for an engine is filling up, instead of deleting and recreating an engine entirely, you can clear the tiles and the associated glyphs.
+
+```c++
+// C
+cobbletext_engine_clear_tiles(engine);
+
+// C++
+engine.clearTiles();
+```
+
+Then, you proceed as if you have a blank texture atlas by creating a new texture and atlas metadata hash table, or clear the texture and hash table.
 
 ## Troubleshooting libraries
 

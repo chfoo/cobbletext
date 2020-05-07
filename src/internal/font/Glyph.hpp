@@ -17,6 +17,8 @@ public:
     int32_t imageOffsetX = 0;
     int32_t imageOffsetY = 0;
 
+    unsigned int referenceCount = 0;
+
     explicit Glyph(GlyphID id) : id(id) {}
 };
 

@@ -195,6 +195,10 @@ bool cobbletext_engine_pack_tiles(CobbletextEngine * engine, uint32_t width,
     return engine->obj->packTiles(width, height);
 }
 
+void cobbletext_engine_clear_tiles(CobbletextEngine * engine) {
+    engine->obj->clearTiles();
+}
+
 void cobbletext_engine_prepare_tiles(CobbletextEngine * engine) {
     try {
         cobbletext::c::prepareEngineTiles(engine);

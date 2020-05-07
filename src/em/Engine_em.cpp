@@ -55,6 +55,7 @@ EMSCRIPTEN_BINDINGS(cobbletext_Engine) {
         .function("tilesValid", &cobbletext::Engine::tilesValid)
         .function("rasterize", &cobbletext::Engine::rasterize)
         .function("packTiles", &cobbletext::Engine::packTiles)
+        .function("clearTiles", &cobbletext::Engine::clearTiles)
 
         ;
 

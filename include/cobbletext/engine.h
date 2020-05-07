@@ -147,10 +147,25 @@ void cobbletext_engine_add_inline_object(CobbletextEngine * engine,
  * Empty the text buffer.
  *
  * This empties the text buffer so the engine can be used to process
- * anther set of text. The properties are not reset.
+ * anther set of text. The properties are not reset and tiles are not cleared.
  */
 COBBLETEXT_API
 void cobbletext_engine_clear(CobbletextEngine * engine);
+
+/**
+ * Clear associated tiles and glyphs.
+ *
+ * The library context caches glyphs until no engine has a reference to them.
+ * This function can be called to reduce memory usage or clear a full
+ * texture atlas. This is especially important if your text sources are
+ * from user generated content.
+ *
+ * This function doesn't affect properties or buffered text, and
+ * does not affect other engines. If you have associated data structures,
+ * such as a texture atlas, remember to clear those too.
+ */
+COBBLETEXT_API
+void cobbletext_engine_clear_tiles(CobbletextEngine * engine);
 
 /**
  * Process and shape the text.
@@ -163,8 +178,15 @@ void cobbletext_engine_lay_out(CobbletextEngine * engine);
 /**
  * Returns whether the associated glyphs to this engine is not stale.
  *
+ * If the value is `true`, then a call to `cobbletext_engine_rasterize()`
+ * and `cobbletext_engine_pack_tiles()` is not required.
+ *
+ * If the value is `false`, a new tile and glyph as been associated with this
+ * engine instance. If you're using a texture atlas, you will need to rebuild
+ * your texture by adding additional or replacing existing tile metadata,
+ * and redrawing the entire texture.
+ *
  * @pre Call `cobbletext_engine_lay_out()`
- * @return `true` if no rasterization or texture packing is required
  */
 COBBLETEXT_API
 bool cobbletext_engine_tiles_valid(CobbletextEngine * engine);

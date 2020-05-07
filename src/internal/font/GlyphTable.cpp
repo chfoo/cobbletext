@@ -38,10 +38,39 @@ bool GlyphTable::registerGlyph(const GlyphKey & glyphKey) {
     return true;
 }
 
+bool GlyphTable::removeGlyph(const GlyphKey & glyphKey) {
+    const auto & result = glyphs.find(glyphKey);
+
+    if (result == glyphs.end())  {
+        return false;
+    }
+
+    freeIDList.push_back(result->second.id);
+
+    idMap.erase(result->second.id);
+    glyphs.erase(result);
+
+    return true;
+}
+
 bool GlyphTable::isRegistered(const GlyphKey & glyphKey) {
     const auto & result = glyphs.find(glyphKey);
 
     return result != glyphs.end();
+}
+
+void GlyphTable::incrementReference(const GlyphKey & glyphKey) {
+    auto & result = glyphs.at(glyphKey);
+    result.referenceCount += 1;
+}
+
+void GlyphTable::decrementReference(const GlyphKey & glyphKey) {
+    auto & result = glyphs.at(glyphKey);
+    result.referenceCount -= 1;
+
+    if (result.referenceCount == 0) {
+        removeGlyph(glyphKey);
+    }
 }
 
 const GlyphKey & GlyphTable::idToKey(GlyphID glyphID) {
@@ -181,6 +210,12 @@ GlyphInfo GlyphTable::getGlyphInfo(GlyphID glyphID) {
 }
 
 GlyphID GlyphTable::getFreeID() {
+    if (!freeIDList.empty()) {
+        GlyphID id = freeIDList.back();
+        freeIDList.pop_back();
+        return id;
+    }
+
     GlyphID id = idCounter;
 
     if (id == std::numeric_limits<GlyphID>::max()) {
@@ -189,13 +224,6 @@ GlyphID GlyphTable::getFreeID() {
 
     idCounter++;
     return id;
-}
-
-void GlyphTable::clear() {
-    idCounter = 1;
-    idMap.clear();
-    glyphs.clear();
-    generationID++;
 }
 
 }

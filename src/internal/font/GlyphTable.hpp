@@ -25,15 +25,18 @@ private:
 
     FT_Bitmap tempBitmap;
 
-public:
-    unsigned long int generationID = 1;
+    std::vector<GlyphID> freeIDList;
 
+public:
     GlyphTable(std::shared_ptr<FreeType> freeType, std::shared_ptr<FontTable> fontTable);
     ~GlyphTable();
 
     bool registerGlyph(const GlyphKey & glyphKey);
-
+    bool removeGlyph(const GlyphKey & glyphKey);
     bool isRegistered(const GlyphKey & glyphKey);
+
+    void incrementReference(const GlyphKey & glyphKey);
+    void decrementReference(const GlyphKey & glyphKey);
 
     const GlyphKey & idToKey(GlyphID glyphID);
 
@@ -45,16 +48,12 @@ public:
 
     GlyphInfo getGlyphInfo(GlyphID glyphID);
 
-    void clear();
-
 private:
     GlyphID getFreeID();
 
     void scaleBitmapGlyph(FT_Bitmap & bitmap, Glyph & glyph, Font & font);
     void scaleBitmapMono(FT_Bitmap & bitmap, Glyph & glyph, Font & font);
     void scaleBitmapGrayscale(FT_Bitmap & bitmap, Glyph & glyph, Font & font);
-
-
 };
 
 }

@@ -16,12 +16,15 @@ LayoutEngine::LayoutEngine(std::shared_ptr<Context> context,
         shaper(context->fontTable),
         lineBreaker(context),
         context(context),
-        textSource(textSource),
-        glyphTableGenerationID(context->glyphTable->generationID) {
+        textSource(textSource) {
     bidiTable.setTextBuffer(textSource->textBuffer);
     scriptTable.setTextBuffer(textSource->textBuffer);
     shaper.setTextBuffer(textSource->textBuffer);
     lineBreaker.setTextBuffer(textSource->textBuffer);
+}
+
+LayoutEngine::~LayoutEngine() {
+    clearTiles(); // Required to clear references to glyphs in the glyph table!
 }
 
 std::vector<TileInfo> & LayoutEngine::tiles() {
@@ -47,6 +50,16 @@ bool LayoutEngine::tilesValid() {
 
 void LayoutEngine::clearText() {
     textSource->clear();
+}
+
+void LayoutEngine::clearTiles() {
+    tiles_.clear();
+
+    for (auto & glyph : glyphs) {
+        context->glyphTable->decrementReference(glyph);
+    }
+
+    glyphs.clear();
 }
 
 void LayoutEngine::layOut() {
@@ -253,12 +266,6 @@ void LayoutEngine::fastPathTextRun(const TextRun & textRun) {
 }
 
 void LayoutEngine::registerGlyphsAndMakeTiles() {
-    if (glyphTableGenerationID != context->glyphTable->generationID) {
-        tiles_.clear();
-        glyphsSeen.clear();
-        glyphTableGenerationID = context->glyphTable->generationID;
-    }
-
     for (auto const & shapeResult : *shapeResults) {
         if (shapeResult.run.source.inlineObject) {
             continue;
@@ -268,21 +275,19 @@ void LayoutEngine::registerGlyphsAndMakeTiles() {
         auto key = GlyphKey(shapeResult.fontID, textFormat.fontSize,
             shapeResult.glyphIndex);
 
-        if (glyphsSeen.find(key) != glyphsSeen.end()) {
+        if (glyphs.find(key) != glyphs.end()) {
             continue;
         }
 
-        bool isNew = context->glyphTable->registerGlyph(key);
-
-        if (isNew) {
-            tilesValid_ = false;
-        }
+        context->glyphTable->registerGlyph(key);
+        context->glyphTable->incrementReference(key);
+        tilesValid_ = false;
 
         TileInfo tile;
         tile.glyphID = context->glyphTable->keyToID(key);
         tiles_.push_back(tile);
 
-        glyphsSeen.insert(key);
+        glyphs.insert(key);
     }
 }
 

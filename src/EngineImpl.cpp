@@ -69,4 +69,8 @@ bool Engine::Impl::packTiles(uint32_t width, uint32_t height) {
     return context->atlasPacker->pack(layoutEngine->tiles(), width, height);
 }
 
+void Engine::Impl::clearTiles() {
+    return layoutEngine->clearTiles();
+}
+
 }

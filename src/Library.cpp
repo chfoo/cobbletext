@@ -69,8 +69,4 @@ FontID Library::getFontAlternative(FontID id) {
     return impl->context->fontTable->getFontAlternative(id);
 }
 
-void Library::clearGlyphs() {
-    impl->context->glyphTable->clear();
-}
-
 }

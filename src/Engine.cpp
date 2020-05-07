@@ -114,4 +114,8 @@ bool Engine::packTiles(uint32_t width, uint32_t height) {
     return impl->packTiles(width, height);
 }
 
+void Engine::clearTiles() {
+    impl->clearTiles();
+}
+
 }

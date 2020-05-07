@@ -33,6 +33,5 @@ EMSCRIPTEN_BINDINGS(cobbletext_Library) {
         .function("getGlyphInfo", &cobbletext::Library::getGlyphInfo)
         .function("setFontAlternative", &cobbletext::Library::setFontAlternative)
         .function("getFontAlternative", &cobbletext::Library::getFontAlternative)
-        .function("clearGlyphs", &cobbletext::Library::clearGlyphs)
         ;
 }
