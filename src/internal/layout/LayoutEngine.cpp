@@ -209,7 +209,7 @@ void LayoutEngine::processTextRun(const TextRun & textRun) {
             codeUnitScript = scriptTable.getHarfBuzzScript(index);
 
             bool isScriptDifferent = codeUnitScript != runScript
-                && codeUnitScript != HB_SCRIPT_COMMON;
+                && codeUnitScript != HB_SCRIPT_INHERITED;
             bool isDirectionDifferent = codeUnitDirection != runDirection;
 
             shouldMakeNewRun = isScriptDifferent || isDirectionDifferent;
