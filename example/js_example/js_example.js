@@ -77,7 +77,7 @@ async function loadFonts() {
         "NotoSansCJK-Regular.ttc",
         "NotoSansArabic-Regular.ttf",
         "NotoSansHebrew-Regular.ttf",
-        "NotoEmoji-Regular.ttf"];
+        "Symbola.otf"]; // Emscripten's bundled FreeType doesn't support NotoColorEmoji.ttf yet
 
     while (pendingFonts.length) {
         let font = pendingFonts.shift();

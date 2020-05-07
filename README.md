@@ -6,7 +6,7 @@ It uses FreeType, HarfBuzz, and Unicode ICU for the actual dirty work.
 
 Online demos:
 
-* [js_example](https://chfoo.github.io/cobbletext/example/js_example/) JavaScript with Emscripten bindings. Note: requires 25 MB of data download due to fonts.
+* [js_example](https://chfoo.github.io/cobbletext/example/js_example/) JavaScript with Emscripten bindings. Note: requires 30 MB of data download due to fonts.
 
 ## Quick start
 
