@@ -90,17 +90,13 @@ jobs:
           cmake --build . --target test_main
           cmake --build . --target ppm_example
         working-directory: build/
-      - run: cp -a vcpkg/installed/${{ matrix.triplet }}/lib/. build/bin/
-        if: matrix.target == 'macos'
-          # ctest copies automatically on Windows. On other OS, cmake sets
-          # RPATH for debugging, but vcpkg builds are glitchy.
-          # We could use DYLD_LIBRARY_PATH on macOS, but it's also glitchy.
       - run: ctest --verbose -C Debug
         working-directory: build/
         env:
-          # On Ubuntu, copying the libraries won't work because it doesn't
-          # search in the executable's directory, but LD_LIBRARY_PATH works
+          # ctest copies the libraries to the executable directory automatically
+          # on Windows. Otherwise, will use the ld/dyld environment variables.
           LD_LIBRARY_PATH: "${{ github.workspace }}/vcpkg/installed/${{ matrix.triplet }}/lib/"
+          DYLD_FALLBACK_LIBRARY_PATH: "${{ github.workspace }}/vcpkg/installed/${{ matrix.triplet }}/lib/:${{ github.workspace }}/build/bin/:/usr/local/lib:/lib:/usr/lib"
       # Now build dynamic library:
       - run: |
           mkdir build-release
