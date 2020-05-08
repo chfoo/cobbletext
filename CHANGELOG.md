@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2020-05-08)
 
 * Removed library `clear_glyphs()` and added engine `clear_tiles()`.
 * Changed `add_inline_object()` to accept width and height instead of size.

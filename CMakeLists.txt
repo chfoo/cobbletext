@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 include(CheckIncludeFile)
 
-project(cobbletext VERSION 0.1.0 DESCRIPTION "Complex text layout and rendering engine")
+project(cobbletext VERSION 0.2.0 DESCRIPTION "Complex text layout and rendering engine")
 
 set(COBBLETEXT_BUILD_EXAMPLES true CACHE BOOL "Whether to include example programs into the build config")
 set(COBBLETEXT_BUILD_TESTS true CACHE BOOL "Whether to include tests into the build config")

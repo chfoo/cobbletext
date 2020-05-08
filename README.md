@@ -337,7 +337,7 @@ Libraries can be placed in the same directory as the executable. If library refu
 
 ### MacOS
 
-Placing libraries in the same directory as the executable might not work. You can temporarily specify a search path using the `DYLD_LIBRARY_PATH` environment variable. For example: `DYLD_LIBRARY_PATH=my/path/to/dylib/directory/ ./my_application`.
+Placing libraries in the same directory as the executable might not work. You can temporarily specify a search path using the `DYLD_FALLBACK_LIBRARY_PATH` environment variable. For example: `DYLD_FALLBACK_LIBRARY_PATH=my/path/to/dylib/directory/:/usr/local/lib:/lib:/usr/lib ./my_application`. Note that macOS strips this environment variable on child processes so you can't `export` it.
 
 Use `otool` to inspect your application's library dependencies. The libraries may be linked into a hardcoded path which may not exist on another system. Or the libraries use `@rpath/` prefix but your application does not specify an rpath. Use `install_name_tool` to change the names.
 
