@@ -90,13 +90,8 @@ jobs:
           cmake --build . --target test_main
           cmake --build . --target ppm_example
         working-directory: build/
-      - run: ctest --verbose -C Debug
+      - run: $GITHUB_WORKSPACE/.github/workflows/run_ctest.sh ${{ matrix.triplet }}
         working-directory: build/
-        env:
-          # ctest copies the libraries to the executable directory automatically
-          # on Windows. Otherwise, will use the ld/dyld environment variables.
-          LD_LIBRARY_PATH: "${{ github.workspace }}/vcpkg/installed/${{ matrix.triplet }}/lib/"
-          DYLD_FALLBACK_LIBRARY_PATH: "${{ github.workspace }}/vcpkg/installed/${{ matrix.triplet }}/lib/:${{ github.workspace }}/build/bin/:/usr/local/lib:/lib:/usr/lib"
       # Now build dynamic library:
       - run: |
           mkdir build-release
