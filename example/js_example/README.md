@@ -13,3 +13,5 @@ To run the example, it requires the files:
 * NotoSansArabic-Regular.ttf
 * NotoSansHebrew-Regular.ttf
 * Symbola.otf
+
+Some of the API returns handles to C++ vectors. These need to be deleted manually from the JavaScript side. In a future release, this may be improved to use regular JavaScript arrays.

@@ -86,7 +86,7 @@ cobbletext_engine_set_properties(engine, &properties);
 
 // C++
 engine.lineLength = 500;
-properties.locale = "en-US";
+engine.locale = "en-US";
 ```
 
 ### Set text properties

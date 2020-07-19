@@ -183,10 +183,11 @@ function prepareAtlas() {
         });
 
         drawAtlasTile(context, tile, glyph);
-        glyph.image.delete();
+        glyph.image.delete();  // C++ vector, remember to delete!
     }
 
-    tiles.delete();
+    tiles.delete();  // C++ vector, remember to delete!
+
     console.debug("drew " + tileCount + " tiles");
 }
 
@@ -263,7 +264,7 @@ function drawText() {
         penY += advance.advanceY;
     }
 
-    advances.delete();
+    advances.delete();  // C++ vector, remember to delete!
 }
 
 function drawGlyph(context, colorContext, advance, penX, penY) {
