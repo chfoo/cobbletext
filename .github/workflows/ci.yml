@@ -50,14 +50,14 @@ jobs:
       - uses: lukka/run-vcpkg@v3
         with:
           setupOnly: true
-          vcpkgGitCommitId: "89d112b839a61f81fb5f341c908d6412e3855228"
+          vcpkgGitCommitId: "6185aa76504a5025f36754324abf307cc776f3da"
           appendedCacheKey: ""
       - run: |
           $VCPKG_ROOT/vcpkg install \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --overlay-ports=$GITHUB_WORKSPACE/misc/vcpkg_custom_ports \
-            freetype[png] harfbuzz[ucdn] icu-cobbletext ms-gsl catch2 \
+            freetype[png] harfbuzz icu-cobbletext ms-gsl catch2 \
             boost-container-hash sdl2 stb ${{ matrix.vcpkg_extras }}
       - uses: actions/cache@v1
         id: cache-uthash
