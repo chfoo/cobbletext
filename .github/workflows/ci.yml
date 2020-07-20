@@ -149,11 +149,13 @@ jobs:
         with:
           key: emscripten-cache-1.38.48-v1
           path: emsdk-cache
-      - uses: mymindstorm/setup-emsdk@v4
+      - uses: mymindstorm/setup-emsdk@v6
         with:
           version: 1.38.48
           actions-cache-folder: 'emsdk-cache'
           no-cache: true
+      - run: emcc -v
+      - run: env
       # Emscripten ICU
       - uses: actions/cache@v1
         id: cache-emscripten-icu
