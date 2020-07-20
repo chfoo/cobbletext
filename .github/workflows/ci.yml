@@ -53,7 +53,7 @@ jobs:
           vcpkgGitCommitId: "6185aa76504a5025f36754324abf307cc776f3da"
           appendedCacheKey: ""
       - run: |
-          $VCPKG_ROOT/vcpkg install \
+          ${VCPKG_ROOT//\\//}/vcpkg install \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --overlay-ports=$GITHUB_WORKSPACE/misc/vcpkg_custom_ports \
@@ -71,6 +71,7 @@ jobs:
           git checkout 1124f0a70b0714886402c3c0df03d037e3c4d57a
         if: steps.cache-uthash.outputs.cache-hit != 'true'
       # Build in debug mode for testing:
+      - run: env
       - run: |
           mkdir build
           cd build
@@ -107,14 +108,14 @@ jobs:
         working-directory: build-release/
       # Packup up binaries
       - run: |
-          rm -f $VCPKG_ROOT/vcpkg-export*
-          $VCPKG_ROOT/vcpkg export \
+          rm -f ${VCPKG_ROOT//\\//}/vcpkg-export*
+          ${VCPKG_ROOT//\\//}/vcpkg export \
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --7zip \
             freetype[png] harfbuzz[ucdn] icu-cobbletext
           mkdir -p build-release/bin-dependencies/
-          mv $VCPKG_ROOT/vcpkg-export* build-release/bin-dependencies/
+          mv ${VCPKG_ROOT//\\//}/vcpkg-export* build-release/bin-dependencies/
       - run: |
           mkdir -p artifact_output/
           tar --create --file artifact_output/cobbletext.tar.bz2 --bzip2 \
