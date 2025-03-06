@@ -11,7 +11,7 @@ Shaper::Shaper(std::shared_ptr<FontTable> fontTable) :
         fontTable(fontTable),
         harfBuzzBuffer(hb_buffer_create()) {
 
-    hb_buffer_reference(harfBuzzBuffer.get());
+    // hb_buffer_reference(harfBuzzBuffer.get());
     hb_buffer_set_cluster_level(harfBuzzBuffer.get(),
         HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
 }
