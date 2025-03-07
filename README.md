@@ -4,6 +4,8 @@ Cobbletext is a complex text layout and rendering engine as a C/C++ library. It 
 
 It uses FreeType, HarfBuzz, and Unicode ICU for the actual dirty work.
 
+The project is considered a "toy" library; it works "good enough" but does not aim to match the level of completeness, performance, and development of an actively developed engine.
+
 Online demos:
 
 * [js_example](https://chfoo.github.io/cobbletext/example/js_example/) JavaScript with Emscripten bindings. Note: requires 30 MB of data download due to fonts.
@@ -364,7 +366,7 @@ You can temporarily include library paths using the `LD_LIBRARY_PATH` environmen
 | Bidirectional text | Yes |
 | Vertical text | No |
 | Font name matching (family, style, weight, etc.) | No |
-| Font fallback | Yes |
+| Font fallback | Yes (partial) |
 | Language-specific display | Yes |
 | Kerning | Yes |
 | Ligatures | Yes |
