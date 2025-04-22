@@ -121,7 +121,7 @@ jobs:
           tar --create --file artifact_output/cobbletext.tar.bz2 --bzip2 \
             build-release/install_dir/ \
             build-release/bin-dependencies/
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: bin-${{ matrix.triplet }}
           path: artifact_output/
@@ -192,7 +192,7 @@ jobs:
           tar --create --file artifact_output/cobbletext.tar.bz2 --bzip2 \
             build-release/install_dir/ \
             icu_emscripten_prefixed/icu_installed/
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: bin-emscripten
           path: artifact_output/
