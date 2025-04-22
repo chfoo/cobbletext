@@ -47,11 +47,7 @@ jobs:
           submodules: true
       # Install our C/C++ library dependencies
       # and test support libraries:
-      - uses: lukka/run-vcpkg@v3
-        with:
-          setupOnly: true
-          vcpkgGitCommitId: "6185aa76504a5025f36754324abf307cc776f3da"
-          appendedCacheKey: ""
+      - uses: lukka/run-vcpkg@v11
       - run: |
           ${VCPKG_ROOT//\\//}/vcpkg install \
             --triplet ${{ matrix.triplet }} \
