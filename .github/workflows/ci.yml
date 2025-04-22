@@ -48,7 +48,7 @@ jobs:
       # https://github.com/microsoft/vcpkg/issues/37554
       - name: Install packages (Ubuntu)
         run: sudo apt-get install libltdl-dev
-        if: ${{ matrix.target }} == 'ubuntu'
+        if: matrix.target == 'ubuntu'
       # Install our C/C++ library dependencies
       # and test support libraries:
       - uses: lukka/run-vcpkg@v11
