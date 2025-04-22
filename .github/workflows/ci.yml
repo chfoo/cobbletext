@@ -24,7 +24,7 @@ jobs:
             test_build_type: Debug
             release_build_flag: "--config Release"
           - target: ubuntu
-            vm: ubuntu-18.04
+            vm: ubuntu-latest
             triplet: x64-linux-dynamic-release # freetype won't link bz2 correctly with vcpkg debug
             vcpkg_extras: ""
             cmake_platform_flag: ""
@@ -42,7 +42,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v4.2.2
         with:
           submodules: true
       # Install our C/C++ library dependencies
@@ -59,7 +59,7 @@ jobs:
             --overlay-ports=$GITHUB_WORKSPACE/misc/vcpkg_custom_ports \
             freetype[png] harfbuzz icu-cobbletext ms-gsl catch2 \
             boost-container-hash sdl2 stb ${{ matrix.vcpkg_extras }}
-      - uses: actions/cache@v1
+      - uses: actions/cache@v4
         id: cache-uthash
         with:
           key: uthash-${{ matrix.target }}-v1
@@ -126,12 +126,12 @@ jobs:
           name: bin-${{ matrix.triplet }}
           path: artifact_output/
   build_emscripten:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v4.2.2
         with:
           submodules: true
       # System dependencies (boost, freetype, and harfbuzz already in emsdk)
@@ -139,13 +139,13 @@ jobs:
           sudo apt install libmsgsl-dev
           mkdir -p local_headers/
           cp -r /usr/include/gsl local_headers/
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@4.2.2
         with:
           repository: nothings/stb
           path: stb
           ref: f54acd4e13430c5122cab4ca657705c84aa61b08
       # Emscripten
-      - uses: actions/cache@v1
+      - uses: actions/cache@v4
         id: emscripten-cache
         with:
           key: emscripten-cache-1.38.48-v1
@@ -158,7 +158,7 @@ jobs:
       - run: emcc -v
       - run: env
       # Emscripten ICU
-      - uses: actions/cache@v1
+      - uses: actions/cache@v4
         id: cache-emscripten-icu
         with:
           key: emscripten-icu-v1
