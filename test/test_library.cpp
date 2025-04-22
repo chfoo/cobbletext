@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #include "cobbletext/cobbletext.h"
 
@@ -10,17 +10,17 @@ TEST_CASE("library construction and error clearing") {
 
     REQUIRE( library );
     CHECK( cobbletext_get_error_code(library) == 0 );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     const struct CobbletextFontInfo * font_info =
     cobbletext_library_get_font_info(library, 123123);
 
     CHECK( cobbletext_get_error_code(library) );
-    CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
 
     cobbletext_clear_error(library);
     CHECK( cobbletext_get_error_code(library) == 0 );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     REQUIRE_NOTHROW( cobbletext_library_delete(library) );
 }
@@ -54,7 +54,7 @@ TEST_CASE("library heavy methods") {
             cobbletext_library_get_font_info(library, 123123);
 
         CHECK( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
     }
 
     SECTION("check nonexistent glyph") {
@@ -62,26 +62,26 @@ TEST_CASE("library heavy methods") {
             cobbletext_library_get_glyph_info(library, 123123);
 
         CHECK( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
     }
 
     SECTION("load nonexistant file") {
         cobbletext_library_load_font(library, "/nonexistant/font.ttf");
 
         CHECK( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
     }
 
     SECTION("load nonexistant file with face index") {
         cobbletext_library_load_font(library, "/nonexistant/font.ttf#123");
 
         CHECK( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
 
         cobbletext_library_load_font(library, "/nonexistant/font.ttf#123invalid");
 
         CHECK( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
     }
 
     SECTION("load nonsense bytes") {
@@ -90,7 +90,7 @@ TEST_CASE("library heavy methods") {
         delete [] bytes;
 
         CHECK( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), !Catch::Matchers::Equals("") );
     }
 
     SECTION("check load file") {
@@ -106,7 +106,7 @@ TEST_CASE("library heavy methods") {
         cobbletext_library_load_font(library, fontPath.c_str());
 
         CHECK_FALSE( cobbletext_get_error_code(library) );
-        CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+        CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
     }
 
     cobbletext_library_delete(library);

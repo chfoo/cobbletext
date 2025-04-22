@@ -1,7 +1,7 @@
 
 file(GLOB_RECURSE COBBLETEXT_TEST_SOURCES *.cpp)
 
-find_path(CATCH2_INCLUDE_PATH "catch2")
+find_package(Catch2 3 REQUIRED)
 
 add_executable(test_main ${COBBLETEXT_TEST_SOURCES})
 
@@ -14,7 +14,7 @@ target_include_directories(test_main PRIVATE
 )
 
 target_link_libraries(test_main PRIVATE cobbletext
-    ${ICU_LIBRARIES})
+    ${ICU_LIBRARIES} Catch2::Catch2WithMain)
 
 if(NOT COBBLETEXT_STATIC)
     if(NOT WIN32)

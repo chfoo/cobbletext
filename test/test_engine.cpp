@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #include "cobbletext/cobbletext.h"
 
@@ -7,7 +7,7 @@ TEST_CASE("engine create delete") {
     CobbletextEngine * engine = cobbletext_engine_new(library);
 
     REQUIRE_FALSE( cobbletext_get_error_code(library) );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     cobbletext_engine_delete(engine);
     cobbletext_library_delete(library);
@@ -36,7 +36,7 @@ TEST_CASE("engine getter/setter") {
         cobbletext_engine_get_properties(engine);
 
     CHECK( properties2->line_length == 200 );
-    CHECK_THAT( properties2->locale, Catch::Equals("zz") );
+    CHECK_THAT( properties2->locale, Catch::Matchers::Equals("zz") );
     CHECK( properties2->text_alignment == COBBLETEXT_TEXT_ALIGNMENT_CENTER );
 
     const CobbletextTextProperties * textProperties2 =
@@ -45,8 +45,8 @@ TEST_CASE("engine getter/setter") {
     CHECK( textProperties2->custom_property == 123);
     CHECK( textProperties2->font == 0);
     CHECK( textProperties2->font_size == 12);
-    CHECK_THAT( textProperties2->language, Catch::Equals("xx") );
-    CHECK_THAT( textProperties2->script, Catch::Equals("xxxx") );
+    CHECK_THAT( textProperties2->language, Catch::Matchers::Equals("xx") );
+    CHECK_THAT( textProperties2->script, Catch::Matchers::Equals("xxxx") );
     CHECK( textProperties2->script_direction == COBBLETEXT_SCRIPT_DIRECTION_LTR);
 
     cobbletext_engine_delete(engine);
@@ -267,14 +267,14 @@ TEST_CASE("engine raster and tile packing") {
     cobbletext_engine_lay_out(engine);
 
     REQUIRE_FALSE( cobbletext_get_error_code(library) );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     CHECK_FALSE( cobbletext_engine_tiles_valid(engine) );
 
     cobbletext_engine_rasterize(engine);
 
     REQUIRE_FALSE( cobbletext_get_error_code(library) );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     uint32_t texture_size = 2;
 
@@ -292,12 +292,12 @@ TEST_CASE("engine raster and tile packing") {
     cobbletext_engine_prepare_tiles(engine);
 
     REQUIRE_FALSE( cobbletext_get_error_code(library) );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     cobbletext_engine_prepare_advances(engine);
 
     REQUIRE_FALSE( cobbletext_get_error_code(library) );
-    CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+    CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
 
     uint32_t tile_count = cobbletext_engine_get_tile_count(engine);
     uint32_t advance_count = cobbletext_engine_get_advance_count(engine);
@@ -334,7 +334,7 @@ TEST_CASE("engine raster and tile packing") {
                 cobbletext_library_get_glyph_info(library, advance->glyph_id);
 
             REQUIRE_FALSE( cobbletext_get_error_code(library) );
-            CHECK_THAT( cobbletext_get_error_message(library), Catch::Equals("") );
+            CHECK_THAT( cobbletext_get_error_message(library), Catch::Matchers::Equals("") );
             CHECK( glyph->image );
             CHECK( glyph->image_width );
             CHECK( glyph->image_height );
