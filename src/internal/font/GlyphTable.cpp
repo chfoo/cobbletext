@@ -177,9 +177,9 @@ void GlyphTable::scaleBitmapGrayscale(FT_Bitmap & bitmap, Glyph & glyph,
 
     auto buffer = static_cast<uint8_t *>(bitmap.buffer);
 
-    stbir_resize_uint8(buffer, bitmap.width, bitmap.rows, 0,
+    stbir_resize_uint8_linear(buffer, bitmap.width, bitmap.rows, 0,
         reinterpret_cast<unsigned char *>(glyph.image.data()),
-        scaledWidth, scaledHeight, 0, 1);
+        scaledWidth, scaledHeight, 0, static_cast<stbir_pixel_layout>(1));
 
     glyph.imageOffsetX = font.freeTypeFace->glyph->bitmap_left
         * font.bitmapScale;

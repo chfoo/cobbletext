@@ -79,7 +79,7 @@ else()
 endif()
 
 find_path(MS_GSL_INCLUDE_PATH "gsl")
-find_path(STB_INCLUDE_PATH "stb.h" PATH_SUFFIXES "stb")
+find_path(STB_INCLUDE_PATH "stb_image_resize2.h" PATH_SUFFIXES "stb")
 
 set(COBBLETEXT_DEPENDENCY_INCLUDES
     ${Boost_INCLUDE_DIRS}
