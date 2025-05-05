@@ -7,7 +7,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [windows-x86, windows-x64, ubuntu, macos-x64, macos-arm64]
+        ## FIXME: build errors relating to architecture on macOS
+        # target: [windows-x86, windows-x64, ubuntu, macos-x64, macos-arm64]
+        target: [windows-x86, windows-x64, ubuntu]
         include:
           - target: windows-x86
             vm: windows-latest
@@ -136,6 +138,8 @@ jobs:
           path: artifact_output/
   build_emscripten:
     runs-on: ubuntu-latest
+    ## FIXME: build error due to GitHub worker environment too new
+    if: false
     defaults:
       run:
         shell: bash

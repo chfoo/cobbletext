@@ -129,11 +129,11 @@ class Main:
         if vcpkg_glob_result:
             subprocess.check_call(["7z",
                 "x", vcpkg_glob_result[0], "-o" + temp_dir])
-            extracted_vcpkg_glob_result = glob.glob(
-                f"{temp_dir}/vcpkg-export*/installed/*-*/")[0]
+            for extracted_vcpkg_glob_result in glob.glob(
+                f"{temp_dir}/vcpkg-export*/installed/*-*/"):
 
-            subprocess.check_call(["rsync", "-a",
-                f"{extracted_vcpkg_glob_result}/", f"{temp_dir}/"])
+                subprocess.check_call(["rsync", "-a",
+                    f"{extracted_vcpkg_glob_result}/", f"{temp_dir}/"])
 
         emscripten_icu_dir = f"{temp_dir}/icu_emscripten_prefixed/icu_installed/"
 
@@ -142,11 +142,12 @@ class Main:
                 emscripten_icu_dir, f"{temp_dir}/"])
 
     def artifact_name_to_platform(self, name):
+        # FIXME: fix broken builds
         table = {
-            "bin-emscripten": "emscripten",
+            # "bin-emscripten": "emscripten",
             "bin-x64-linux-dynamic-release": "linux-x64",
-            "bin-x64-osx-dynamic": "macos-x64",
-            "bin-arm64-osx-dynamic": "macos-arm64",
+            # "bin-x64-osx-dynamic": "macos-x64",
+            # "bin-arm64-osx-dynamic": "macos-arm64",
             "bin-x64-windows": "windows-x64",
             "bin-x86-windows": "windows-x86",
         }
@@ -156,7 +157,7 @@ class Main:
         bin_patterns = (
             r"include/cobbletext/.+",
             r"(lib|bin)/(lib)?cobbletext.*\.(a|bc|so|dylib|dll|lib|wasm|js)",
-            r"(lib|bin)/(lib)?(bz2|freetype|harfbuzz|icudt|icudata|icuuc).*\.(a|bc|so|dylib|dll|lib)",
+            r"(lib|bin)/(lib)?(brotlicommon|brotlidec|brotlienc|bz2|freetype|harfbuzz|icudt|icudata|icuuc).*\.(a|bc|so|dylib|dll|lib)",
             r"(lib|bin)/(libpng|libz|zlib).*\.(a|bc|so|dylib|dll|lib)",
 
         )
@@ -181,6 +182,7 @@ class Main:
         windows_dll = os.path.join(package_path, "lib", "cobbletext.dll")
         if os.path.exists(windows_dll):
             # Match vcpkg package convention
+            os.makedirs(os.path.join(package_path, "bin"), exist_ok=True)
             better_path = os.path.join(package_path, "bin", "cobbletext.dll")
             os.rename(windows_dll, better_path)
 
