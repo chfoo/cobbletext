@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 (2025-05-05)
+
+* Fixed a memory leak [(#2)](https://github.com/chfoo/cobbletext/issues/2)
+* Fixed compatibility with latest version of stb
+
 ## 0.2.0 (2020-05-08)
 
 * Removed library `clear_glyphs()` and added engine `clear_tiles()`.
