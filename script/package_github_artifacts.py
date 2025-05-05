@@ -146,6 +146,7 @@ class Main:
             "bin-emscripten": "emscripten",
             "bin-x64-linux-dynamic-release": "linux-x64",
             "bin-x64-osx-dynamic": "macos-x64",
+            "bin-arm64-osx-dynamic": "macos-arm64",
             "bin-x64-windows": "windows-x64",
             "bin-x86-windows": "windows-x86",
         }

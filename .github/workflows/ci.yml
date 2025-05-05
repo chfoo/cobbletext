@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [windows-x86, windows-x64, ubuntu, macos]
+        target: [windows-x86, windows-x64, ubuntu, macos-x64, macos-arm64]
         include:
           - target: windows-x86
             vm: windows-latest
@@ -30,11 +30,18 @@ jobs:
             cmake_platform_flag: ""
             test_build_type: Release # can't use debug because vcpkg toolchain links debug libs
             release_build_flag: ""
-          - target: macos
+          - target: macos-x64
             vm: macos-latest
             triplet: x64-osx-dynamic
             vcpkg_extras: ""
-            cmake_platform_flag: ""
+            cmake_platform_flag: "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+            test_build_type: Debug
+            release_build_flag: ""
+          - target: macos-arm64
+            vm: macos-latest
+            triplet: arm64-osx-dynamic
+            vcpkg_extras: ""
+            cmake_platform_flag: "-DCMAKE_OSX_ARCHITECTURES=arm64"
             test_build_type: Debug
             release_build_flag: ""
     runs-on: ${{ matrix.vm }}
@@ -115,7 +122,7 @@ jobs:
             --triplet ${{ matrix.triplet }} \
             --overlay-triplets=misc/vcpkg_custom_triplets \
             --7zip \
-            freetype[png] harfbuzz[ucdn] icu-cobbletext
+            freetype harfbuzz icu-cobbletext
           mkdir -p build-release/bin-dependencies/
           mv ${VCPKG_ROOT//\\//}/vcpkg-export* build-release/bin-dependencies/
       - run: |
