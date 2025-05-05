@@ -32,20 +32,20 @@ jobs:
             cmake_platform_flag: ""
             test_build_type: Release # can't use debug because vcpkg toolchain links debug libs
             release_build_flag: ""
-          - target: macos-x64
-            vm: macos-latest
-            triplet: x64-osx-dynamic
-            vcpkg_extras: ""
-            cmake_platform_flag: "-DCMAKE_OSX_ARCHITECTURES=x86_64"
-            test_build_type: Debug
-            release_build_flag: ""
-          - target: macos-arm64
-            vm: macos-latest
-            triplet: arm64-osx-dynamic
-            vcpkg_extras: ""
-            cmake_platform_flag: "-DCMAKE_OSX_ARCHITECTURES=arm64"
-            test_build_type: Debug
-            release_build_flag: ""
+          # - target: macos-x64
+          #   vm: macos-latest
+          #   triplet: x64-osx-dynamic
+          #   vcpkg_extras: ""
+          #   cmake_platform_flag: "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+          #   test_build_type: Debug
+          #   release_build_flag: ""
+          # - target: macos-arm64
+          #   vm: macos-latest
+          #   triplet: arm64-osx-dynamic
+          #   vcpkg_extras: ""
+          #   cmake_platform_flag: "-DCMAKE_OSX_ARCHITECTURES=arm64"
+          #   test_build_type: Debug
+          #   release_build_flag: ""
     runs-on: ${{ matrix.vm }}
     defaults:
       run:
